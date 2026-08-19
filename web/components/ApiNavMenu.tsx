@@ -5,8 +5,8 @@ import { Dropdown } from './ui/dropdown';
 import { IChevronDown } from './Icons';
 
 const items = [
-  { href: '/developers#satori', label: 'Vector PDF', hint: 'Free · same template as the playground' },
-  { href: '/developers#browser', label: 'Chromium print', hint: 'Paid · headless /print-view' },
+  { href: '/developers#satori', label: 'Vector PDF', hint: 'Free · default worker path' },
+  { href: '/developers#browser', label: 'Chromium print', hint: 'Optional · headless /print-view' },
   { href: '/developers#sheets', label: 'Google Sheets', hint: 'HYPERLINK, no backend' },
   { href: '/developers#share', label: 'Share URLs', hint: '#j= JSON in the hash' },
   { href: '/developers#schema', label: 'Invoice schema', hint: 'JSON contract' },
@@ -20,7 +20,7 @@ export default function ApiNavMenu() {
       trigger={
         <button
           type="button"
-          className="hidden sm:inline-flex items-center gap-0.5 text-zinc-600 hover:text-zinc-900 transition-colors"
+          className="inline-flex items-center gap-0.5 text-zinc-600 hover:text-zinc-900 transition-colors"
         >
           API
           <IChevronDown className="size-3.5 text-zinc-400" />

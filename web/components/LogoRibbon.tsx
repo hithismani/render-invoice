@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const SEQUENCE = ['Free', 'No signup', 'No card', 'Private'];
+const SEQUENCE = ['Private', 'Local only', 'No tracking'];
 
 export default function LogoRibbon({ dark = false, className = '' }: { dark?: boolean; className?: string }) {
   const [step, setStep] = useState(0);

@@ -219,20 +219,20 @@ export default function PlaygroundPage() {
           </Card>
         )}
 
-        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-5 items-start">
-          {/* Editor */}
-          <Card className="overflow-hidden">
-            <div className="px-5 pt-3 flex items-center gap-1 border-b border-zinc-100 bg-white">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-4 sm:gap-5 items-start">
+          {/* Editor — stacks on top on mobile */}
+          <Card className="overflow-hidden order-1">
+            <div className="px-4 sm:px-5 pt-3 flex items-center gap-1 border-b border-zinc-100 bg-white">
               <TabBtn active={tab === 'form'} onClick={() => switchTab('form')}>Form</TabBtn>
               <TabBtn active={tab === 'json'} onClick={() => switchTab('json')}>JSON</TabBtn>
-              <span className="ml-auto text-xs text-zinc-400 pb-3">
+              <span className="ml-auto text-xs text-zinc-400 pb-3 hidden sm:inline">
                 {tab === 'form' ? 'Visual · drag to reorder' : 'Paste & go'}
               </span>
             </div>
 
             {tab === 'json' ? (
               <form onSubmit={onPreviewFromJson} className="flex flex-col">
-                <div className="px-5 pt-4">
+                <div className="px-4 sm:px-5 pt-4">
                   <div className="mb-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
                     <ISparkles className="size-3.5 mt-0.5 shrink-0" />
                     <div>
@@ -244,14 +244,14 @@ export default function PlaygroundPage() {
                     </div>
                   </div>
                 </div>
-                <div className="px-5 pb-5">
+                <div className="px-4 sm:px-5 pb-5">
                   <AutoGrowTextarea
                     value={jsonText}
                     onChange={(e) => setJsonText(e.target.value)}
                     className="font-mono text-sm leading-relaxed"
                     placeholder="Paste invoice JSON here"
                     spellCheck={false}
-                    minRows={20}
+                    minRows={12}
                   />
                 </div>
                 <EditorFooter error={error}>
@@ -260,7 +260,7 @@ export default function PlaygroundPage() {
               </form>
             ) : (
               <>
-                <div data-form-scroll className="p-5 max-h-[calc(100vh-260px)] overflow-y-auto">
+                <div data-form-scroll className="p-4 sm:p-5 max-h-none lg:max-h-[calc(100vh-260px)] overflow-y-auto">
                   <InvoiceForm value={invoiceData} onChange={onFormChange} />
                 </div>
                 <EditorFooter error={error} />
@@ -268,21 +268,23 @@ export default function PlaygroundPage() {
             )}
           </Card>
 
-          {/* Preview */}
-          <Card className="lg:sticky lg:top-[72px] self-start overflow-hidden">
+          {/* Preview — below editor on mobile */}
+          <Card className="order-2 lg:sticky lg:top-[72px] self-start overflow-hidden">
             <div className="px-4 py-2.5 border-b border-zinc-100 flex items-center justify-between bg-white">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="flex gap-1.5 shrink-0">
                   <span className="size-2.5 rounded-full bg-red-400" />
                   <span className="size-2.5 rounded-full bg-amber-400" />
                   <span className="size-2.5 rounded-full bg-emerald-400" />
                 </div>
-                <span className="text-xs font-medium text-zinc-600 ml-1 font-mono truncate max-w-[220px]">{docName}</span>
+                <span className="text-xs font-medium text-zinc-600 ml-1 font-mono truncate">{docName}</span>
               </div>
-              <Badge variant="outline" className="text-[10px]">Live</Badge>
+              <Badge variant="outline" className="text-[10px] shrink-0">Live</Badge>
             </div>
-            <div className="bg-zinc-100/60 p-4 max-h-[calc(100vh-180px)] overflow-y-auto">
-              <SatoriPreview invoice={invoiceData} />
+            <div className="bg-zinc-100/60 p-3 sm:p-4 max-h-[70vh] lg:max-h-[calc(100vh-180px)] overflow-y-auto overflow-x-auto">
+              <div className="min-w-[280px]">
+                <SatoriPreview invoice={invoiceData} />
+              </div>
             </div>
           </Card>
         </div>

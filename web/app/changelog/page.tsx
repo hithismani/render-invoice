@@ -21,7 +21,7 @@ const entries = [
     date: '2026-08-19',
     tag: 'new',
     title: 'Satori vector PDF on the free plan',
-    body: 'The default Worker path (Satori) now emits a real vector PDF with selectable text from the same template as the playground. No second layout, no PNG-in-PDF. Browser Rendering remains available on Workers Paid for Chromium print-view.',
+    body: 'The default free Worker path (Satori) emits a real vector PDF with selectable text from the same template as the playground. No second layout, no PNG-in-PDF. Chromium print-view remains an optional deploy if you want headless Browser Rendering.',
   },
   {
     version: 'v1.2',

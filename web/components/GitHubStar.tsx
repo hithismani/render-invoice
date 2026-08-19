@@ -49,10 +49,11 @@ export default function GitHubStar({
         className,
       )}
     >
-      {compact ? <IGithub className="size-3.5" /> : <IStar className="size-3.5" />}
+      <IGithub className="size-3.5" />
       {!compact && <span className="hidden sm:inline">Star</span>}
       {stars !== null && (
-        <span className={cn('tabular-nums', dark ? 'text-zinc-400' : 'text-zinc-500')}>
+        <span className={cn('inline-flex items-center gap-0.5 tabular-nums', dark ? 'text-zinc-400' : 'text-zinc-500')}>
+          <IStar className="size-3" />
           {formatStars(stars)}
         </span>
       )}

@@ -3,7 +3,7 @@ import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button';
-import LogoRibbon from '@/components/LogoRibbon';
+
 
 export const metadata: Metadata = {
   title: 'About',
@@ -45,7 +45,7 @@ export default function AboutPage() {
         <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
           <h3 className="font-bold text-lg">Try it for yourself.</h3>
           <p className="text-sm text-zinc-600 mt-1">No account or installation required.</p>
-          <ButtonLink href="/playground" variant="primary" className="mt-4">Open playground <LogoRibbon dark /></ButtonLink>
+          <ButtonLink href="/playground" variant="primary" className="mt-4">Open playground →</ButtonLink>
         </div>
       </section>
       <SiteFooter />

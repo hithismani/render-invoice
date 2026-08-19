@@ -21,7 +21,7 @@ import {
   IGithub,
 } from '@/components/Icons';
 import { REPO } from '@/lib/repo';
-import LogoRibbon from '@/components/LogoRibbon';
+
 
 const InteractiveHeroMock = dynamic(() => import('@/components/InteractiveHeroMock'), {
   loading: () => <div className="h-[520px] rounded-2xl bg-zinc-100 animate-pulse" />,
@@ -64,7 +64,7 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/playground" variant="default" size="lg">
-              Try it free <LogoRibbon dark /> <IArrowRight />
+              Try it free <IArrowRight />
             </ButtonLink>
             <ButtonLink href="/examples" variant="secondary" size="lg">
               Browse examples
@@ -302,7 +302,7 @@ function CTA() {
             </h2>
             <p className="mt-4 text-zinc-300 text-lg">Open the playground, adjust the fields, and save your PDF.</p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <ButtonLink href="/playground" variant="secondary" size="lg">Open the playground <LogoRibbon /> <IArrowRight /></ButtonLink>
+              <ButtonLink href="/playground" variant="secondary" size="lg">Open the playground <IArrowRight /></ButtonLink>
               <a
                 href={REPO.url}
                 target="_blank"

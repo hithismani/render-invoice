@@ -9,7 +9,7 @@ output requirements.
 | Engine | Speed | Cost per 1000 | Output | When to use |
 | --- | --- | --- | --- | --- |
 | **`satori` (default)** | 50 to 200 ms | ~$0.15 | Vector PDF (selectable text) or PNG | Default. Same template as the playground. |
-| **`browser`** | 500 to 2000 ms | ~$90 | Vector PDF via Chromium | Only if you want headless print of `/print-view`. Workers Paid. |
+| **`browser`** | 500 to 2000 ms | ~$90 | Vector PDF via Chromium | Optional headless print of `/print-view` (Browser Rendering). |
 
 The render template is **shared with the playground at
 [renderinvoice.com/playground](https://renderinvoice.com/playground)**: `cf-worker`
@@ -18,7 +18,7 @@ behavior matches the web UI across layouts, custom fields, and RTL text.
 
 ## Deploy
 
-This folder is the **paid** deploy (Browser Rendering binding). Repo-root one-click is the same Worker **without** that binding: Satori vector PDF on the free plan.
+Repo-root one-click is the free Satori vector PDF worker. This folder adds the optional Browser Rendering binding for Chromium print-view.
 
 [![Deploy browser worker](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker)
 
@@ -29,9 +29,9 @@ npx wrangler login
 npx wrangler deploy
 ```
 
-- **Workers Paid** is required to deploy this folder (the `[browser]` binding).
-- `?engine=satori` (default) is a vector PDF with selectable text. `?format=png` is still a raster image.
-- Free-plan one-click: deploy from the repo root (no `[browser]` binding).
+- `?engine=satori` (default) is a vector PDF with selectable text on the free plan.
+- `?format=png` returns an image only.
+- Browser Rendering (`[browser]` binding) is optional for `?engine=browser`.
 
 ## Use it
 

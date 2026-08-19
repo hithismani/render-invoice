@@ -73,9 +73,12 @@ export default function DevelopersPage() {
                   </a>
                 </div>
                 <div id="browser" className="scroll-mt-20 rounded-xl border border-zinc-200 p-4">
-                  <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Workers Paid</div>
+                  <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Optional</div>
                   <div className="mt-1 font-semibold text-zinc-900">Browser Rendering</div>
-                  <p className="mt-1 text-xs text-zinc-600 leading-relaxed">Prints <Link href="/print-view" className="text-blue-700 underline">/print-view</Link>. <code className="font-mono">cf-worker/</code>. Pixel match to the playground.</p>
+                  <p className="mt-1 text-xs text-zinc-600 leading-relaxed">
+                    Prints <Link href="/print-view" className="text-blue-700 underline">/print-view</Link> in headless Chromium.
+                    Needs Cloudflare Browser Rendering on your account. Default free path already returns a vector PDF.
+                  </p>
                   <a href={DEPLOY.browser} className="mt-3 inline-block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy browser worker to Cloudflare" />
@@ -83,14 +86,14 @@ export default function DevelopersPage() {
                 </div>
               </div>
               <ul className="mt-5 space-y-1.5 text-sm text-zinc-700">
-                <li>• Both return <code className="font-mono bg-zinc-100 px-1 rounded text-xs">application/pdf</code> with selectable text from the same Satori template.</li>
+                <li>• Free default: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">POST /v1/render</code> → vector PDF with selectable text.</li>
                 <li>• Optional JWT auth: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">wrangler secret put API_KEY_SECRET</code>.</li>
               </ul>
             </div>
             <div className="bg-zinc-950 text-zinc-100 p-6 md:p-8 text-xs font-mono leading-relaxed overflow-auto">
-              <div className="text-zinc-400 mb-2"># 1. One-click free (Satori vector PDF)</div>
+              <div className="text-zinc-400 mb-2"># 1. One-click free (vector PDF)</div>
               <div>deploy.workers.cloudflare.com/?url=…/tree/main</div>
-              <div className="text-zinc-400 mt-5 mb-2"># One-click paid (Browser Rendering)</div>
+              <div className="text-zinc-400 mt-5 mb-2"># Optional Chromium print-view worker</div>
               <div>deploy.workers.cloudflare.com/?url=…/tree/main/cf-worker</div>
               <div className="text-zinc-400 mt-5 mb-2"># 2. Call it from anything</div>
               <pre className="whitespace-pre text-zinc-200">{`curl -X POST \\

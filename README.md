@@ -55,7 +55,7 @@ npx wrangler deploy
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker)
 
-Same Worker plus Browser Rendering. `?engine=browser` prints `/print-view` in headless Chromium. Workers Paid.
+Optional. Same Worker plus Browser Rendering. `?engine=browser` prints `/print-view` in headless Chromium (needs Browser Rendering on your Cloudflare account).
 
 ```bash
 cd cf-worker && pnpm install && npx wrangler deploy
@@ -71,6 +71,6 @@ curl -X POST https://your-worker.workers.dev/v1/render \
 ## Repo
 
 - [`web/`](web/) — Next.js 15 static export. Playground, examples, print view. One invoice template: `SatoriInvoiceTemplate`.
-- [`cf-worker/`](cf-worker/) — render Worker. Satori vector PDF on the free plan; Browser Rendering if you deploy this folder on Workers Paid.
+- [`cf-worker/`](cf-worker/) — render Worker. Default free path is Satori vector PDF; optional Chromium print if you enable Browser Rendering.
 
 More: [web/README.md](web/README.md) · [cf-worker/README.md](cf-worker/README.md) · [renderinvoice.com/developers](https://renderinvoice.com/developers)
