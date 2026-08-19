@@ -2,31 +2,20 @@
 
 import { useEffect, useState } from 'react';
 
-const SEQUENCE = [
-  'Free',
-  'No Sign Up',
-  'No Credit Card',
-  '100% Private',
-  'No Sign Up',
-  'No Credit Card',
-  '100% Private',
-  'Free',
-];
+const SEQUENCE = ['Free', 'No signup', 'No card', 'Private'];
 
 export default function LogoRibbon({ dark = false, className = '' }: { dark?: boolean; className?: string }) {
   const [step, setStep] = useState(0);
   const [fade, setFade] = useState(true);
 
   useEffect(() => {
-    if (step >= SEQUENCE.length - 1) return;
-
     const timer = setTimeout(() => {
       setFade(false);
       setTimeout(() => {
-        setStep((prev) => Math.min(prev + 1, SEQUENCE.length - 1));
+        setStep((prev) => (prev + 1) % SEQUENCE.length);
         setFade(true);
       }, 200);
-    }, step === 0 ? 2400 : 2000);
+    }, 2200);
 
     return () => clearTimeout(timer);
   }, [step]);

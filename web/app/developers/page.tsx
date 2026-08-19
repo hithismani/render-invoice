@@ -4,20 +4,19 @@ import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ButtonLink } from '@/components/ui/button';
 import { IArrowRight, IGithub } from '@/components/Icons';
-import { REPO } from '@/lib/repo';
+import { DEPLOY, REPO } from '@/lib/repo';
 import SchemaReference from '@/components/SchemaReference';
 import CopyPrompt from '@/components/CopyPrompt';
 import { GSHEETS_AI_PROMPT } from '@/lib/aiPrompts';
 
 export const metadata: Metadata = {
-  title: 'Invoice API for Developers',
+  title: 'Invoice API',
   description:
     'Render invoices from JSON. Self-host a Cloudflare Worker for PDF or PNG, or pass invoice JSON in a URL hash. Schema, llms.txt, and Google Sheets included.',
   alternates: { canonical: '/developers' },
   openGraph: {
-    title: 'Invoice API for Developers — RenderInvoice',
+    title: 'Invoice API — RenderInvoice',
     description: 'POST JSON, get PDF or PNG. Or skip the backend and put invoice JSON in a URL hash.',
     url: '/developers',
   },
@@ -32,7 +31,7 @@ export default function DevelopersPage() {
         <div aria-hidden className="absolute inset-0 dot-grid mask-fade-b" />
         <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-gradient-to-tr from-blue-200/40 via-indigo-200/30 to-transparent rounded-full blur-3xl -z-10" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 animate-in-up">
-          <Badge variant="blue" className="mb-4">Developers · AI agents · Integrations</Badge>
+          <Badge variant="blue" className="mb-4">API · agents · integrations</Badge>
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-balance max-w-3xl">
             No backend. <span className="gradient-text">Yours to self-host.</span>
           </h1>
@@ -52,44 +51,47 @@ export default function DevelopersPage() {
 
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
         {/* Cloudflare Worker */}
-        <Card className="overflow-hidden">
+        <Card id="worker" className="overflow-hidden scroll-mt-20">
           <div className="grid md:grid-cols-[1.2fr_1fr]">
             <div className="p-8">
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Self-hosted render API</div>
                 <Badge variant="green">Programmatic PDFs</Badge>
               </div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight">
-                <code className="text-xl font-mono bg-zinc-100 px-1.5 py-0.5 rounded">cf-worker/</code>: Cloudflare Worker
-              </h2>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight">Self-hosted render workers</h2>
               <p className="mt-3 text-zinc-600 leading-relaxed">
-                A minimal Cloudflare Worker you can deploy to your Cloudflare account. Send a <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">POST /v1/render</code> request with <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">{`{ "invoice": {…} }`}</code> (or a bare invoice object) to receive PDF or PNG bytes. Two render engines are supported:
+                Send a <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">POST /v1/render</code> request with <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">{`{ "invoice": {…} }`}</code> (or a bare invoice object). Two one-click options:
               </p>
-              <ul className="mt-4 space-y-2 text-sm text-zinc-700">
-                <li><strong>Satori</strong> (default): JavaScript pipeline using Satori, resvg-wasm, and pdf-lib. Takes 50 to 200 ms per invoice (around $0.15 per 1,000 requests) to output a raster PDF.</li>
-                <li><strong>Browser</strong> (<code className="font-mono bg-zinc-100 px-1 rounded text-xs">?engine=browser</code>): Uses Cloudflare Browser Rendering to print the public <Link href="/print-view" className="text-blue-700 underline">/print-view</Link> page in headless Chromium. Takes 500 to 2000 ms per request to generate a vector PDF with selectable text.</li>
-              </ul>
-              <ul className="mt-5 space-y-1.5 text-sm text-zinc-700">
-                <li>• Output formats: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">?format=pdf|png</code> (satori). Browser engine is always PDF. No SVG.</li>
-                <li>• Optional JWT authentication (<code className="font-mono bg-zinc-100 px-1 rounded text-xs">wrangler secret put API_KEY_SECRET</code>).</li>
-                <li>• Workers Paid plan ($5/mo) is only required for <code className="font-mono bg-zinc-100 px-1 rounded text-xs">?engine=browser</code>. Satori runs on the free tier.</li>
-              </ul>
-              <div className="mt-6 flex gap-3 flex-wrap items-center">
-                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" />
-                </a>
-                <a href="/llms.txt" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 text-zinc-800 text-sm font-medium hover:bg-zinc-50">
-                  /llms.txt
-                </a>
+              <div className="mt-5 grid sm:grid-cols-2 gap-3">
+                <div id="satori" className="scroll-mt-20 rounded-xl border border-zinc-200 p-4">
+                  <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Free</div>
+                  <div className="mt-1 font-semibold text-zinc-900">Satori</div>
+                  <p className="mt-1 text-xs text-zinc-600 leading-relaxed">Vector PDF, selectable text. Same template as the playground. Cloudflare free plan.</p>
+                  <a href={DEPLOY.satori} className="mt-3 inline-block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy Satori worker to Cloudflare" />
+                  </a>
+                </div>
+                <div id="browser" className="scroll-mt-20 rounded-xl border border-zinc-200 p-4">
+                  <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Workers Paid</div>
+                  <div className="mt-1 font-semibold text-zinc-900">Browser Rendering</div>
+                  <p className="mt-1 text-xs text-zinc-600 leading-relaxed">Prints <Link href="/print-view" className="text-blue-700 underline">/print-view</Link>. <code className="font-mono">cf-worker/</code>. Pixel match to the playground.</p>
+                  <a href={DEPLOY.browser} className="mt-3 inline-block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy browser worker to Cloudflare" />
+                  </a>
+                </div>
               </div>
+              <ul className="mt-5 space-y-1.5 text-sm text-zinc-700">
+                <li>• Both return <code className="font-mono bg-zinc-100 px-1 rounded text-xs">application/pdf</code> with selectable text from the same Satori template.</li>
+                <li>• Optional JWT auth: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">wrangler secret put API_KEY_SECRET</code>.</li>
+              </ul>
             </div>
             <div className="bg-zinc-950 text-zinc-100 p-6 md:p-8 text-xs font-mono leading-relaxed overflow-auto">
-              <div className="text-zinc-400 mb-2"># 1. One-click (Satori, free tier)</div>
+              <div className="text-zinc-400 mb-2"># 1. One-click free (Satori vector PDF)</div>
+              <div>deploy.workers.cloudflare.com/?url=…/tree/main</div>
+              <div className="text-zinc-400 mt-5 mb-2"># One-click paid (Browser Rendering)</div>
               <div>deploy.workers.cloudflare.com/?url=…/tree/main/cf-worker</div>
-              <div className="text-zinc-400 mt-5 mb-2"># or CLI</div>
-              <div>cd cf-worker && pnpm install</div>
-              <div>npx wrangler login && npx wrangler deploy</div>
               <div className="text-zinc-400 mt-5 mb-2"># 2. Call it from anything</div>
               <pre className="whitespace-pre text-zinc-200">{`curl -X POST \\
   https://your.workers.dev/v1/render \\
@@ -103,7 +105,7 @@ export default function DevelopersPage() {
         </Card>
 
         {/* Google Sheets */}
-        <Card className="overflow-hidden">
+        <Card id="sheets" className="overflow-hidden scroll-mt-20">
           <div className="grid md:grid-cols-[1.2fr_1fr]">
             <div className="p-8">
               <div className="flex items-center gap-2 flex-wrap">
@@ -139,7 +141,7 @@ export default function DevelopersPage() {
         </Card>
 
         {/* Share URL protocol */}
-        <Card className="p-8">
+        <Card id="share" className="p-8 scroll-mt-20">
           <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Share-URL protocol</div>
           <h2 className="mt-2 text-2xl font-bold tracking-tight">Hand off an invoice with a URL.</h2>
           <p className="mt-3 text-zinc-600 leading-relaxed max-w-3xl">
@@ -170,7 +172,7 @@ export default function DevelopersPage() {
         </Card>
 
         {/* llms.txt */}
-        <Card className="p-6">
+        <Card id="llms" className="p-6 scroll-mt-20">
           <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Agent manifest</div>
           <h3 className="mt-2 text-lg font-bold tracking-tight">
             <code className="font-mono bg-zinc-100 px-1.5 py-0.5 rounded">/llms.txt</code>
@@ -184,7 +186,7 @@ export default function DevelopersPage() {
         </Card>
 
         {/* Schema reference */}
-        <Card className="p-8">
+        <Card id="schema" className="p-8 scroll-mt-20">
           <div className="flex items-end justify-between flex-wrap gap-3 mb-4">
             <div>
               <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Schema reference</div>

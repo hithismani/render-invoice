@@ -13,7 +13,7 @@ Please:
 
 Before writing code, please READ these reference docs so the JSON shape and URL format are correct:
 - Plain-language schema and share-URL spec for AI agents: https://renderinvoice.com/llms.txt
-- Developer page (schema reference, examples): https://renderinvoice.com/developers
+- API page (schema reference, examples): https://renderinvoice.com/developers
 - Live invoice examples to model after: https://renderinvoice.com/examples
 
 Constraints from the schema:

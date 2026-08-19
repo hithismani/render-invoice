@@ -52,23 +52,19 @@ link back to /playground#i=… so the same invoice can be reopened.
 
 ## 2. Self-hosted Cloudflare Worker (optional render API)
 
-Only if you need programmatic PDF/PNG bytes. Deploy cf-worker/ yourself.
+Only if you need programmatic PDF bytes. Two workers:
 
-One-click (Satori, free tier):
-  https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker
+  Free — Satori vector PDF (same template as the playground)
+    https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main
+    POST https://<your-worker>/v1/render
+    POST https://<your-worker>/v1/render?format=png
 
-  POST https://<your-worker>/v1/render?engine=satori&format=pdf|png
-  POST https://<your-worker>/v1/render?engine=browser
+  Paid — Browser Rendering (prints /print-view, also Satori)
+    https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker
+    POST https://<your-worker>/v1/render?engine=browser
+
   Content-Type: application/json
   { "invoice": <Invoice> }     // or a bare invoice object
-
-  engine=satori (default)
-    format=pdf (default)  raster PDF (PNG embedded, text not selectable)
-    format=png            image/png
-  engine=browser
-    always application/pdf (vector, selectable text)
-    prints /print-view#i=<lz> in headless Chromium
-    Workers Paid required. No SVG.
 
 ## 3. Invoice JSON schema (generated from Zod)
 
@@ -81,6 +77,9 @@ Constraints:
 - summary[].value is a string (formatted) or a number. Compute totals before creating the JSON.
 - Currency, date, and number formatting is all agent-controlled. RenderInvoice
   never calculates or reformats values.
+- font must be one of: Inter, Source Serif 4, IBM Plex Sans, Playfair Display,
+  Space Grotesk, DM Sans, Fraunces, Libre Baskerville, Instrument Sans, Newsreader.
+  Default Inter. Anything else falls back to Inter.
 
 ## 4. Browser-driving agents
 

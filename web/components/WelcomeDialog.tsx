@@ -24,7 +24,7 @@ const STEPS = [
   {
     kicker: 'The editor',
     title: 'Form on the left, live preview on the right.',
-    body: 'Content, Design, and Settings stack as you scroll down. Choose any Google Font, an accent color, and a layout variant, or paste raw JSON directly.',
+    body: 'Content, Design, and Settings stack as you scroll down. Pick a typeface from the curated list, an accent color, and a layout variant, or paste raw JSON directly.',
   },
   {
     kicker: 'Leave with a file',

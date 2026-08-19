@@ -165,10 +165,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
   const errCount = Object.keys(errors).length;
 
   const [tab, setTab] = useState<FormTab>('content');
-  const [fontDraft, setFontDraft] = useState(() => satoriFontName(value.font));
   const rootRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { setFontDraft(satoriFontName(value.font)); }, [value.font]);
 
   const goTo = (t: FormTab) => {
     setTab(t);
@@ -399,22 +396,18 @@ export default function InvoiceForm({ value, onChange }: Props) {
           </div>
 
           <div className="mb-4">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">Typeface (any Google Font)</label>
-            <input
-              className={`${inputCls} mb-2`}
-              placeholder="e.g. Playfair Display"
-              value={fontDraft}
-              onChange={(e) => setFontDraft(e.target.value)}
-              onBlur={() => set('font', fontDraft.trim() || 'Inter')}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); set('font', fontDraft.trim() || 'Inter'); } }}
-            />
+            <label className="text-xs font-medium text-gray-600 mb-1.5 block">Typeface</label>
+            <p className="text-[11px] text-gray-500 mb-2">
+              Embedded in PDF as Regular + Bold. Pick one of the fonts below (default Inter).
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {POPULAR_FONTS.map((f) => (
                 <button
                   key={f}
                   type="button"
-                  onClick={() => { setFontDraft(f); set('font', f); }}
+                  onClick={() => set('font', f)}
                   className={`px-2 py-1 rounded-md text-[11px] border transition-colors ${satoriFontName(value.font) === f ? 'border-blue-500 bg-blue-50 text-blue-800' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                  style={{ fontFamily: `"${f}", ui-sans-serif, system-ui, sans-serif` }}
                 >
                   {f}
                 </button>

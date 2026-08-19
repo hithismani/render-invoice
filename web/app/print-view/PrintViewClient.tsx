@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Invoice from '@/components/Invoice';
+import SatoriPreview from '@/components/SatoriPreview';
 import { exampleInvoice, type Invoice as InvoiceData } from '@/schema/invoiceSchema';
 import { decodeShareHash } from '@/lib/share';
 
@@ -16,12 +16,12 @@ export default function PrintViewClient() {
   if (!invoice) return null;
 
   return (
-    <div style={{ width: '900px', margin: '0 auto', background: '#fff' }}>
-      <Invoice
-        invoice={invoice}
-        performValidation={false}
-        printView={true}
-      />
+    <div
+      id="invoice-content"
+      data-autosize={invoice.autoSize === false ? '0' : '1'}
+      style={{ width: '900px', margin: '0 auto', background: '#fff' }}
+    >
+      <SatoriPreview invoice={invoice} />
     </div>
   );
 }

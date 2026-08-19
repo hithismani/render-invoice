@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button';
 import { ICheck } from '@/components/Icons';
+import LogoRibbon from '@/components/LogoRibbon';
 
 export const metadata: Metadata = {
   title: 'Pricing',
@@ -51,7 +52,7 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            <ButtonLink href="/playground" variant="primary" size="lg" className="w-full mt-6">Open the app</ButtonLink>
+            <ButtonLink href="/playground" variant="primary" size="lg" className="w-full mt-6">Open the app <LogoRibbon dark /></ButtonLink>
             <p className="mt-3 text-xs text-zinc-500 text-center">No sign-up or credit card required.</p>
           </Card>
         </div>

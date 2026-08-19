@@ -26,7 +26,6 @@ interface Props {
   onLoad: (inv: Invoice) => void;
   onDownload: () => void;
   onDownloadSvg?: () => void;
-  onDownloadRasterPdf?: () => void;
   downloading: boolean;
   savedAt?: number | null;
   onFlash?: (msg: string) => void;
@@ -35,7 +34,7 @@ interface Props {
 }
 
 export default function PlaygroundNav({
-  invoice, docName, onDocNameChange, onLoad, onDownload, onDownloadSvg, onDownloadRasterPdf,
+  invoice, docName, onDocNameChange, onLoad, onDownload, onDownloadSvg,
   downloading, savedAt, onFlash,
   storageOk = true, autosaveError = null,
 }: Props) {
@@ -156,7 +155,6 @@ export default function PlaygroundNav({
           <MenuItem icon={<IconBookmark />} onClick={onSaveTemplate}>Save as template…</MenuItem>
           <MenuItem icon={<IconDownload />} onClick={onExportCurrent} shortcut=".json">Export JSON</MenuItem>
           {onDownloadSvg && <MenuItem icon={<IconDownload />} onClick={onDownloadSvg} shortcut=".svg">Export SVG (searchable)</MenuItem>}
-          {onDownloadRasterPdf && <MenuItem icon={<IconDownload />} onClick={onDownloadRasterPdf} shortcut=".pdf">Export raster PDF (image-only)</MenuItem>}
           <MenuItem icon={<IconShare />} onClick={() => setShareOpen(true)}>Share link / QR…</MenuItem>
           <MenuSeparator />
           <MenuLabel>Templates</MenuLabel>

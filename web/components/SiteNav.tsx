@@ -3,6 +3,7 @@ import { ButtonLink } from './ui/button';
 import { IArrowRight } from './Icons';
 import LogoRibbon from './LogoRibbon';
 import GitHubStar from './GitHubStar';
+import ApiNavMenu from './ApiNavMenu';
 
 export default function SiteNav() {
   return (
@@ -19,11 +20,10 @@ export default function SiteNav() {
         </Link>
         <div className="flex items-center gap-1 sm:gap-5 text-sm">
           <Link href="/examples" className="hidden sm:inline text-zinc-600 hover:text-zinc-900 transition-colors">Examples</Link>
-          <Link href="/developers" className="hidden md:inline text-zinc-600 hover:text-zinc-900 transition-colors">Developers</Link>
-          <Link href="/changelog" className="hidden lg:inline text-zinc-600 hover:text-zinc-900 transition-colors">Changelog</Link>
+          <ApiNavMenu />
           <GitHubStar className="hidden sm:inline-flex" />
           <ButtonLink href="/playground" variant="default" size="sm">
-            Open app <IArrowRight className="size-3.5" />
+            Open app <LogoRibbon dark className="!py-0 !text-[9px]" />
           </ButtonLink>
         </div>
       </div>

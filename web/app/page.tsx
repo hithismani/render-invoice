@@ -21,6 +21,7 @@ import {
   IGithub,
 } from '@/components/Icons';
 import { REPO } from '@/lib/repo';
+import LogoRibbon from '@/components/LogoRibbon';
 
 const InteractiveHeroMock = dynamic(() => import('@/components/InteractiveHeroMock'), {
   loading: () => <div className="h-[520px] rounded-2xl bg-zinc-100 animate-pulse" />,
@@ -63,7 +64,7 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/playground" variant="default" size="lg">
-              Try it free <IArrowRight />
+              Try it free <LogoRibbon dark /> <IArrowRight />
             </ButtonLink>
             <ButtonLink href="/examples" variant="secondary" size="lg">
               Browse examples
@@ -228,7 +229,7 @@ function DevelopersStrip() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/developers" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-zinc-900 font-medium hover:bg-zinc-100 transition-colors">
-                Developer docs <IArrowRight />
+                API docs <IArrowRight />
               </Link>
               <a href="/llms.txt" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/15 text-white hover:bg-white/5 transition-colors font-mono text-sm">
                 /llms.txt
@@ -236,8 +237,8 @@ function DevelopersStrip() {
             </div>
           </div>
           <div className="bg-black/40 backdrop-blur rounded-2xl border border-white/10 p-6 text-xs font-mono leading-relaxed">
-            <div className="text-zinc-400 mb-2"># 1. Deploy your own render worker</div>
-            <div className="text-zinc-200">cd cf-worker && pnpm install && npx wrangler deploy</div>
+            <div className="text-zinc-400 mb-2"># 1. Deploy (free, Satori vector PDF)</div>
+            <div className="text-zinc-200">npx wrangler deploy</div>
             <div className="text-zinc-400 mt-4 mb-2"># 2. Render invoices via curl</div>
             <pre className="text-zinc-200 whitespace-pre overflow-x-auto">{`curl -X POST \\
   https://your-worker.workers.dev/v1/render \\
@@ -301,7 +302,7 @@ function CTA() {
             </h2>
             <p className="mt-4 text-zinc-300 text-lg">Open the playground, adjust the fields, and save your PDF.</p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <ButtonLink href="/playground" variant="secondary" size="lg">Open the playground <IArrowRight /></ButtonLink>
+              <ButtonLink href="/playground" variant="secondary" size="lg">Open the playground <LogoRibbon /> <IArrowRight /></ButtonLink>
               <a
                 href={REPO.url}
                 target="_blank"

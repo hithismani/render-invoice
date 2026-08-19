@@ -18,6 +18,7 @@ import { loadDraft, saveDraft, clearDraft } from '@/lib/draft';
 import { appendHistory, findInvoiceNumberMatch } from '@/lib/history';
 import { isStorageSupported } from '@/lib/draft';
 import WelcomeDialog from '@/components/WelcomeDialog';
+import SiteFooter from '@/components/SiteFooter';
 
 type Tab = 'form' | 'json';
 
@@ -126,11 +127,7 @@ export default function PlaygroundPage() {
     return data;
   }, [tab, jsonText, invoiceData]);
 
-  // Default Save PDF tries the *vector* (selectable-text) path first — that's
-  // what users expect when they hit a "Download PDF" button, not a giant
-  // PNG-wrapped-in-PDF that breaks ctrl-F. Falls back to the raster path
-  // only if svg2pdf/jsPDF chokes (rare, but a safety net so the user always
-  // gets a file).
+  // Vector PDF only (selectable text). Never PNG-in-PDF.
   const handleDownload = useCallback(async () => {
     setError(null);
     const data = currentInvoice();
@@ -143,32 +140,10 @@ export default function PlaygroundPage() {
       try {
         pdfBytes = await renderVectorPdf(data);
       } catch (vectorErr) {
-        console.warn('Vector PDF failed, falling back to raster:', vectorErr);
+        console.warn('svg2pdf failed, using free-worker vector path:', vectorErr);
         pdfBytes = await renderPdf(data);
-        flashMsg('Downloaded raster PDF (vector path failed)');
       }
       downloadPdfBytes(pdfBytes, resolveFilename(data));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setDownloading(false);
-    }
-  }, [currentInvoice]);
-
-  // Explicit "Save raster PDF" — fast path for batch/archival when text
-  // selection doesn't matter. Same renderer that runs server-side on the
-  // CF Worker's engine=satori&format=pdf.
-  const handleDownloadRasterPdf = useCallback(async () => {
-    setError(null);
-    const data = currentInvoice();
-    if (!data) return;
-    setDownloading(true);
-    try {
-      const { initSatori, renderPdf, downloadPdfBytes } = await import('@/lib/satoriRender');
-      await initSatori();
-      const pdfBytes = await renderPdf(data);
-      downloadPdfBytes(pdfBytes, resolveFilename(data));
-      flashMsg('Raster PDF exported');
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -215,7 +190,6 @@ export default function PlaygroundPage() {
         onLoad={loadInvoice}
         onDownload={handleDownload}
         onDownloadSvg={handleDownloadSvg}
-        onDownloadRasterPdf={handleDownloadRasterPdf}
         downloading={downloading}
         savedAt={savedAt}
         onFlash={flashMsg}
@@ -313,6 +287,7 @@ export default function PlaygroundPage() {
           </Card>
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

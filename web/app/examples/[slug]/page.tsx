@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Invoice from '@/components/Invoice';
+import SatoriPreview from '@/components/SatoriPreview';
 import SiteNav from '@/components/SiteNav';
 import SiteFooter from '@/components/SiteFooter';
 import { ButtonLink } from '@/components/ui/button';
@@ -103,7 +103,7 @@ export default async function ExamplePage({ params }: { params: Promise<{ slug: 
           <span className="text-xs text-zinc-500">Everything below is fully editable.</span>
         </div>
         <Card className="p-2 bg-zinc-50/40 overflow-hidden">
-          <Invoice invoice={t.invoice} performValidation={false} />
+          <SatoriPreview invoice={t.invoice} />
         </Card>
 
         {/* Paraphrased template philosophy & comparison section */}
