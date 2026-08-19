@@ -1,9 +1,8 @@
-# Satori fixture harness
+# Invoice fixture harness
 
-Renders edge-case invoice fixtures through the **production** `invoiceElement`
-template (`web/components/SatoriInvoiceTemplate.tsx`) and writes both `.svg` and
-`.png` per fixture into `output/`. Used to catch Satori layout regressions
-(overflow, wrap, RTL, markdown, etc.) without spinning up the Next dev server.
+Renders every edge-case invoice through the production template and writes
+`.svg`, `.png`, and a vector `.pdf` into `output/`. Same files for the
+in-process run and the Cloudflare Worker (`*.worker.pdf`).
 
 ## Usage
 
@@ -15,7 +14,7 @@ pnpm test:fixtures
 pnpm test:fixtures -- only=many
 ```
 
-Outputs land in `output/<name>.svg` and `output/<name>.png` (gitignored).
+Outputs land in `output/<name>.svg`, `.png`, and `.pdf` (gitignored).
 
 ## Adding a fixture
 

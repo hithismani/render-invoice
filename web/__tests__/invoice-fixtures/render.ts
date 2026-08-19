@@ -1,19 +1,14 @@
 /**
- * Satori fixture renderer — reads every fixture in ./fixtures/, renders it
- * via the *production* invoiceElement template, and writes SVG + PNG into
- * ./output/. Lets you eyeball edge cases (overflow, wrap, RTL, MD, etc.)
- * without booting the full Next dev server.
+ * Invoice fixture renderer. Writes SVG, PNG, and vector PDF into ./output/.
  *
- * Run with:  pnpm test:fixtures        (script in package.json)
- *        or  pnpm exec tsx __tests__/satori-fixtures/render.ts
- *        or  pnpm exec tsx __tests__/satori-fixtures/render.ts only=03
+ * Run with:  pnpm test:fixtures
+ *        or  pnpm exec tsx __tests__/invoice-fixtures/render.ts only=03
  *
  * The "only=" filter substring-matches fixture filenames, useful when iterating.
  */
 
 import satori, { init as initSatoriWasm } from 'satori';
 import { Resvg, initWasm as initResvgWasm } from '@resvg/resvg-wasm';
-import { PDFDocument } from 'pdf-lib';
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve as pathResolve } from 'node:path';
@@ -22,6 +17,8 @@ import { dirname, join, resolve as pathResolve } from 'node:path';
 // harness only needs to exercise it once.
 import { invoiceElement } from '../../components/SatoriInvoiceTemplate.jsx';
 import type { Invoice } from '../../schema/invoiceSchema.js';
+import { satoriSvgToPdf } from '../../lib/satoriSvgToPdf.js';
+import { encodeShareHash } from '../../lib/share.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = pathResolve(__dirname, '../..');
@@ -135,35 +132,29 @@ async function main() {
       writeFileSync(join(OUTPUT_DIR, `${fix.name}.png`), png);
       timings.png.push(pngMs);
 
-      let pdfMs = 0;
-      let pdfDims = '';
-      if (fix.pdf) {
-        const td = Date.now();
-        const pdf = await PDFDocument.create();
-        const image = await pdf.embedPng(png);
-        const naturalW = image.width / 2;
-        const naturalH = image.height / 2;
-        if (fitToA4) {
-          const scale = Math.min(A4_W_PT / naturalW, A4_H_PT / naturalH);
-          const drawW = naturalW * scale;
-          const drawH = naturalH * scale;
-          const page = pdf.addPage([A4_W_PT, A4_H_PT]);
-          page.drawImage(image, { x: (A4_W_PT - drawW) / 2, y: A4_H_PT - drawH, width: drawW, height: drawH });
-          pdfDims = `A4@${scale.toFixed(2)}`;
-        } else {
-          const page = pdf.addPage([naturalW, naturalH]);
-          page.drawImage(image, { x: 0, y: 0, width: naturalW, height: naturalH });
-          pdfDims = `${naturalW.toFixed(0)}×${naturalH.toFixed(0)}`;
-        }
-        const bytes = await pdf.save();
-        writeFileSync(join(OUTPUT_DIR, `${fix.name}.pdf`), bytes);
-        pdfMs = Date.now() - td;
-        timings.pdf.push(pdfMs);
-      }
+      const td = Date.now();
+      const svgText = await satori(invoiceElement(fix.invoice, { forExport: fix.forExport ?? false }), {
+        width: renderWidth,
+        embedFont: false,
+        fonts: fontsCfg,
+      });
+      const bytes = await satoriSvgToPdf(
+        svgText,
+        { regular, bold },
+        {
+          fitToA4,
+          editUrl:
+            fix.invoice.includeEditLink === false
+              ? undefined
+              : `https://renderinvoice.com/playground${encodeShareHash(fix.invoice)}`,
+        },
+      );
+      writeFileSync(join(OUTPUT_DIR, `${fix.name}.pdf`), bytes);
+      const pdfMs = Date.now() - td;
+      timings.pdf.push(pdfMs);
 
       const cell = (n: number) => String(n).padStart(5) + 'ms';
-      const pdfCol = fix.pdf ? `${cell(pdfMs)} ${pdfDims}` : '';
-      console.log(`  ${fix.name.padEnd(42)} ${cell(svgMs)}  ${cell(pngMs)}  ${pdfCol}`);
+      console.log(`  ${fix.name.padEnd(42)} ${cell(svgMs)}  ${cell(pngMs)}  ${cell(pdfMs)}`);
     } catch (e) {
       failures.push(`${fix.name}: ${e instanceof Error ? e.message : String(e)}`);
       console.error(`  ✗ ${fix.name.padEnd(42)} render failed: ${e instanceof Error ? e.message : String(e)}`);
