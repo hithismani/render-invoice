@@ -21,9 +21,6 @@ fallthrough = true
 [browser]
 binding = "BROWSER"
 
-[vars]
-RENDERINVOICE_PRINT_URL = "https://renderinvoice.com/print-view"
-
 # Rotate-signed JWT secret for API-key verification. Set with:
 #   wrangler secret put API_KEY_SECRET
 # Then mint keys off-worker by signing { sub: <customer>, exp: <ts> } with that secret.

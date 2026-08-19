@@ -41,6 +41,7 @@ npx wrangler deploy
 
 ```bash
 curl -X POST https://your-worker.workers.dev/v1/render \
+  -H "Authorization: Bearer $API_KEY_SECRET" \
   -H 'Content-Type: application/json' \
   --data-binary @invoice.json \
   --output invoice.pdf
@@ -50,6 +51,7 @@ curl -X POST https://your-worker.workers.dev/v1/render \
 
 ```bash
 curl -X POST "https://your-worker.workers.dev/v1/render?format=png" \
+  -H "Authorization: Bearer $API_KEY_SECRET" \
   -H 'Content-Type: application/json' \
   --data-binary @invoice.json \
   --output invoice.png
@@ -59,6 +61,7 @@ curl -X POST "https://your-worker.workers.dev/v1/render?format=png" \
 
 ```bash
 curl -X POST "https://your-worker.workers.dev/v1/render?engine=browser" \
+  -H "Authorization: Bearer $API_KEY_SECRET" \
   -H 'Content-Type: application/json' \
   --data-binary @invoice.json \
   --output invoice.pdf
@@ -86,19 +89,28 @@ pointing at `https://renderinvoice.com/playground#i=…`. Set `false` to omit.
 ### Browser Rendering (`engine=browser`)
 
 1. Worker launches headless Chromium via the `BROWSER` binding.
-2. Navigates to `RENDERINVOICE_PRINT_URL#i=<lz-compressed-invoice-json>`.
+2. Builds the same Satori SVG locally and sets it as the page content.
 3. Calls `page.pdf()` to produce a vector PDF with selectable text.
 
-## Auth (optional)
+## Auth and IP allowlist
 
-Turn on bearer-token checking by setting a secret:
+`API_KEY_SECRET` is mandatory for `/v1/render`. Set it as a Worker secret:
 
 ```bash
 npx wrangler secret put API_KEY_SECRET
 ```
 
-With the secret set, every request requires an `Authorization: Bearer <jwt>` header
-signed with HS256 using that secret.
+If it is missing, the Worker returns HTTP 500 and refuses to render. Every request
+requires `Authorization: Bearer <API_KEY_SECRET>`. This is the same static bearer
+secret used by the Render/Docker service.
+
+Optional IP allowlist: set `ALLOWED_IPS` as a comma-separated Worker variable.
+Cloudflare supplies the client address through `CF-Connecting-IP`.
+
+```toml
+[vars]
+ALLOWED_IPS = "203.0.113.10,198.51.100.24"
+```
 
 ## Satori vs v1 template parity
 

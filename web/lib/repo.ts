@@ -11,4 +11,6 @@ const deploy = (path: string) =>
 export const DEPLOY = {
   satori: deploy(''),
   browser: deploy('/cf-worker'),
+  /** Render Blueprint from this repo (Docker Chromium PDF service). */
+  render: `https://dashboard.render.com/blueprint/new?repo=${encodeURIComponent(REPO.url)}`,
 } as const;

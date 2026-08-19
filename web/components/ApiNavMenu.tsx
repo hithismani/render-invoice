@@ -7,9 +7,11 @@ import { IChevronDown } from './Icons';
 const items = [
   { href: '/developers#satori', label: 'Vector PDF', hint: 'Free · default worker path' },
   { href: '/developers#browser', label: 'Chromium print', hint: 'Optional · headless /print-view' },
+  { href: '/developers#render', label: 'Render service', hint: 'Optional · Render Free or Docker' },
   { href: '/developers#sheets', label: 'Google Sheets', hint: 'HYPERLINK, no backend' },
   { href: '/developers#share', label: 'Share URLs', hint: '#j= JSON in the hash' },
   { href: '/developers#schema', label: 'Invoice schema', hint: 'JSON contract' },
+  { href: '/developers#warranty', label: 'Disclaimer', hint: 'As-is · no warranties' },
   { href: '/llms.txt', label: 'llms.txt', hint: 'Agent manifest' },
 ];
 

@@ -1,0 +1,13 @@
+{
+  "name": "renderinvoice-browser-service",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Docker-ready Chromium PDF service for RenderInvoice.",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "lz-string": "1.5.0",
+    "playwright": "1.52.0"
+  }
+}

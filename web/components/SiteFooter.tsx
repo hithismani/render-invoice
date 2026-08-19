@@ -44,6 +44,7 @@ export default function SiteFooter() {
             <li><Link href="/developers" className="hover:text-zinc-900">Overview</Link></li>
             <li><Link href="/developers#satori" className="hover:text-zinc-900">Vector PDF · free</Link></li>
             <li><Link href="/developers#browser" className="hover:text-zinc-900">Chromium print · optional</Link></li>
+            <li><Link href="/developers#render" className="hover:text-zinc-900">Render service · optional</Link></li>
             <li><a href="/llms.txt" className="hover:text-zinc-900">llms.txt</a></li>
             <li>
               <a href={REPO.url} target="_blank" rel="noopener noreferrer" className="hover:text-zinc-900 inline-flex items-center gap-1.5">

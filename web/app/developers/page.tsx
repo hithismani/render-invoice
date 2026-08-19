@@ -36,7 +36,7 @@ export default function DevelopersPage() {
             No backend. <span className="gradient-text">Yours to self-host.</span>
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-zinc-600 text-pretty">
-            RenderInvoice runs entirely in your browser. If you need batch PDF generation, deploy the worker to your own Cloudflare account. If you want a spreadsheet workflow, use the Google Sheets script without setting up an external API.
+            RenderInvoice runs entirely in your browser. For programmatic PDFs, use the free Cloudflare Worker or the optional Render/Docker Chromium service. If you want a spreadsheet workflow, use the Google Sheets script without setting up an external API.
           </p>
           <a
             href={REPO.url}
@@ -76,8 +76,7 @@ export default function DevelopersPage() {
                   <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Optional</div>
                   <div className="mt-1 font-semibold text-zinc-900">Browser Rendering</div>
                   <p className="mt-1 text-xs text-zinc-600 leading-relaxed">
-                    Prints <Link href="/print-view" className="text-blue-700 underline">/print-view</Link> in headless Chromium.
-                    Needs Cloudflare Browser Rendering on your account. Default free path already returns a vector PDF.
+                    Headless Chromium on Cloudflare Browser Rendering (optional). Default free path already returns a vector PDF.
                   </p>
                   <a href={DEPLOY.browser} className="mt-3 inline-block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -85,25 +84,112 @@ export default function DevelopersPage() {
                   </a>
                 </div>
               </div>
-              <ul className="mt-5 space-y-1.5 text-sm text-zinc-700">
-                <li>• Free default: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">POST /v1/render</code> → vector PDF with selectable text.</li>
-                <li>• Optional JWT auth: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">wrangler secret put API_KEY_SECRET</code>.</li>
-              </ul>
+              <ol className="mt-5 space-y-1.5 text-sm text-zinc-700 list-decimal pl-5">
+                <li>Click Deploy (free) above, or run <code className="font-mono bg-zinc-100 px-1 rounded text-xs">npx wrangler deploy</code> from the repo root.</li>
+                <li>Set the secret: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">npx wrangler secret put API_KEY_SECRET</code> (required).</li>
+                <li>Optional IP allowlist: Worker var <code className="font-mono bg-zinc-100 px-1 rounded text-xs">ALLOWED_IPS=1.2.3.4,5.6.7.8</code>.</li>
+                <li>
+                  Call <code className="font-mono bg-zinc-100 px-1 rounded text-xs">POST /v1/render</code> with
+                  <code className="font-mono bg-zinc-100 px-1 rounded text-xs">Authorization: Bearer &lt;API_KEY_SECRET&gt;</code>.
+                </li>
+              </ol>
             </div>
             <div className="bg-zinc-950 text-zinc-100 p-6 md:p-8 text-xs font-mono leading-relaxed overflow-auto">
-              <div className="text-zinc-400 mb-2"># 1. One-click free (vector PDF)</div>
-              <div>deploy.workers.cloudflare.com/?url=…/tree/main</div>
-              <div className="text-zinc-400 mt-5 mb-2"># Optional Chromium print-view worker</div>
-              <div>deploy.workers.cloudflare.com/?url=…/tree/main/cf-worker</div>
-              <div className="text-zinc-400 mt-5 mb-2"># 2. Call it from anything</div>
+              <div className="text-zinc-400 mb-2"># Free path (default)</div>
+              <div>npx wrangler secret put API_KEY_SECRET</div>
+              <div>npx wrangler deploy</div>
+              <div className="text-zinc-400 mt-5 mb-2"># Same request for Cloudflare and Render</div>
               <pre className="whitespace-pre text-zinc-200">{`curl -X POST \\
-  https://your.workers.dev/v1/render \\
+  https://your-host/v1/render \\
+  -H 'Authorization: Bearer $API_KEY_SECRET' \\
   -H 'Content-Type: application/json' \\
   --data-binary @invoice.json \\
   --output invoice.pdf`}</pre>
-              <div className="text-zinc-400 mt-5 mb-2"># 3. Optional auth</div>
-              <div>wrangler secret put API_KEY_SECRET</div>
+              <div className="text-zinc-400 mt-5 mb-2"># Cloudflare only: image response</div>
+              <div>?format=png</div>
             </div>
+          </div>
+        </Card>
+
+        <Card id="render" className="p-8 scroll-mt-20">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Optional Chromium service</div>
+            <Badge variant="green">Render Free · Docker</Badge>
+          </div>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight">Exact PDFs on Render (or any Docker host)</h2>
+          <p className="mt-3 max-w-3xl text-zinc-600 leading-relaxed">
+            For headless Chromium PDFs without Cloudflare Browser Rendering, deploy
+            <code className="mx-1 font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">render-service/</code>.
+            The image builds the frontend, serves local <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">/print-view</code>,
+            and prints it. Same route and auth as Cloudflare:
+            <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">POST /v1/render</code> +
+            <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">Authorization: Bearer &lt;API_KEY_SECRET&gt;</code>.
+          </p>
+          <ol className="mt-5 space-y-1.5 text-sm text-zinc-700 list-decimal pl-5">
+            <li>Open the Blueprint link (or create a Docker Web Service from this repo).</li>
+            <li>Set secret <code className="font-mono bg-zinc-100 px-1 rounded text-xs">API_KEY_SECRET</code> (required; service will not start without it).</li>
+            <li>Optional: <code className="font-mono bg-zinc-100 px-1 rounded text-xs">ALLOWED_IPS</code> comma-separated allowlist.</li>
+            <li>Call the same curl as Cloudflare against your <code className="font-mono bg-zinc-100 px-1 rounded text-xs">*.onrender.com</code> URL.</li>
+          </ol>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href={DEPLOY.render}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
+            >
+              Deploy Blueprint on Render <IArrowRight className="size-3.5 ml-1" />
+            </a>
+            <a
+              href={`${REPO.url}/tree/main/render-service`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              render-service/ on GitHub
+            </a>
+            <Link href="/developers#schema" className="inline-flex items-center rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
+              Invoice schema
+            </Link>
+          </div>
+          <div className="mt-5 rounded-lg bg-zinc-950 text-zinc-100 p-4 text-xs font-mono leading-relaxed overflow-x-auto">
+            <div className="text-zinc-400 mb-2"># Docker (any host)</div>
+            <pre className="whitespace-pre text-zinc-200">{`docker build -f render-service/Dockerfile -t renderinvoice-browser .
+docker run --rm -p 10000:10000 \\
+  -e API_KEY_SECRET=replace-me \\
+  -e ALLOWED_IPS=203.0.113.10 \\
+  renderinvoice-browser`}</pre>
+          </div>
+          <p className="mt-4 text-xs text-zinc-500">
+            Free Cloudflare remains the default. Render Free sleeps when idle (cold starts). No uptime or volume guarantees on free tiers.
+          </p>
+        </Card>
+
+        <Card id="warranty" className="p-8 scroll-mt-20 border-amber-200 bg-amber-50/40">
+          <div className="text-xs font-semibold tracking-widest text-amber-800 uppercase">Disclaimer</div>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900">Provided as-is. No warranties.</h2>
+          <div className="mt-3 space-y-3 text-sm text-zinc-700 leading-relaxed max-w-3xl">
+            <p>
+              RenderInvoice, the playground, the Cloudflare Worker, and the optional Render/Docker service are provided
+              <strong> without warranties or guarantees</strong> of any kind, including merchantability, fitness for a
+              particular purpose, accuracy of rendered output, uptime, or continued free-tier availability.
+            </p>
+            <p>
+              You are responsible for verifying invoice totals, tax, legal fields, and recipient details before sending
+              documents. Hosted free tiers (Cloudflare, Render, and others) may sleep, throttle, change pricing, or
+              terminate services. Self-hosted deployments are your responsibility for security, secrets, IPs, and scaling.
+            </p>
+            <p>
+              Use of the software is at your own risk. See{' '}
+              <a href="https://businessaddons.com/disclaimers/terms-of-service" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">
+                Terms of service
+              </a>{' '}
+              and{' '}
+              <a href="https://businessaddons.com/disclaimers/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">
+                Privacy policy
+              </a>
+              .
+            </p>
           </div>
         </Card>
 

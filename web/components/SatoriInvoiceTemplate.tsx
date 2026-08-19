@@ -49,7 +49,7 @@ function DisclaimerBox(): React.ReactElement {
         <span style={{ fontSize: 13, fontWeight: 600, color: '#854d0e' }}>Notice</span>
       </div>
       <span style={{ fontSize: 12, color: '#a16207' }}>
-        RenderInvoice does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
+        RenderInvoice.com does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
       </span>
     </div>
   );

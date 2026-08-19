@@ -12,6 +12,3 @@ compatibility_flags = ["nodejs_compat"]
 type = "CompiledWasm"
 globs = ["**/*.wasm"]
 fallthrough = true
-
-[vars]
-RENDERINVOICE_PRINT_URL = "https://renderinvoice.com/print-view"

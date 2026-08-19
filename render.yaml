@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: renderinvoice-browser
+    runtime: docker
+    dockerfilePath: ./render-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: API_KEY_SECRET
+        sync: false
+      - key: ALLOWED_IPS
+        sync: false

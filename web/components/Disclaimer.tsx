@@ -10,7 +10,7 @@ export default function Disclaimer() {
         </div>
         <div className="text-left space-y-1 text-yellow-700">
           <p className="text-sm">
-            RenderInvoice does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
+            RenderInvoice.com does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
           </p>
         </div>
       </div>

@@ -16,20 +16,19 @@
  *            format=pdf → vector PDF (selectable text, path borders/radius, edit link).
  *            format=png → raster image only (never stuffed into a PDF).
  *
- *   Browser Rendering (paid) — headless Chromium prints /print-view.
+ *   Browser Rendering (optional) — headless Chromium prints local Satori SVG.
  *
- * Optional auth: verify a bearer JWT signed with API_KEY_SECRET.
+ * Auth: Authorization: Bearer <API_KEY_SECRET> (required). Optional ALLOWED_IPS.
  */
 
 import puppeteer from '@cloudflare/puppeteer';
-import { compressToEncodedURIComponent } from './lz.js';
-import { renderPdf, renderPng } from './satori-render.js';
+import { renderPdf, renderPng, renderSvg } from './satori-render.js';
 import type { InvoiceLike } from './types.js';
 
 export interface Env {
   BROWSER?: Fetcher;
-  RENDERINVOICE_PRINT_URL: string;
   API_KEY_SECRET?: string;
+  ALLOWED_IPS?: string;
 }
 
 export default {
@@ -51,13 +50,12 @@ export default {
       return json({ error: 'Not found' }, 404);
     }
 
-    // Optional bearer-token auth.
-    if (env.API_KEY_SECRET) {
-      const auth = req.headers.get('authorization') || '';
-      if (!auth.startsWith('Bearer ')) return json({ error: 'Missing bearer token' }, 401);
-      const ok = await verifyJwt(auth.slice(7), env.API_KEY_SECRET);
-      if (!ok) return json({ error: 'Invalid token' }, 401);
-    }
+    if (!env.API_KEY_SECRET) return json({ error: 'Worker is not configured: API_KEY_SECRET is required' }, 500);
+    const allowedIps = (env.ALLOWED_IPS || '').split(',').map((ip) => ip.trim()).filter(Boolean);
+    const clientIp = req.headers.get('CF-Connecting-IP') || '';
+    if (allowedIps.length > 0 && !allowedIps.includes(clientIp)) return json({ error: 'IP not allowed' }, 403);
+    const auth = req.headers.get('authorization') || '';
+    if (auth !== `Bearer ${env.API_KEY_SECRET}`) return json({ error: 'Unauthorized' }, 401);
 
     let body: unknown;
     try { body = await req.json(); }
@@ -78,7 +76,7 @@ export default {
         if (!env.BROWSER) {
           return json({ error: 'engine=browser needs the Browser Rendering binding (Workers Paid). Default Satori PDF is already vector.' }, 400);
         }
-        return await renderWithBrowser(invoice, env);
+        return await renderWithBrowser(invoice, env as Env & { BROWSER: Fetcher });
       }
       return json({ error: `Unknown engine "${engine}" — use satori or browser` }, 400);
     } catch (e) {
@@ -108,18 +106,17 @@ async function renderWithSatori(invoice: InvoiceLike, format: string): Promise<R
 }
 
 async function renderWithBrowser(invoice: InvoiceLike, env: Env & { BROWSER: Fetcher }): Promise<Response> {
-  const hash = compressToEncodedURIComponent(JSON.stringify(invoice));
-  const target = `${env.RENDERINVOICE_PRINT_URL}#i=${hash}`;
+  const svg = await renderSvg(invoice, 900, false);
 
   const browser = await puppeteer.launch(env.BROWSER);
   try {
     const page = await browser.newPage();
-    await page.goto(target, { waitUntil: 'networkidle0' });
+    await page.setContent(`<!doctype html><html><head><style>html,body{margin:0;padding:0;background:#fff}svg{display:block}</style></head><body>${svg}</body></html>`, { waitUntil: 'networkidle0' });
     const dims = await page.evaluate(() => {
-      const root = document.getElementById('invoice-content');
+      const root = document.querySelector('svg');
       if (!root) return null;
       const r = root.getBoundingClientRect();
-      return { w: Math.ceil(r.width), h: Math.ceil(r.height), autoSize: (root as HTMLElement).dataset.autosize !== '0' };
+      return { w: Math.ceil(r.width), h: Math.ceil(r.height), autoSize: true };
     });
     const pdf = dims?.autoSize
       ? await page.pdf({ width: `${dims.w}px`, height: `${dims.h}px`, margin: { top: 0, bottom: 0, left: 0, right: 0 }, printBackground: true })
@@ -148,20 +145,4 @@ function unwrapInvoice(body: unknown): InvoiceLike | null {
 
 function json(obj: unknown, status = 200): Response {
   return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
-}
-
-/** Minimal HS256 JWT verification. Payload shape: { sub, exp }. */
-async function verifyJwt(token: string, secret: string): Promise<boolean> {
-  try {
-    const [h, p, s] = token.split('.');
-    if (!h || !p || !s) return false;
-    const data = `${h}.${p}`;
-    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
-    const sig = Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
-    const ok = await crypto.subtle.verify('HMAC', key, sig, new TextEncoder().encode(data));
-    if (!ok) return false;
-    const payload = JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/')));
-    if (payload.exp && Date.now() / 1000 > payload.exp) return false;
-    return true;
-  } catch { return false; }
 }
