@@ -30,7 +30,7 @@ export function decodeShareHash(hash: string): Invoice | null {
 }
 
 function origin(): string {
-  return typeof window !== 'undefined' ? window.location.origin : 'https://invoicely.app';
+  return typeof window !== 'undefined' ? window.location.origin : 'https://renderinvoice.com';
 }
 
 export function jsonShareHash(invoice: Invoice): string {

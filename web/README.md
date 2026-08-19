@@ -1,4 +1,4 @@
-# Invoicely (v1)
+# RenderInvoice (v1)
 
 A browser-based invoice generator built with Next.js 15 (App Router, static export), Tailwind CSS, and Zod. Exports vector PDFs through the browser print pipeline without an external backend.
 
@@ -54,7 +54,7 @@ pnpm build
 
 ## Environment variables
 
-- `NEXT_PUBLIC_SITE_URL`: used for canonical URLs, Open Graph tags, and sitemaps. Defaults to `https://invoicely.app`.
+- `NEXT_PUBLIC_SITE_URL`: used for canonical URLs, Open Graph tags, and sitemaps. Defaults to `https://renderinvoice.com`.
 
 ## Architecture notes
 

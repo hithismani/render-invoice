@@ -1,5 +1,5 @@
 /**
- * A minimal shape of the Invoicely invoice, mirrored from web/schema/invoiceSchema.ts.
+ * A minimal shape of the RenderInvoice invoice, mirrored from web/schema/invoiceSchema.ts.
  * Kept loose here — the Worker doesn't validate, just renders whatever valid JSON
  * the caller sends. Validation happens client-side in the playground and via the
  * Zod schema shipped with the npm package (future).

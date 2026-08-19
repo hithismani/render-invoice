@@ -1,4 +1,4 @@
-name = "invoicely-render"
+name = "renderinvoice"
 main = "src/worker.ts"
 compatibility_date = "2024-11-01"
 # pdf-lib + @cloudflare/puppeteer's transitive deps reach for node:buffer /
@@ -22,7 +22,7 @@ fallthrough = true
 binding = "BROWSER"
 
 [vars]
-INVOICELY_PRINT_URL = "https://invoicely.app/print-view"
+RENDERINVOICE_PRINT_URL = "https://renderinvoice.com/print-view"
 
 # Rotate-signed JWT secret for API-key verification. Set with:
 #   wrangler secret put API_KEY_SECRET

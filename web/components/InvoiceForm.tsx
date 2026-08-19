@@ -190,8 +190,8 @@ export default function InvoiceForm({ value, onChange }: Props) {
       const t = (e as CustomEvent<FormTab>).detail;
       if (t === 'content' || t === 'design' || t === 'settings') goTo(t);
     };
-    window.addEventListener('invoicely:form-tab', onSwitch as EventListener);
-    return () => window.removeEventListener('invoicely:form-tab', onSwitch as EventListener);
+    window.addEventListener('renderinvoice:form-tab', onSwitch as EventListener);
+    return () => window.removeEventListener('renderinvoice:form-tab', onSwitch as EventListener);
   }, []);
 
   useEffect(() => {
@@ -517,7 +517,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
           </label>
           <label className="flex items-center gap-2 mb-2">
             <input type="checkbox" checked={!!value.showBuiltWith} onChange={(e) => set('showBuiltWith', e.target.checked)} />
-            <span className="text-sm">Show <em>&ldquo;Built with Invoicely&rdquo;</em> at the bottom</span>
+            <span className="text-sm">Show <em>&ldquo;Built with RenderInvoice&rdquo;</em> at the bottom</span>
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={value.includeEditLink !== false} onChange={(e) => set('includeEditLink', e.target.checked)} />

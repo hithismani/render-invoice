@@ -16,10 +16,10 @@ function dumpFields(fields: SchemaField[], indent: number): string {
 
 export function generateLlmsTxt(): string {
   const schema = dumpFields(invoiceSchemaFields(), 4);
-  return `# Invoicely: AI agent integration guide
+  return `# RenderInvoice: AI agent integration guide
 
-Invoicely is a browser-only invoice generator at https://invoicely.app.
-There is no Invoicely-hosted backend. This file is generated from the
+RenderInvoice is a browser-only invoice generator at https://renderinvoice.com.
+There is no RenderInvoice-hosted backend. This file is generated from the
 live Zod schema, which is the source of truth.
 
 ## 1. Share-URL protocol (stateless, no infrastructure)
@@ -33,18 +33,18 @@ Encodings:
       Shorter. Only if you can bundle lz-string.
 
 Destinations:
-  https://invoicely.app/playground#j=<json>
+  https://renderinvoice.com/playground#j=<json>
       Opens the editor with every field filled. Human reviews and downloads.
-  https://invoicely.app/print-view#j=<json>
+  https://renderinvoice.com/print-view#j=<json>
       Chrome-less invoice. Ready to print / Save as PDF. No nav, no playground.
 
 Example (agent builds the object, then):
 
   const hash = '#j=' + encodeURIComponent(JSON.stringify(invoice));
-  const edit  = 'https://invoicely.app/playground' + hash;
-  const print = 'https://invoicely.app/print-view' + hash;
+  const edit  = 'https://renderinvoice.com/playground' + hash;
+  const print = 'https://renderinvoice.com/print-view' + hash;
 
-That is the free, zero-backend path. Do not invent a POST API on invoicely.app.
+That is the free, zero-backend path. Do not invent a POST API on renderinvoice.com.
 There is none.
 
 PDF footer: when includeEditLink is true (default), the saved PDF stamps a
@@ -55,7 +55,7 @@ link back to /playground#i=… so the same invoice can be reopened.
 Only if you need programmatic PDF/PNG bytes. Deploy cf-worker/ yourself.
 
 One-click (Satori, free tier):
-  https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/astro-apiinvoicegenerator/tree/v1
+  https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main
 
   POST https://<your-worker>/v1/render?engine=satori&format=pdf|png
   POST https://<your-worker>/v1/render?engine=browser
@@ -79,7 +79,7 @@ ${schema}
 Constraints:
 - Every key used in lineItems must be present in the columns array.
 - summary[].value is a string (formatted) or a number. Compute totals before creating the JSON.
-- Currency, date, and number formatting is all agent-controlled. Invoicely
+- Currency, date, and number formatting is all agent-controlled. RenderInvoice
   never calculates or reformats values.
 
 ## 4. Browser-driving agents
@@ -96,8 +96,8 @@ Agents that drive a real browser can fill /playground. Prefer emitting a
 - us-sales-tax
 - multi-shipment
 
-Each: https://invoicely.app/examples/<slug>
-Open in playground: https://invoicely.app/examples/<slug> then the page's share hash,
+Each: https://renderinvoice.com/examples/<slug>
+Open in playground: https://renderinvoice.com/examples/<slug> then the page's share hash,
 or build #j= yourself from the same JSON shape.
 `;
 }

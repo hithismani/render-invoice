@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ButtonLink } from './ui/button';
 import { IArrowRight } from './Icons';
 import LogoRibbon from './LogoRibbon';
+import GitHubStar from './GitHubStar';
 
 export default function SiteNav() {
   return (
@@ -13,13 +14,14 @@ export default function SiteNav() {
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" />
             </svg>
           </div>
-          <span>Invoicely</span>
+          <span>RenderInvoice</span>
           <LogoRibbon className="ml-1" />
         </Link>
         <div className="flex items-center gap-1 sm:gap-5 text-sm">
           <Link href="/examples" className="hidden sm:inline text-zinc-600 hover:text-zinc-900 transition-colors">Examples</Link>
           <Link href="/developers" className="hidden md:inline text-zinc-600 hover:text-zinc-900 transition-colors">Developers</Link>
           <Link href="/changelog" className="hidden lg:inline text-zinc-600 hover:text-zinc-900 transition-colors">Changelog</Link>
+          <GitHubStar className="hidden sm:inline-flex" />
           <ButtonLink href="/playground" variant="default" size="sm">
             Open app <IArrowRight className="size-3.5" />
           </ButtonLink>

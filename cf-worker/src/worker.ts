@@ -1,5 +1,5 @@
 /**
- * Invoicely self-hostable render Worker.
+ * RenderInvoice self-hostable render Worker.
  *
  * Endpoints:
  *   POST /v1/render?engine=satori&format=png|pdf   (default: pdf)
@@ -34,7 +34,7 @@ import type { InvoiceLike } from './types.js';
 
 export interface Env {
   BROWSER: Fetcher;
-  INVOICELY_PRINT_URL: string;
+  RENDERINVOICE_PRINT_URL: string;
   API_KEY_SECRET?: string;
 }
 
@@ -44,12 +44,12 @@ export default {
 
     if (req.method === 'GET' && url.pathname === '/') {
       return json({
-        name: 'invoicely-render',
+        name: 'renderinvoice',
         endpoints: [
           'POST /v1/render?engine=satori&format=png|pdf  (raster, ~100ms, batch/archive/thumbnails)',
           'POST /v1/render?engine=browser                 (vector PDF with selectable text, ~1s)',
         ],
-        docs: 'https://invoicely.app/developers',
+        docs: 'https://renderinvoice.com/developers',
       });
     }
 
@@ -116,7 +116,7 @@ async function renderWithSatori(invoice: InvoiceLike, format: string): Promise<R
 
 async function renderWithBrowser(invoice: InvoiceLike, env: Env): Promise<Response> {
   const hash = compressToEncodedURIComponent(JSON.stringify(invoice));
-  const target = `${env.INVOICELY_PRINT_URL}#i=${hash}`;
+  const target = `${env.RENDERINVOICE_PRINT_URL}#i=${hash}`;
 
   const browser = await puppeteer.launch(env.BROWSER);
   try {

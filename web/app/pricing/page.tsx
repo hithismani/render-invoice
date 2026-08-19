@@ -7,9 +7,15 @@ import { ButtonLink } from '@/components/ui/button';
 import { ICheck } from '@/components/Icons';
 
 export const metadata: Metadata = {
-  title: 'Pricing: Free, forever',
-  description: 'Invoicely is free and runs in your browser without accounts or paywalls.',
+  title: 'Pricing',
+  description:
+    'RenderInvoice is a free invoice generator. Unlimited invoices, PDF export, and a self-hostable Cloudflare Worker. No accounts or paywalls.',
   alternates: { canonical: '/pricing' },
+  openGraph: {
+    title: 'Pricing — RenderInvoice is free forever',
+    description: 'Unlimited invoices, PDF export, and a self-hostable render API. $0 forever.',
+    url: '/pricing',
+  },
 };
 
 export default function PricingPage() {
@@ -20,7 +26,7 @@ export default function PricingPage() {
         <Badge variant="green" className="mb-4">Pricing</Badge>
         <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-balance">Free. <span className="gradient-text">Forever.</span></h1>
         <p className="mt-4 text-lg text-zinc-600 max-w-xl mx-auto">
-          There&rsquo;s no backend to fund and no data to monetize. Use Invoicely as much as you want.
+          There&rsquo;s no backend to fund and no data to monetize. Use RenderInvoice as much as you want.
         </p>
         <div className="mt-10 max-w-md mx-auto">
           <Card className="text-left p-8">

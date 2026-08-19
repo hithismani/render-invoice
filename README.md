@@ -1,4 +1,4 @@
-# Invoicely
+# RenderInvoice
 
 Browser-only invoice generator. No hosted backend.
 
@@ -6,9 +6,9 @@ Browser-only invoice generator. No hosted backend.
 
 The app and the render API are two Workers. Each button clones the repo into your account and deploys.
 
-[![Deploy the app](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/astro-apiinvoicegenerator/tree/v1/v1)
+[![Deploy the app](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/web)
 
-[![Deploy the render worker](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/astro-apiinvoicegenerator/tree/v1)
+[![Deploy the render worker](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
 
 | Button | What you get | Plan |
 | --- | --- | --- |
@@ -32,4 +32,4 @@ npx wrangler deploy
 cd cf-worker && pnpm install && npx wrangler deploy
 ```
 
-Docs: [web/README.md](web/README.md) · [cf-worker/README.md](cf-worker/README.md) · https://invoicely.app/developers
+Docs: [web/README.md](web/README.md) · [cf-worker/README.md](cf-worker/README.md) · https://renderinvoice.com/developers

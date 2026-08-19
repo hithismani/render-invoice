@@ -21,11 +21,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!t) return {};
   return {
     title: `${t.name} Invoice Example`,
-    description: `${t.tagline} ${t.description}`,
-    keywords: t.keywords,
+    description: `${t.tagline} ${t.description}`.slice(0, 160),
+    keywords: [...t.keywords, 'invoice example', 'invoice template', 'invoice PDF'],
     alternates: { canonical: `/examples/${t.slug}` },
     openGraph: {
-      title: `${t.name} Invoice Example`,
+      title: `${t.name} Invoice Example — RenderInvoice`,
       description: t.description,
       url: `/examples/${t.slug}`,
     },

@@ -44,8 +44,8 @@ export default async function OgImage({ params }: { params: { slug: string } }) 
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 22, fontWeight: 700 }}>I</div>
-          <div style={{ fontSize: 26, fontWeight: 600, color: '#111827' }}>Invoicely</div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 22, fontWeight: 700 }}>R</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#111827' }}>RenderInvoice</div>
           <div style={{ marginLeft: 20, fontSize: 16, color: '#6b7280', padding: '6px 14px', borderRadius: 999, background: '#f3f4f6' }}>Invoice example</div>
         </div>
 
@@ -63,7 +63,7 @@ export default async function OgImage({ params }: { params: { slug: string } }) 
               <div key={k} style={{ fontSize: 16, color: '#374151', padding: '6px 14px', borderRadius: 999, border: '1px solid #e5e7eb', background: '#ffffff' }}>{k}</div>
             ))}
           </div>
-          <div style={{ display: 'flex', fontSize: 18, color: '#6b7280' }}>{`invoicely.app/examples/${t.slug}`}</div>
+          <div style={{ display: 'flex', fontSize: 18, color: '#6b7280' }}>{`renderinvoice.com/examples/${t.slug}`}</div>
         </div>
       </div>
     ),

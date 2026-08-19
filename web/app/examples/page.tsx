@@ -8,10 +8,15 @@ import { TEMPLATES } from '@/lib/templates';
 import { IArrowRight } from '@/components/Icons';
 
 export const metadata: Metadata = {
-  title: 'Invoice Examples: Customizable PDF templates',
+  title: 'Invoice Examples & PDF Templates',
   description:
-    'Ready-made invoice examples for freelancers, SaaS, agencies, UK VAT, US sales tax, and multi-shipment. Click any example to customize and download as PDF.',
+    'Ready-made invoice examples for freelancers, SaaS, agencies, UK VAT, US sales tax, and multi-shipment. Customize any template and download a PDF.',
   alternates: { canonical: '/examples' },
+  openGraph: {
+    title: 'Invoice Examples & PDF Templates — RenderInvoice',
+    description: 'Freelance, SaaS, agency, VAT, and sales-tax invoice examples you can edit and export as PDF.',
+    url: '/examples',
+  },
 };
 
 export default function ExamplesPage() {

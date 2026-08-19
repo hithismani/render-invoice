@@ -4,9 +4,9 @@ export const dynamic = 'force-static';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Invoicely',
-    short_name: 'Invoicely',
-    description: 'Free, un-opinionated invoice generator. 100% browser-side.',
+    name: 'RenderInvoice',
+    short_name: 'RenderInvoice',
+    description: 'Unopinionated invoice generator. Web app and Cloudflare Worker.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

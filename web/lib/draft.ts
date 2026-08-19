@@ -6,8 +6,8 @@ import type { Invoice } from '@/schema/invoiceSchema';
  * Mirrors lib/storage.ts design: LS → IDB one-time migration, persist() opt-in.
  */
 
-const DRAFT_KEY = 'invoicely.draft.v1';
-const NUM_KEY = 'invoicely.invoicenum.v1';
+const DRAFT_KEY = 'renderinvoice.draft.v1';
+const NUM_KEY = 'renderinvoice.invoicenum.v1';
 
 interface DraftEntry {
   invoice: Invoice;

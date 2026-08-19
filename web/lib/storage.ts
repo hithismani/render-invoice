@@ -10,8 +10,8 @@ import type { Invoice } from '@/schema/invoiceSchema';
  * read from localStorage again.
  */
 
-const KEY = 'invoicely.templates.v1';
-const LEGACY_LS_KEY = 'invoicely.templates.v1';
+const KEY = 'renderinvoice.templates.v1';
+const LEGACY_LS_KEY = 'renderinvoice.templates.v1';
 
 export interface Template {
   id: string;

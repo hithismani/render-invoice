@@ -356,11 +356,11 @@ function BuiltWith() {
     <p className="mt-2 text-[11px] text-zinc-400">
       Built with{' '}
       <a
-        href="https://invoicely.app"
+        href="https://renderinvoice.com"
         target="_blank"
         rel="noopener noreferrer"
         className="underline hover:text-zinc-600"
-      >Invoicely</a>
+      >RenderInvoice</a>
       {' '}· un-opinionated invoice generator
     </p>
   );

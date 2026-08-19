@@ -124,7 +124,7 @@ export function VisualExport() {
         <div>
           <div className="text-[9px] font-medium text-white/40 mb-1">Example invoice link</div>
           <div className="rounded-md bg-white/[0.06] px-2 py-1 font-mono text-[8px] text-emerald-400 truncate">
-            invoicely.app/examples/freelance-consulting
+            renderinvoice.com/examples/freelance-consulting
           </div>
         </div>
         <div className="text-[9px] text-white/45 leading-tight">

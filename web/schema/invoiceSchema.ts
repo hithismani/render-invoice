@@ -65,7 +65,7 @@ export const InvoiceSchema = z.object({
   amountsVerifiedHideDisclaimer: z.boolean().default(false)
     .describe('If false, a disclaimer about verifying amounts will be displayed.'),
   showBuiltWith: z.boolean().default(false)
-    .describe('If true, shows a small "Built with Invoicely" line at the bottom of the invoice.'),
+    .describe('If true, shows a small "Built with RenderInvoice" line at the bottom of the invoice.'),
   includeEditLink: z.boolean().optional()
     .describe('If true (default), add a full-width footer rule that links back to this invoice in the playground (PDF only).'),
 }).describe('The schema for the invoice data.');

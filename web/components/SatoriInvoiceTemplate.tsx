@@ -49,7 +49,7 @@ function DisclaimerBox(): React.ReactElement {
         <span style={{ fontSize: 13, fontWeight: 600, color: '#854d0e' }}>Notice</span>
       </div>
       <span style={{ fontSize: 12, color: '#a16207' }}>
-        Invoicely does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
+        RenderInvoice does not verify totals, calculations, or tax rates. Please check all line items and legal requirements before sending. To hide this message, check the verification box under Options in the editor.
       </span>
     </div>
   );
@@ -58,7 +58,7 @@ function DisclaimerBox(): React.ReactElement {
 function BuiltWith(): React.ReactElement {
   return (
     <div style={{ display: 'flex', marginTop: 4, fontSize: 10, color: '#9ca3af' }}>
-      Built with Invoicely · un-opinionated invoice generator
+      Built with RenderInvoice · un-opinionated invoice generator
     </div>
   );
 }

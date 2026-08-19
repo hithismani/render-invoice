@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { Dropdown, MenuItem, MenuLabel, MenuSeparator } from './ui/dropdown';
 import { IDownload, IShare, IArrowRight } from './Icons';
+import GitHubStar from './GitHubStar';
 import type { Invoice } from '@/schema/invoiceSchema';
 import { blankInvoice } from '@/schema/invoiceSchema';
 import LogoRibbon from './LogoRibbon';
@@ -87,7 +88,7 @@ export default function PlaygroundNav({
     const blob = new Blob([json], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `invoicely-templates-${Date.now()}.json`;
+    a.download = `renderinvoice-templates-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(a.href);
     flash(`Backed up ${list.length} template(s)`);
@@ -136,7 +137,7 @@ export default function PlaygroundNav({
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" />
             </svg>
           </div>
-          <span className="text-sm font-semibold tracking-tight hidden sm:inline">Invoicely</span>
+          <span className="text-sm font-semibold tracking-tight hidden sm:inline">RenderInvoice</span>
           <LogoRibbon dark className="hidden md:inline-flex" />
         </Link>
 
@@ -190,11 +191,12 @@ export default function PlaygroundNav({
 
         {/* Right actions */}
         <div className="flex items-center gap-1.5">
+          <GitHubStar compact dark className="hidden sm:inline-flex" />
           <button
             type="button"
             aria-label="How this works"
             title="How this works"
-            onClick={() => window.dispatchEvent(new Event('invoicely:onboard'))}
+            onClick={() => window.dispatchEvent(new Event('renderinvoice:onboard'))}
             className="size-7 rounded-full text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-colors grid place-items-center"
           >
             ?

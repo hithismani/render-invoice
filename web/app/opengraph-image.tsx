@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const dynamic = 'force-static';
-export const alt = 'Invoicely: flexible invoice generator';
+export const alt = 'RenderInvoice — Unopinionated Invoice Generator';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -21,8 +21,8 @@ export default async function OGImage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 14, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 28, fontWeight: 700 }}>I</div>
-          <div style={{ fontSize: 32, fontWeight: 600, color: '#111827' }}>Invoicely</div>
+          <div style={{ width: 56, height: 56, borderRadius: 14, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 28, fontWeight: 700 }}>R</div>
+          <div style={{ fontSize: 32, fontWeight: 600, color: '#111827' }}>RenderInvoice</div>
         </div>
         <div style={{ fontSize: 84, fontWeight: 800, color: '#111827', letterSpacing: -2, lineHeight: 1 }}>
           Un-opinionated invoices.

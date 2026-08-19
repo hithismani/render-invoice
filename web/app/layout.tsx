@@ -1,38 +1,41 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://invoicely.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renderinvoice.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Invoicely: Free, flexible invoice generator',
-    template: '%s · Invoicely',
+    default: 'RenderInvoice — Unopinionated Invoice Generator',
+    template: '%s · RenderInvoice',
   },
   description:
-    'Generate professional PDF invoices directly in your browser. Flexible schema, no accounts, and no data leaving your machine.',
+    'Unopinionated invoice generator. Build invoices in the browser, or POST JSON to a Cloudflare Worker and get a PDF or PNG. No account, no lock-in.',
   keywords: [
+    'invoice generator',
     'free invoice generator',
-    'invoice template',
-    'freelance invoice',
-    'PDF invoice',
+    'render invoice',
+    'invoice PDF',
+    'invoice API',
+    'JSON to PDF invoice',
     'invoice maker',
-    'client-side invoice',
+    'freelance invoice',
+    'invoice template',
   ],
-  authors: [{ name: 'Invoicely' }],
+  authors: [{ name: 'RenderInvoice' }],
   openGraph: {
     type: 'website',
     url: SITE_URL,
-    siteName: 'Invoicely',
-    title: 'Invoicely: Free, flexible invoice generator',
+    siteName: 'RenderInvoice',
+    title: 'RenderInvoice — Unopinionated Invoice Generator',
     description:
-      'Create PDF invoices with live preview and custom schemas directly in your browser.',
+      'Build invoices in the browser, or POST JSON to a Cloudflare Worker and get a PDF or PNG. No account, no lock-in.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Invoicely: Free, flexible invoice generator',
-    description: 'Create PDF invoices directly in your browser without signing up.',
+    title: 'RenderInvoice — Unopinionated Invoice Generator',
+    description: 'Build invoices in the browser or render PDF/PNG from JSON. No account, no lock-in.',
     images: ['/opengraph-image'],
   },
   robots: { index: true, follow: true },
@@ -49,13 +52,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Invoicely',
+    name: 'RenderInvoice',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     description:
-      'Browser-based invoice generator with flexible schema and instant PDF export.',
+      'Unopinionated invoice generator. Web app and Cloudflare Worker. JSON in, PDF or PNG out.',
     url: SITE_URL,
+    sameAs: ['https://github.com/hithismani/render-invoice'],
   };
   return (
     <html lang="en">

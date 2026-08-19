@@ -18,7 +18,9 @@ import {
   IShield,
   IArrowRight,
   ICheck,
+  IGithub,
 } from '@/components/Icons';
+import { REPO } from '@/lib/repo';
 
 const InteractiveHeroMock = dynamic(() => import('@/components/InteractiveHeroMock'), {
   loading: () => <div className="h-[520px] rounded-2xl bg-zinc-100 animate-pulse" />,
@@ -57,7 +59,7 @@ function Hero() {
             <span className="gradient-text">don&rsquo;t have opinions.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg sm:text-xl text-zinc-600 text-pretty">
-            Every invoice tool tells you how to bill. Invoicely simply renders your data with a flexible schema, live preview, and vector PDF export. No sign-up required, and nothing leaves your browser.
+            Every invoice tool tells you how to bill. RenderInvoice simply renders your data with a flexible schema, live preview, and vector PDF export. No sign-up required, and nothing leaves your browser.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/playground" variant="default" size="lg">
@@ -243,8 +245,8 @@ function DevelopersStrip() {
   --data-binary @invoice.json \\
   --output invoice.pdf`}</pre>
             <div className="text-zinc-400 mt-4 mb-2"># 3. Zero-backend links (put the JSON in the hash)</div>
-            <div className="text-emerald-300">https://invoicely.app/playground#j=&lt;json&gt;   <span className="text-zinc-500"># edit</span></div>
-            <div className="text-emerald-300">https://invoicely.app/print-view#j=&lt;json&gt;  <span className="text-zinc-500"># print</span></div>
+            <div className="text-emerald-300">https://renderinvoice.com/playground#j=&lt;json&gt;   <span className="text-zinc-500"># edit</span></div>
+            <div className="text-emerald-300">https://renderinvoice.com/print-view#j=&lt;json&gt;  <span className="text-zinc-500"># print</span></div>
           </div>
         </div>
       </div>
@@ -300,7 +302,14 @@ function CTA() {
             <p className="mt-4 text-zinc-300 text-lg">Open the playground, adjust the fields, and save your PDF.</p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <ButtonLink href="/playground" variant="secondary" size="lg">Open the playground <IArrowRight /></ButtonLink>
-              <ButtonLink href="/examples" size="lg" className="bg-white/10 text-white border border-white/15 hover:bg-white/20">Browse examples</ButtonLink>
+              <a
+                href={REPO.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 h-12 px-6 text-base rounded-xl font-medium bg-white/10 text-white border border-white/15 hover:bg-white/20 transition-all"
+              >
+                <IGithub className="size-4" /> Star on GitHub
+              </a>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { TEMPLATES } from '@/lib/templates';
 
 export const dynamic = 'force-static';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://invoicely.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renderinvoice.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

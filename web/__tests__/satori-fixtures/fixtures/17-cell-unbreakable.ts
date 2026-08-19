@@ -8,7 +8,7 @@ export default {
     columns: ['Reference', 'Description', 'Qty', 'Total'],
     lineItems: [
       {
-        Reference: 'https://invoicely.example.com/orders/very-long-permalink-that-does-not-have-natural-break-points-and-should-still-wrap-inside-the-cell',
+        Reference: 'https://example.com/orders/very-long-permalink-that-does-not-have-natural-break-points-and-should-still-wrap-inside-the-cell',
         Description: 'Order details retrievable at the reference URL',
         Qty: 1,
         Total: '$500',

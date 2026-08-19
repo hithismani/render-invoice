@@ -5,16 +5,22 @@ import SiteFooter from '@/components/SiteFooter';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button';
-import { IArrowRight } from '@/components/Icons';
+import { IArrowRight, IGithub } from '@/components/Icons';
+import { REPO } from '@/lib/repo';
 import SchemaReference from '@/components/SchemaReference';
 import CopyPrompt from '@/components/CopyPrompt';
 import { GSHEETS_AI_PROMPT } from '@/lib/aiPrompts';
 
 export const metadata: Metadata = {
-  title: 'For developers and AI agents',
+  title: 'Invoice API for Developers',
   description:
-    'Self-host a Cloudflare Worker that renders Invoicely JSON to PDF with Satori or browser rendering. Integrate via Google Sheets, llms.txt, and the share-URL protocol without an external backend.',
+    'Render invoices from JSON. Self-host a Cloudflare Worker for PDF or PNG, or pass invoice JSON in a URL hash. Schema, llms.txt, and Google Sheets included.',
   alternates: { canonical: '/developers' },
+  openGraph: {
+    title: 'Invoice API for Developers — RenderInvoice',
+    description: 'POST JSON, get PDF or PNG. Or skip the backend and put invoice JSON in a URL hash.',
+    url: '/developers',
+  },
 };
 
 export default function DevelopersPage() {
@@ -31,8 +37,16 @@ export default function DevelopersPage() {
             No backend. <span className="gradient-text">Yours to self-host.</span>
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-zinc-600 text-pretty">
-            Invoicely runs entirely in your browser. If you need batch PDF generation, deploy the worker to your own Cloudflare account. If you want a spreadsheet workflow, use the Google Sheets script without setting up an external API.
+            RenderInvoice runs entirely in your browser. If you need batch PDF generation, deploy the worker to your own Cloudflare account. If you want a spreadsheet workflow, use the Google Sheets script without setting up an external API.
           </p>
+          <a
+            href={REPO.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-800 hover:text-zinc-950"
+          >
+            <IGithub className="size-4" /> {REPO.owner}/{REPO.name}
+          </a>
         </div>
       </header>
 
@@ -61,7 +75,7 @@ export default function DevelopersPage() {
                 <li>• Workers Paid plan ($5/mo) is only required for <code className="font-mono bg-zinc-100 px-1 rounded text-xs">?engine=browser</code>. Satori runs on the free tier.</li>
               </ul>
               <div className="mt-6 flex gap-3 flex-wrap items-center">
-                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/astro-apiinvoicegenerator/tree/v1">
+                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" />
                 </a>
@@ -102,7 +116,7 @@ export default function DevelopersPage() {
               </p>
               <ul className="mt-5 space-y-1.5 text-sm text-zinc-700">
                 <li>• The playground reads invoice JSON directly from the URL hash.</li>
-                <li>• Data stays in your browser and is not sent to Invoicely servers.</li>
+                <li>• Data stays in your browser and is not sent to RenderInvoice servers.</li>
                 <li>• For advanced setups (such as multi-recipient invoices or dynamic columns), use the prompt below to generate an Apps Script or formula.</li>
               </ul>
               <div className="mt-5">
@@ -112,7 +126,7 @@ export default function DevelopersPage() {
             <div className="bg-zinc-950 text-zinc-100 p-6 md:p-8 text-xs font-mono leading-relaxed overflow-auto">
               <div className="text-zinc-400 mb-2"># One Sheets formula. Copy down a column.</div>
               <pre className="whitespace-pre text-zinc-200">{`=HYPERLINK(
-  "https://invoicely.app/playground#j="
+  "https://renderinvoice.com/playground#j="
     & ENCODEURL(G2),
   "Open ↗"
 )
@@ -135,7 +149,7 @@ export default function DevelopersPage() {
             <div>
               <div className="text-xs text-zinc-500 mb-1.5"><strong className="text-zinc-700">#i=</strong> &nbsp;compressed with lz-string <code className="font-mono bg-zinc-100 px-1 rounded">compressToEncodedURIComponent</code> for shorter URLs.</div>
               <div className="bg-zinc-950 text-zinc-100 rounded-lg p-4 text-xs font-mono overflow-x-auto">
-                <span className="text-zinc-400">https://invoicely.app/playground</span>
+                <span className="text-zinc-400">https://renderinvoice.com/playground</span>
                 <span className="text-emerald-400">#i=</span>
                 <span className="text-zinc-400">N4IgdghgtgpiBcIAuBLAdkgNCAlgOwCcB7TCAOgA8AHJAVwBsFE...</span>
               </div>
@@ -143,11 +157,11 @@ export default function DevelopersPage() {
             <div>
               <div className="text-xs text-zinc-500 mb-1.5"><strong className="text-zinc-700">#j=</strong> &nbsp;standard <code className="font-mono bg-zinc-100 px-1 rounded">encodeURIComponent(JSON.stringify(invoice))</code>. Generates longer URLs that can be constructed from shell scripts, Apps Script, or curl.</div>
               <div className="bg-zinc-950 text-zinc-100 rounded-lg p-4 text-xs font-mono overflow-x-auto">
-                <span className="text-zinc-400">https://invoicely.app/playground</span>
+                <span className="text-zinc-400">https://renderinvoice.com/playground</span>
                 <span className="text-emerald-400">#j=</span>
                 <span className="text-zinc-400">%7B%22design%22%3A%22classic%22...</span>
                 <div className="text-zinc-500 mt-2"># or skip the editor:</div>
-                <span className="text-zinc-400">https://invoicely.app/print-view</span>
+                <span className="text-zinc-400">https://renderinvoice.com/print-view</span>
                 <span className="text-emerald-400">#j=</span>
                 <span className="text-zinc-400">…same JSON…</span>
               </div>

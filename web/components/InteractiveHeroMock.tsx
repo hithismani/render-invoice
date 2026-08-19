@@ -574,7 +574,7 @@ export default function InteractiveHeroMock() {
 
             <div className="flex items-center gap-2 ml-2 px-2.5 py-0.5 rounded-md bg-white border border-zinc-200/70 text-[11px] font-mono text-zinc-600 shadow-2xs max-w-[200px] sm:max-w-none truncate">
               <span className="size-1.5 rounded-full animate-pulse" style={{ backgroundColor: scenario.accentColor }} />
-              <span className="truncate">invoicely.app/{scenario.id}</span>
+              <span className="truncate">renderinvoice.com/{scenario.id}</span>
             </div>
 
             <div className="ml-auto flex items-center gap-2">

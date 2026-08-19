@@ -117,7 +117,7 @@ export async function renderPdf(invoice: InvoiceLike, width = 900): Promise<Uint
 }
 
 function editUrl(invoice: InvoiceLike): string {
-  return `https://invoicely.app/playground#i=${compressToEncodedURIComponent(JSON.stringify(invoice))}`;
+  return `https://renderinvoice.com/playground#i=${compressToEncodedURIComponent(JSON.stringify(invoice))}`;
 }
 
 function stampEditLink(

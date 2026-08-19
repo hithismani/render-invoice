@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { VisualFrame, VisualInvoice, VisualMath, VisualLocal, VisualEditor, VisualExport } from './OnboardVisuals';
 
-const KEY = 'invoicely.welcome.seen.v4';
+const KEY = 'renderinvoice.welcome.seen.v4';
 
 const STEPS = [
   {
@@ -43,8 +43,8 @@ export default function WelcomeDialog() {
     if (typeof window === 'undefined') return;
     if (!window.localStorage.getItem(KEY)) setOpen(true);
     const onShow = () => show();
-    window.addEventListener('invoicely:onboard', onShow);
-    return () => window.removeEventListener('invoicely:onboard', onShow);
+    window.addEventListener('renderinvoice:onboard', onShow);
+    return () => window.removeEventListener('renderinvoice:onboard', onShow);
   }, []);
 
   const dismiss = () => {

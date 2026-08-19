@@ -1,8 +1,8 @@
 {
-  "name": "invoicely-render",
+  "name": "renderinvoice",
   "private": true,
   "version": "0.1.0",
-  "description": "Self-hostable Cloudflare Worker that renders Invoicely JSON to PNG or PDF (Satori raster, or Browser Rendering vector). Deploy with wrangler deploy.",
+  "description": "Self-hostable Cloudflare Worker that renders RenderInvoice JSON to PNG or PDF (Satori raster, or Browser Rendering vector). Deploy with wrangler deploy.",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",

@@ -9,7 +9,7 @@ import type { Invoice } from '@/schema/invoiceSchema';
  * any past snapshot from the History dialog.
  */
 
-const KEY = 'invoicely.history.v1';
+const KEY = 'renderinvoice.history.v1';
 const MAX = 20;
 
 export interface HistoryEntry {

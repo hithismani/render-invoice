@@ -1,6 +1,6 @@
-# invoicely-render: self-hostable Cloudflare Worker
+# renderinvoice: self-hostable Cloudflare Worker
 
-Accepts Invoicely invoice JSON and returns either a **PNG** (image) or a
+Accepts RenderInvoice invoice JSON and returns either a **PNG** (image) or a
 **PDF** (document). Two render engines, chosen per request based on your
 output requirements.
 
@@ -17,7 +17,7 @@ For interactive documents, use Browser Rendering for a true vector PDF with
 selectable text matching the live preview.
 
 The render template is **shared with the playground at
-[invoicely.app/playground](https://invoicely.app/playground)**: `cf-worker`
+[renderinvoice.com/playground](https://renderinvoice.com/playground)**: `cf-worker`
 imports `web/components/SatoriInvoiceTemplate.tsx` directly, so rendering
 behavior matches the web UI across layouts, custom fields, and RTL text.
 
@@ -25,7 +25,7 @@ behavior matches the web UI across layouts, custom fields, and RTL text.
 
 One-click (Satori only, free tier):
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/astro-apiinvoicegenerator/tree/v1)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
 
 ```bash
 cd cf-worker
@@ -91,12 +91,12 @@ and cached in module scope.
 The PDF response sets `X-Pdf-Type: raster` to indicate raster output.
 
 `includeEditLink` (default true) stamps a URI annotation on the footer rule
-pointing at `https://invoicely.app/playground#i=…`. Set `false` to omit.
+pointing at `https://renderinvoice.com/playground#i=…`. Set `false` to omit.
 
 ### Browser Rendering (`engine=browser`)
 
 1. Worker launches headless Chromium via the `BROWSER` binding.
-2. Navigates to `INVOICELY_PRINT_URL#i=<lz-compressed-invoice-json>`.
+2. Navigates to `RENDERINVOICE_PRINT_URL#i=<lz-compressed-invoice-json>`.
 3. Calls `page.pdf()` to produce a vector PDF with selectable text.
 
 ## Auth (optional)

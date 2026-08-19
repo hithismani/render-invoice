@@ -4,9 +4,15 @@ import SiteFooter from '@/components/SiteFooter';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
-  title: 'Changelog: Updates and releases',
-  description: 'Product updates for Invoicely, a browser-side invoice generator.',
+  title: 'Changelog',
+  description:
+    'Product updates for RenderInvoice, the unopinionated invoice generator. New render engines, templates, and PDF export changes.',
   alternates: { canonical: '/changelog' },
+  openGraph: {
+    title: 'Changelog — RenderInvoice',
+    description: 'Updates to the invoice generator, render worker, and PDF export.',
+    url: '/changelog',
+  },
 };
 
 const entries = [
@@ -28,7 +34,7 @@ const entries = [
     version: 'v1.0',
     date: '2026-04-14',
     tag: 'new',
-    title: 'Invoicely v1',
+    title: 'RenderInvoice v1',
     body: 'Initial release of the Next.js 15 browser app. Includes form and JSON editors, multiple template designs, RTL support, field reordering, local draft storage in IndexedDB, URL sharing, and an optional self-hosted Cloudflare Worker for automated PDF rendering.',
   },
 ];
