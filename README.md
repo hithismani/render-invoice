@@ -41,7 +41,7 @@ If you need PDF or PNG bytes instead of a link, deploy the Worker and `POST /v1/
 
 `cf-worker/` is the backend. `POST` invoice JSON, get a PNG or PDF back.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker)
 
 That button deploys Satori only (free tier): `POST /v1/render` → PNG or raster PDF. Repo must stay **public** for the button to work.
 

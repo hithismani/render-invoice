@@ -55,7 +55,7 @@ link back to /playground#i=… so the same invoice can be reopened.
 Only if you need programmatic PDF/PNG bytes. Deploy cf-worker/ yourself.
 
 One-click (Satori, free tier):
-  https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main
+  https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker
 
   POST https://<your-worker>/v1/render?engine=satori&format=pdf|png
   POST https://<your-worker>/v1/render?engine=browser

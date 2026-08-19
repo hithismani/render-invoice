@@ -75,7 +75,7 @@ export default function DevelopersPage() {
                 <li>• Workers Paid plan ($5/mo) is only required for <code className="font-mono bg-zinc-100 px-1 rounded text-xs">?engine=browser</code>. Satori runs on the free tier.</li>
               </ul>
               <div className="mt-6 flex gap-3 flex-wrap items-center">
-                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main">
+                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" />
                 </a>
@@ -86,7 +86,7 @@ export default function DevelopersPage() {
             </div>
             <div className="bg-zinc-950 text-zinc-100 p-6 md:p-8 text-xs font-mono leading-relaxed overflow-auto">
               <div className="text-zinc-400 mb-2"># 1. One-click (Satori, free tier)</div>
-              <div>deploy.workers.cloudflare.com/?url=…/tree/v1</div>
+              <div>deploy.workers.cloudflare.com/?url=…/tree/main/cf-worker</div>
               <div className="text-zinc-400 mt-5 mb-2"># or CLI</div>
               <div>cd cf-worker && pnpm install</div>
               <div>npx wrangler login && npx wrangler deploy</div>
