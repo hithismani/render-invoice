@@ -12,17 +12,11 @@
  *
  * Two render engines, each with its sweet spot:
  *
- *   Satori (default) — pure JS, ~50–200ms, ~$0.15 per 1000. Outputs PNG or
- *            raster PDF (PNG embedded in a single-page PDF; text not
- *            selectable). Right for: thumbnails, OG images, social-card
- *            previews, batch archive/email PDFs where MIME type matters but
- *            text selection doesn't, high-volume invoice generation.
+ *   Satori (default, free) — same template as the playground.
+ *            format=pdf → vector PDF (selectable text, path borders/radius, edit link).
+ *            format=png → raster image only (never stuffed into a PDF).
  *
- *   Browser Rendering — headless Chromium via Cloudflare Browser Rendering,
- *            ~500–2000ms, ~$90 per 1000. Outputs a vector PDF with selectable
- *            text, pixel-perfect match to the live /print-view page. Right
- *            for: customer-facing PDFs where text selection / copy-paste /
- *            accessibility / search indexing all matter.
+ *   Browser Rendering (paid) — headless Chromium prints /print-view.
  *
  * Optional auth: verify a bearer JWT signed with API_KEY_SECRET.
  */
@@ -33,7 +27,7 @@ import { renderPdf, renderPng } from './satori-render.js';
 import type { InvoiceLike } from './types.js';
 
 export interface Env {
-  BROWSER: Fetcher;
+  BROWSER?: Fetcher;
   RENDERINVOICE_PRINT_URL: string;
   API_KEY_SECRET?: string;
 }
@@ -46,8 +40,8 @@ export default {
       return json({
         name: 'renderinvoice',
         endpoints: [
-          'POST /v1/render?engine=satori&format=png|pdf  (raster, ~100ms, batch/archive/thumbnails)',
-          'POST /v1/render?engine=browser                 (vector PDF with selectable text, ~1s)',
+          'POST /v1/render?engine=satori&format=pdf|png  (pdf = vector + selectable text)',
+          'POST /v1/render?engine=browser                (Chromium print-view, Workers Paid)',
         ],
         docs: 'https://renderinvoice.com/developers',
       });
@@ -81,6 +75,9 @@ export default {
         return await renderWithSatori(invoice, format);
       }
       if (engine === 'browser') {
+        if (!env.BROWSER) {
+          return json({ error: 'engine=browser needs the Browser Rendering binding (Workers Paid). Default Satori PDF is already vector.' }, 400);
+        }
         return await renderWithBrowser(invoice, env);
       }
       return json({ error: `Unknown engine "${engine}" — use satori or browser` }, 400);
@@ -96,10 +93,6 @@ async function renderWithSatori(invoice: InvoiceLike, format: string): Promise<R
     return new Response(png as BodyInit, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'no-store', 'X-Render-Engine': 'satori' } });
   }
   if (format === 'pdf' || !format) {
-    // Raster PDF (PNG inside a PDF wrapper). Text isn't selectable; this
-    // route exists for callers that need the PDF MIME type but don't need
-    // text selection (archival, email attachments, batch). For selectable
-    // text, use ?engine=browser.
     const pdf = await renderPdf(invoice);
     return new Response(pdf as BodyInit, {
       headers: {
@@ -107,14 +100,14 @@ async function renderWithSatori(invoice: InvoiceLike, format: string): Promise<R
         'Content-Disposition': 'attachment; filename="invoice.pdf"',
         'Cache-Control': 'no-store',
         'X-Render-Engine': 'satori',
-        'X-Pdf-Type': 'raster',
+        'X-Pdf-Type': 'vector',
       },
     });
   }
   return json({ error: `Unknown format "${format}" — engine=satori supports format=png or format=pdf.` }, 400);
 }
 
-async function renderWithBrowser(invoice: InvoiceLike, env: Env): Promise<Response> {
+async function renderWithBrowser(invoice: InvoiceLike, env: Env & { BROWSER: Fetcher }): Promise<Response> {
   const hash = compressToEncodedURIComponent(JSON.stringify(invoice));
   const target = `${env.RENDERINVOICE_PRINT_URL}#i=${hash}`;
 

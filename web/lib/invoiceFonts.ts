@@ -17,10 +17,18 @@ const LEGACY: Record<string, string> = {
   plex: 'IBM Plex Sans',
 };
 
+const ALLOWED = new Set<string>(POPULAR_FONTS.map((f) => f.toLowerCase()));
+
+/** Canonical typeface name, or Inter if unknown / not in the curated list. */
 export function satoriFontName(family?: string | null): string {
   const n = (family || 'Inter').trim();
   if (!n) return 'Inter';
-  return LEGACY[n.toLowerCase()] || n;
+  const legacy = LEGACY[n.toLowerCase()];
+  if (legacy) return legacy;
+  if (ALLOWED.has(n.toLowerCase())) {
+    return POPULAR_FONTS.find((f) => f.toLowerCase() === n.toLowerCase()) || 'Inter';
+  }
+  return 'Inter';
 }
 
 export function fontStack(family?: string | null): string {
@@ -35,18 +43,29 @@ export function googleCssHref(family?: string | null): string {
 
 const cache = new Map<string, { regular: ArrayBuffer; bold: ArrayBuffer }>();
 
+function isSfnt(buf: ArrayBuffer): boolean {
+  if (buf.byteLength < 4) return false;
+  const b = new Uint8Array(buf, 0, 4);
+  if (b[0] === 0x00 && b[1] === 0x01 && b[2] === 0x00 && b[3] === 0x00) return true;
+  const tag = String.fromCharCode(b[0], b[1], b[2], b[3]);
+  return tag === 'OTTO' || tag === 'true' || tag === 'typ1';
+}
+
 export async function loadInvoiceFont(family?: string | null): Promise<{ family: string; regular: ArrayBuffer; bold: ArrayBuffer }> {
   const name = satoriFontName(family);
   const hit = cache.get(name);
-  if (hit) return { family: name, ...hit };
+  if (hit && isSfnt(hit.regular) && isSfnt(hit.bold)) return { family: name, ...hit };
+  if (hit) cache.delete(name);
 
   if (name === 'Inter') {
     try {
       const [lr, lb] = await Promise.all([fetch('/fonts/Inter-Regular.ttf'), fetch('/fonts/Inter-Bold.ttf')]);
       if (lr.ok && lb.ok) {
         const pair = { regular: await lr.arrayBuffer(), bold: await lb.arrayBuffer() };
-        cache.set(name, pair);
-        return { family: name, ...pair };
+        if (isSfnt(pair.regular) && isSfnt(pair.bold)) {
+          cache.set(name, pair);
+          return { family: name, ...pair };
+        }
       }
     } catch {
       /* worker / missing local files */
@@ -54,8 +73,8 @@ export async function loadInvoiceFont(family?: string | null): Promise<{ family:
   }
 
   try {
-    const regular = await fetchGoogleTtf(name, 400);
-    const bold = await fetchGoogleTtf(name, 700).catch(() => regular);
+    const regular = await fetchTtf(name, 400);
+    const bold = await fetchTtf(name, 700).catch(() => regular);
     cache.set(name, { regular, bold });
     return { family: name, regular, bold };
   } catch {
@@ -64,7 +83,13 @@ export async function loadInvoiceFont(family?: string | null): Promise<{ family:
   }
 }
 
-async function fetchGoogleTtf(family: string, weight: number): Promise<ArrayBuffer> {
+async function fetchTtf(family: string, weight: number): Promise<ArrayBuffer> {
+  try {
+    const fromSource = await fetchFontsource(family, weight);
+    if (isSfnt(fromSource)) return fromSource;
+  } catch {
+    /* try Google next */
+  }
   const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}`;
   const css = await fetch(cssUrl, {
     headers: {
@@ -73,13 +98,17 @@ async function fetchGoogleTtf(family: string, weight: number): Promise<ArrayBuff
   });
   if (css.ok) {
     const text = await css.text();
-    const m = text.match(/src:\s*url\(([^)]+)\)/);
-    if (m) {
-      const file = await fetch(m[1]);
-      if (file.ok) return file.arrayBuffer();
+    const urls = [...text.matchAll(/src:\s*url\(([^)]+)\)/g)].map((m) => m[1]);
+    const ttfUrl = urls.find((u) => /\.(ttf|otf)(\?|$)/i.test(u)) || urls.find((u) => !/woff2?/i.test(u));
+    if (ttfUrl) {
+      const file = await fetch(ttfUrl);
+      if (file.ok) {
+        const buf = await file.arrayBuffer();
+        if (isSfnt(buf)) return buf;
+      }
     }
   }
-  return fetchFontsource(family, weight);
+  throw new Error(`No TTF for "${family}" ${weight}`);
 }
 
 function slug(family: string): string {

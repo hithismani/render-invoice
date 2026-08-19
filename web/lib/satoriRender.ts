@@ -4,11 +4,11 @@
 
 import satori, { init as initSatoriWasm } from 'satori';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
-import { PDFDocument, PDFString } from 'pdf-lib';
 import type { Invoice } from '@/schema/invoiceSchema';
 import { invoiceElement } from '@/components/SatoriInvoiceTemplate';
 import { shareUrl } from '@/lib/share';
 import { loadInvoiceFont } from '@/lib/invoiceFonts';
+import { satoriSvgToPdf } from '@/lib/satoriSvgToPdf';
 
 // Use the full Inter TTFs we already bundle for jsPDF (in /public/fonts/),
 // not fontsource's `inter-latin-*.woff` subsets. The Latin-only subsets are
@@ -197,86 +197,16 @@ export async function renderVectorPdf(invoice: Invoice, width = 900): Promise<Ui
   }
 }
 
-// A4 portrait in PDF points (1pt = 1/72 inch). 8.27" × 11.69".
-const A4_W_PT = 595;
-const A4_H_PT = 842;
-
 /**
- * Render the invoice to a single-page raster PDF.
- *
- * Two modes, controlled by `invoice.autoSize` (default true):
- *
- * - **autoSize: true** — page is sized to the rendered content height.
- *   No scaling, no clipping, no whitespace. The browser's PDF viewer will
- *   fit the page to the window. Best for invoices that don't need to fit
- *   a physical sheet.
- *
- * - **autoSize: false** — content is rendered at A4 width (595pt) and the
- *   page is locked to A4. If content fits within A4 height, it sits at the
- *   top of the page with whitespace below. If it overflows, it's scaled
- *   uniformly to fit (never enlarged). This is the "shrink everything to
- *   one page" mode users want when printing or sending PDFs that must fit
- *   a standard sheet.
- *
- * The 2x scaling factor below comes from `renderPng` invoking resvg with
- * `fitTo: { mode: 'width', value: width * 2 }` — i.e. the rasterized image
- * is at 2x density relative to the natural pt dimensions.
+ * Vector PDF for the free Worker path and fixtures.
+ * Satori SVG (real text + paths) → pdf-lib. Never embeds a full-page PNG.
  */
 export async function renderPdf(invoice: Invoice, width = 900): Promise<Uint8Array> {
   const fitToA4 = invoice.autoSize === false;
-  // For both modes we render at the same visual default width (900pt).
-  // Rendering at 595pt directly would force narrower columns / more text
-  // wrapping, then leave side whitespace after height-driven uniform
-  // scaling — visually worse than rendering wide and scaling down.
-  const png = await renderPng(invoice, width);
-
-  const pdf = await PDFDocument.create();
-  const image = await pdf.embedPng(png);
-  const naturalW = image.width / 2;
-  const naturalH = image.height / 2;
-
-  if (fitToA4) {
-    // Uniform shrink-to-fit. Width-scale (A4_W / 900 = 0.661) is the
-    // limiter for typical invoices; height-scale only kicks in for very
-    // tall content. Result: A4 width is filled, content sits at top.
-    const scale = Math.min(A4_W_PT / naturalW, A4_H_PT / naturalH);
-    const drawW = naturalW * scale;
-    const drawH = naturalH * scale;
-    const page = pdf.addPage([A4_W_PT, A4_H_PT]);
-    page.drawImage(image, {
-      x: (A4_W_PT - drawW) / 2,
-      y: A4_H_PT - drawH,
-      width: drawW,
-      height: drawH,
-    });
-    stampEditLink(pdf, invoice, { x: (A4_W_PT - drawW) / 2, y: A4_H_PT - drawH, w: drawW, h: 16 * scale });
-  } else {
-    const page = pdf.addPage([naturalW, naturalH]);
-    page.drawImage(image, { x: 0, y: 0, width: naturalW, height: naturalH });
-    stampEditLink(pdf, invoice, { x: 0, y: 0, w: naturalW, h: 16 });
-  }
-
-  return pdf.save();
-}
-
-function stampEditLink(
-  pdf: PDFDocument,
-  invoice: Invoice,
-  rect: { x: number; y: number; w: number; h: number },
-): void {
-  if (invoice.includeEditLink === false) return;
-  const page = pdf.getPages()[0];
-  page.node.addAnnot(
-    pdf.context.register(
-      pdf.context.obj({
-        Type: 'Annot',
-        Subtype: 'Link',
-        Rect: [rect.x, rect.y, rect.x + rect.w, rect.y + rect.h],
-        Border: [0, 0, 0],
-        A: { Type: 'Action', S: 'URI', URI: PDFString.of(shareUrl(invoice)) },
-      }),
-    ),
-  );
+  const svg = await renderSvg(invoice, width, { forExport: true, embedFont: false });
+  const { regular, bold } = await loadInvoiceFont(invoice.font);
+  const editUrl = invoice.includeEditLink === false ? undefined : shareUrl(invoice);
+  return satoriSvgToPdf(svg, { regular, bold }, { fitToA4, editUrl });
 }
 
 export function downloadPdfBytes(bytes: Uint8Array, filename = 'invoice.pdf'): void {

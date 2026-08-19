@@ -1,11 +1,12 @@
 {
   "name": "renderinvoice",
   "private": true,
-  "description": "One-click Cloudflare Worker: POST /v1/render → PNG or raster PDF.",
+  "description": "One-click Cloudflare Worker: POST /v1/render → vector PDF (Satori).",
   "scripts": {
     "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
     "@resvg/resvg-wasm": "^2.6.2",
     "marked": "^18.0.2",
     "pdf-lib": "^1.17.1",
@@ -14,12 +15,5 @@
   },
   "devDependencies": {
     "wrangler": "^4.85.0"
-  },
-  "cloudflare": {
-    "bindings": {
-      "RENDERINVOICE_PRINT_URL": {
-        "description": "Public print-view origin used only by `?engine=browser`. Default `https://renderinvoice.com/print-view` is fine. Point at your own `/print-view` if you also deployed the app."
-      }
-    }
   }
 }

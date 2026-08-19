@@ -7,7 +7,7 @@ export const InvoiceSchema = z.object({
   design: z.enum(['classic', 'bold']).default('classic')
     .describe('Visual variant for the rendered invoice. "classic" is the default; "bold" uses an accent header.'),
   font: z.string().optional()
-    .describe('Google Font family name for the invoice (default Inter). Same face is used in the playground, PDF, and worker.'),
+    .describe('Typeface for playground, PDF, and worker. One of: Inter, Source Serif 4, IBM Plex Sans, Playfair Display, Space Grotesk, DM Sans, Fraunces, Libre Baskerville, Instrument Sans, Newsreader. Default Inter. Unknown names fall back to Inter.'),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a hex color like #2563eb').default('#2563eb')
     .describe('Accent color (hex) threaded through headings, totals, and borders.'),
   logoPosition: z.enum(['center', 'left', 'right']).default('center')

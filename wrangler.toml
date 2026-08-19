@@ -1,6 +1,5 @@
-# One-click / repo-root deploy of the render Worker (Satori only).
-# Free-tier safe: no Browser Rendering binding.
-# Paid `engine=browser` still uses cf-worker/wrangler.toml.
+# One-click / repo-root: Satori vector PDF. Free plan. No Browser Rendering.
+# Paid print-view PDFs: deploy from cf-worker/ (has the [browser] binding).
 name = "renderinvoice"
 main = "cf-worker/src/worker.ts"
 compatibility_date = "2024-11-01"

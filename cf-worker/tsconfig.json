@@ -20,6 +20,7 @@
     "../web/components/SatoriInvoiceTemplate.tsx",
     "../web/components/SatoriMarkdown.tsx",
     "../web/schema/invoiceSchema.ts",
-    "../web/lib/invoiceFonts.ts"
+    "../web/lib/invoiceFonts.ts",
+    "../web/lib/satoriSvgToPdf.ts"
   ]
 }

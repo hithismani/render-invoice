@@ -8,13 +8,14 @@
     "deploy": "wrangler deploy",
     "start": "next start",
     "lint": "next lint",
-    "test:fixtures": "tsx __tests__/satori-fixtures/render.ts",
-    "test:fixtures:worker": "tsx __tests__/satori-fixtures/render-worker.ts"
+    "test:fixtures": "tsx __tests__/invoice-fixtures/render.ts",
+    "test:fixtures:worker": "tsx __tests__/invoice-fixtures/render-worker.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@pdf-lib/fontkit": "^1.1.1",
     "@resvg/resvg-wasm": "^2.6.2",
     "idb-keyval": "^6.2.2",
     "jspdf": "^4.2.1",
