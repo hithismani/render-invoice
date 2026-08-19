@@ -1,0 +1,43 @@
+{
+  "name": "apiinvoicegenerator-v1",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "deploy": "wrangler deploy",
+    "start": "next start",
+    "lint": "next lint",
+    "test:fixtures": "tsx __tests__/satori-fixtures/render.ts",
+    "test:fixtures:worker": "tsx __tests__/satori-fixtures/render-worker.ts"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@resvg/resvg-wasm": "^2.6.2",
+    "idb-keyval": "^6.2.2",
+    "jspdf": "^4.2.1",
+    "lz-string": "^1.5.0",
+    "marked": "^18.0.2",
+    "next": "^15.0.3",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "satori": "^0.26.0",
+    "svg2pdf.js": "^2.7.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3"
+  }
+}

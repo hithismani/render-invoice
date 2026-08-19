@@ -1,0 +1,16 @@
+# Cloudflare Pages / Netlify headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: interest-cohort=()
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/icon.svg
+  Cache-Control: public, max-age=86400
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=3600

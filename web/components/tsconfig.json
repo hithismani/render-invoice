@@ -1,0 +1,8 @@
+{
+  "//": "Sub-tsconfig that scopes jsx:react-jsx to the components directory. v1's root tsconfig keeps jsx:preserve (required by Next.js + SWC) but external bundlers like esbuild — used by Wrangler when the cf-worker imports v1's SatoriInvoiceTemplate.tsx for 1:1 parity — walk up from each .tsx file and find the nearest tsconfig. With this file in place, components-tree files get jsx-transformed instead of leaving raw `<` tokens in the bundle.",
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}

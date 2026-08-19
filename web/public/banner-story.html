@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoicely — Pure Vector Cinema</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg: #030305;
+      --accent: #2563eb;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      overflow: hidden;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Cinematic Viewport */
+    #stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 50%, #0a0a14 0%, #030305 100%);
+      overflow: hidden;
+    }
+
+    /* Film Grain Noise */
+    .grain {
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      animation: grainJitter 0.2s steps(2) infinite;
+    }
+
+    @keyframes grainJitter {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(-2%, 2%); }
+      100% { transform: translate(2%, -2%); }
+    }
+
+    /* Ambient Spatial Lighting */
+    .light-cone {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+
+    /* Act Layers */
+    .act {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Custom Scrub Bar */
+    .timeline-dot {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .timeline-dot.active {
+      background-color: #38bdf8;
+      box-shadow: 0 0 15px #38bdf8;
+      transform: scale(1.4);
+    }
+  </style>
+</head>
+<body class="w-screen h-screen bg-[#030305] text-white overflow-hidden">
+
+  <div id="stage" class="relative w-full h-full flex items-center justify-center">
+
+    <!-- Film Grain Overlay -->
+    <div class="grain"></div>
+
+    <!-- Volumetric Dynamic Light Emitters -->
+    <div id="light-1" class="light-cone w-[600px] h-[600px] bg-blue-600/15 top-[10%] left-[20%]"></div>
+    <div id="light-2" class="light-cone w-[700px] h-[700px] bg-indigo-600/10 bottom-[10%] right-[20%]"></div>
+    <div id="light-3" class="light-cone w-[500px] h-[500px] bg-emerald-500/10 top-[40%] right-[30%]"></div>
+
+    <!-- Minimal Geometric Coordinate Grid -->
+    <svg class="absolute inset-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid-pattern" width="80" height="80" patternUnits="userSpaceOnUse">
+          <circle cx="40" cy="40" r="1" fill="#ffffff"/>
+          <line x1="0" y1="40" x2="80" y2="40" stroke="#ffffff" stroke-width="0.5" stroke-dasharray="2 6"/>
+          <line x1="40" y1="0" x2="40" y2="80" stroke="#ffffff" stroke-width="0.5" stroke-dasharray="2 6"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+    </svg>
+
+    <!-- ========================================================================= -->
+    <!-- ACT I: THE BURDEN (0:00 - 0:10) -->
+    <!-- "What should an invoice generator do? Handle compliance? Store and train on your data? Or just generate the damn PDF?" -->
+    <!-- ========================================================================= -->
+    <section id="act-1" class="act z-10 w-full max-w-6xl px-8 flex flex-col items-center justify-center">
+      <!-- Kinetic Question Typography -->
+      <div class="text-center mb-12">
+        <p id="a1-lead" class="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-zinc-500 mb-3">Core Question</p>
+        <h1 id="a1-title" class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-balance max-w-4xl leading-[1.05]">
+          What should an invoice generator <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-orange-400 to-amber-300">actually do?</span>
+        </h1>
+      </div>
+
+      <!-- Vector Battleground: Bloat Matrix vs Pure Plane -->
+      <div class="relative w-full max-w-4xl h-[340px] flex items-center justify-center">
+        <!-- Bloat Monolith (Left) -->
+        <svg id="a1-bloat-svg" class="w-[420px] h-[320px]" viewBox="0 0 420 320" fill="none">
+          <rect width="420" height="320" rx="20" fill="#0c0d14" stroke="#27272a" stroke-width="1.5"/>
+          
+          <!-- Clamping Vices & Tax Cage Rings -->
+          <g id="a1-vice-lines" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 4" opacity="0.6">
+            <line x1="40" y1="80" x2="380" y2="80"/>
+            <line x1="40" y1="140" x2="380" y2="140"/>
+            <line x1="40" y1="200" x2="380" y2="200"/>
+          </g>
+
+          <!-- Mathematical Friction Formulas -->
+          <g id="a1-math-glyphs" fill="#71717a" font-family="JetBrains Mono" font-size="11" font-weight="700">
+            <text x="50" y="72">TAX_JURISDICTION_RULE_0x7F [AUTO-CALC]</text>
+            <text x="50" y="132">DATA_HARVEST::SCRAPE_CLIENT_REVENUE</text>
+            <text x="50" y="192">SCHEMA_LOCK: [QTY, RATE, FIXED_4_COL]</text>
+          </g>
+
+          <!-- Warning Eye Beacon -->
+          <circle id="a1-beacon" cx="360" cy="45" r="8" fill="#f43f5e"/>
+          <circle cx="360" cy="45" r="16" stroke="#f43f5e" stroke-width="1.5" opacity="0.4"/>
+
+          <!-- Slashed Overprint Stamp -->
+          <g id="a1-slam-stamp" transform="translate(130, 110)">
+            <rect width="160" height="50" rx="10" fill="#f43f5e" fill-opacity="0.2" stroke="#f43f5e" stroke-width="2"/>
+            <text x="80" y="32" fill="#f43f5e" font-family="Space Grotesk" font-size="15" font-weight="900" text-anchor="middle" letter-spacing="0.1em">NOT YOUR ADVISOR</text>
+          </g>
+        </svg>
+
+        <!-- Golden Laser Cutter Beam -->
+        <div id="a1-cutter-beam" class="absolute w-1 h-[360px] bg-gradient-to-b from-cyan-400 via-white to-blue-500 shadow-[0_0_30px_#38bdf8] opacity-0"></div>
+
+        <!-- The Pristine Vector Paper Sheet (Right) -->
+        <svg id="a1-pure-svg" class="w-[420px] h-[320px]" viewBox="0 0 420 320" fill="none">
+          <rect width="420" height="320" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+          
+          <!-- Pure Minimal Geometry -->
+          <rect x="40" y="40" width="36" height="36" rx="8" fill="#2563eb"/>
+          <path d="M 50 58 L 58 50 L 66 58 L 58 66 Z" fill="#ffffff"/>
+          <rect x="90" y="48" width="120" height="12" rx="6" fill="#0f172a"/>
+          <rect x="90" y="66" width="160" height="6" rx="3" fill="#94a3b8"/>
+
+          <!-- Clean Verbatim Table Rows -->
+          <g transform="translate(40, 110)">
+            <rect width="340" height="24" rx="6" fill="#2563eb"/>
+            <rect x="12" y="8" width="80" height="8" rx="4" fill="#ffffff"/>
+            <rect x="260" y="8" width="60" height="8" rx="4" fill="#ffffff"/>
+
+            <rect x="12" y="40" width="140" height="8" rx="4" fill="#1e293b"/>
+            <rect x="260" y="40" width="60" height="8" rx="4" fill="#1e293b"/>
+            <line x1="0" y1="58" x2="340" y2="58" stroke="#f1f5f9" stroke-width="1"/>
+
+            <rect x="12" y="72" width="160" height="8" rx="4" fill="#1e293b"/>
+            <rect x="260" y="72" width="60" height="8" rx="4" fill="#1e293b"/>
+          </g>
+
+          <!-- Vector PDF Seal -->
+          <g id="a1-pure-seal" transform="translate(230, 230)">
+            <rect width="150" height="42" rx="10" fill="#0f172a"/>
+            <circle cx="24" cy="21" r="7" fill="#10b981"/>
+            <text x="40" y="26" fill="#ffffff" font-family="JetBrains Mono" font-size="11" font-weight="700">JUST THE PDF</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ACT II: INVOICES WITHOUT OPINIONS (0:10 - 0:20) -->
+    <!-- "Every invoice tool tells you how to bill. Invoicely simply renders your data verbatim." -->
+    <!-- ========================================================================= -->
+    <section id="act-2" class="act z-10 w-full max-w-6xl px-8 flex flex-col items-center justify-center">
+      <div class="text-center mb-8">
+        <p class="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-emerald-400 mb-2">Zero Backend · 100% Browser</p>
+        <h2 id="a2-title" class="text-4xl sm:text-6xl font-extrabold tracking-tight font-display max-w-3xl">
+          Invoices that <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400">don&rsquo;t have opinions.</span>
+        </h2>
+      </div>
+
+      <!-- Spatial Kinetic Engine: Data Stream Feeding Direct Vector Mesh -->
+      <div class="relative w-full max-w-4xl h-[340px] flex items-center justify-center">
+        <!-- SVG Vector Reactor -->
+        <svg id="a2-reactor-svg" class="w-full h-full" viewBox="0 0 900 340" fill="none">
+          <!-- Light Rails -->
+          <path id="a2-rail-1" d="M 100 80 C 300 80, 350 170, 500 170" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 6"/>
+          <path id="a2-rail-2" d="M 100 170 L 500 170" stroke="#818cf8" stroke-width="2" stroke-dasharray="6 6"/>
+          <path id="a2-rail-3" d="M 100 260 C 300 260, 350 170, 500 170" stroke="#34d399" stroke-width="2" stroke-dasharray="6 6"/>
+
+          <!-- Floating Kinetic Data Particles -->
+          <circle id="a2-particle-1" cx="100" cy="80" r="7" fill="#38bdf8"/>
+          <circle id="a2-particle-2" cx="100" cy="170" r="7" fill="#818cf8"/>
+          <circle id="a2-particle-3" cx="100" cy="260" r="7" fill="#34d399"/>
+
+          <!-- Local In-Memory Boundary (Client Shield) -->
+          <g id="a2-shield" transform="translate(480, 50)">
+            <rect width="360" height="240" rx="16" fill="#090a10" stroke="#38bdf8" stroke-width="1.5"/>
+            <!-- Vector Document Skeleton -->
+            <rect x="24" y="24" width="312" height="192" rx="8" fill="#ffffff"/>
+            
+            <rect x="44" y="44" width="30" height="30" rx="6" fill="#2563eb"/>
+            <rect x="86" y="52" width="100" height="10" rx="5" fill="#0f172a"/>
+            <rect x="240" y="52" width="90" height="10" rx="5" fill="#10b981"/>
+
+            <!-- Real-time Lines -->
+            <g id="a2-rendered-rows" transform="translate(44, 95)">
+              <rect width="272" height="16" rx="4" fill="#f1f5f9"/>
+              <rect x="10" y="4" width="120" height="8" rx="4" fill="#334155"/>
+              <rect x="200" y="4" width="60" height="8" rx="4" fill="#0f172a"/>
+
+              <g transform="translate(0, 24)">
+                <rect width="272" height="16" rx="4" fill="#f1f5f9"/>
+                <rect x="10" y="4" width="140" height="8" rx="4" fill="#334155"/>
+                <rect x="200" y="4" width="60" height="8" rx="4" fill="#0f172a"/>
+              </g>
+
+              <g transform="translate(0, 48)">
+                <rect width="272" height="16" rx="4" fill="#eff6ff"/>
+                <rect x="10" y="4" width="100" height="8" rx="4" fill="#2563eb"/>
+                <rect x="200" y="4" width="60" height="8" rx="4" fill="#2563eb"/>
+              </g>
+            </g>
+
+            <!-- 0ms Local Execution Stamp -->
+            <g id="a2-zero-ms" transform="translate(180, 190)">
+              <rect width="140" height="32" rx="8" fill="#10b981"/>
+              <text x="70" y="20" fill="#ffffff" font-family="JetBrains Mono" font-size="10" font-weight="800" text-anchor="middle">0ms · 0 BACKEND</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ACT III: THE CIRCUIT OF TRUST (0:20 - 0:30) -->
+    <!-- "You simply create an invoice, hand it off to your accountant to verify before sending. Need changes? Edit immediately." -->
+    <!-- ========================================================================= -->
+    <section id="act-3" class="act z-10 w-full max-w-6xl px-8 flex flex-col items-center justify-center">
+      <div class="text-center mb-8">
+        <p class="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-cyan-400 mb-2">Verification Loop</p>
+        <h2 id="a3-title" class="text-4xl sm:text-6xl font-extrabold tracking-tight font-display max-w-3xl">
+          Accountant cross-checks. <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400">You edit in seconds.</span>
+        </h2>
+      </div>
+
+      <!-- The 3-Node Circuit: Creator ➔ Auditor ➔ Client -->
+      <div class="relative w-full max-w-4xl h-[320px] flex items-center justify-center">
+        <svg id="a3-circuit-svg" class="w-full h-full" viewBox="0 0 900 320" fill="none">
+          <!-- Orbital Arc Hand-off -->
+          <path id="a3-arc" d="M 160 160 Q 450 30 740 160" stroke="#10b981" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+          
+          <!-- Traveling Token -->
+          <g id="a3-flying-token" transform="translate(420, 70)">
+            <rect width="60" height="76" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+            <rect x="10" y="15" width="24" height="6" rx="3" fill="#2563eb"/>
+            <rect x="10" y="28" width="40" height="4" rx="2" fill="#94a3b8"/>
+            <rect x="10" y="38" width="32" height="4" rx="2" fill="#94a3b8"/>
+          </g>
+
+          <!-- Node 1: Creator -->
+          <g id="a3-node-1" transform="translate(100, 100)">
+            <circle cx="60" cy="60" r="50" fill="#090a10" stroke="#3b82f6" stroke-width="2"/>
+            <circle cx="60" cy="50" r="16" fill="#3b82f6"/>
+            <path d="M 38 84 C 38 72 48 68 60 68 C 72 68 82 72 82 84" fill="#3b82f6"/>
+            <text x="60" y="130" fill="#94a3b8" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">YOU (#i= URL)</text>
+          </g>
+
+          <!-- Node 2: Accountant / Auditor Clipboard (Center Glow) -->
+          <g id="a3-node-2" transform="translate(390, 160)">
+            <rect width="120" height="140" rx="16" fill="#06281e" stroke="#10b981" stroke-width="2.5"/>
+            <rect x="40" y="-8" width="40" height="16" rx="4" fill="#10b981"/>
+            <line x1="24" y1="40" x2="96" y2="40" stroke="#34d399" stroke-width="3"/>
+            <line x1="24" y1="60" x2="96" y2="60" stroke="#34d399" stroke-width="3"/>
+            <line x1="24" y1="80" x2="66" y2="80" stroke="#34d399" stroke-width="3"/>
+            
+            <!-- Certified Checkmark -->
+            <g id="a3-stamp-badge" transform="translate(35, 90)">
+              <circle cx="25" cy="25" r="22" fill="#10b981"/>
+              <path d="M 16 25 L 22 31 L 34 19" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </g>
+
+          <!-- Node 3: Client -->
+          <g id="a3-node-3" transform="translate(680, 100)">
+            <circle cx="60" cy="60" r="50" fill="#090a10" stroke="#64748b" stroke-width="2"/>
+            <rect x="44" y="40" width="32" height="40" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+            <rect x="52" y="50" width="6" height="6" rx="1" fill="#38bdf8"/>
+            <rect x="62" y="50" width="6" height="6" rx="1" fill="#38bdf8"/>
+            <text x="60" y="130" fill="#94a3b8" font-family="JetBrains Mono" font-size="11" font-weight="700" text-anchor="middle">CLIENT (PAID)</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ACT IV: THE MACHINE INTERFACE (0:30 - 0:40) -->
+    <!-- "If you're a developer or master prompter, you can have your AI agent handle this." -->
+    <!-- ========================================================================= -->
+    <section id="act-4" class="act z-10 w-full max-w-6xl px-8 flex flex-col items-center justify-center">
+      <div class="text-center mb-8">
+        <p class="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-purple-400 mb-2">For Developers & Autonomous Agents</p>
+        <h2 id="a4-title" class="text-4xl sm:text-6xl font-extrabold tracking-tight font-display max-w-3xl">
+          Agent-friendly. <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400">Still no backend.</span>
+        </h2>
+      </div>
+
+      <!-- Autonomous Lattice: Agent Neural Hex ➔ URL Hash Stream ➔ Serverless Worker -->
+      <div class="relative w-full max-w-4xl h-[320px] flex items-center justify-center">
+        <svg id="a4-neural-svg" class="w-full h-full" viewBox="0 0 900 320" fill="none">
+          <!-- AI Agent Core (Hexagon) -->
+          <g id="a4-agent-hex" transform="translate(100, 80)">
+            <polygon points="60,0 120,34 120,104 60,138 0,104 0,34" fill="#581c87" stroke="#a855f7" stroke-width="2"/>
+            <circle cx="60" cy="69" r="18" fill="#c084fc"/>
+            <text x="60" y="165" fill="#c084fc" font-family="JetBrains Mono" font-size="12" font-weight="800" text-anchor="middle">AI AGENT (/llms.txt)</text>
+          </g>
+
+          <!-- Concentrated Laser Data Hash Rail -->
+          <g transform="translate(240, 140)">
+            <line x1="0" y1="10" x2="380" y2="10" stroke="#a855f7" stroke-width="3" stroke-dasharray="8 6"/>
+            <!-- Encoded Hash Block Token -->
+            <g id="a4-hash-block" transform="translate(60, -15)">
+              <rect width="260" height="48" rx="24" fill="#18181b" stroke="#8b5cf6" stroke-width="2"/>
+              <text x="24" y="30" fill="#38bdf8" font-family="JetBrains Mono" font-size="14" font-weight="800">#j=&lt;encoded-json&gt;</text>
+            </g>
+          </g>
+
+          <!-- Edge Render Worker Node -->
+          <g id="a4-cf-worker" transform="translate(660, 70)">
+            <rect width="160" height="160" rx="24" fill="#431407" stroke="#f97316" stroke-width="2"/>
+            <polygon points="90,30 65,80 85,80 75,120 110,70 90,70" fill="#ffffff"/>
+            <text x="80" y="150" fill="#fdba74" font-family="JetBrains Mono" font-size="11" font-weight="800" text-anchor="middle">CF WORKER (BATCH)</text>
+          </g>
+
+          <!-- Cascading Batch Vector PDF Fan Output -->
+          <g id="a4-pdf-fan" transform="translate(690, 180)">
+            <rect x="30" y="-10" width="90" height="110" rx="6" fill="#334155" stroke="#475569"/>
+            <rect x="15" y="0" width="90" height="110" rx="6" fill="#1e293b" stroke="#334155"/>
+            <rect x="0" y="10" width="90" height="110" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+            <circle cx="70" cy="95" r="10" fill="#10b981"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ACT V: THE UN-OPINIONATED ARTIFACT (0:40 - 0:50) -->
+    <!-- "Generate an invoice in under a minute. Invoicely." -->
+    <!-- ========================================================================= -->
+    <section id="act-5" class="act z-10 w-full max-w-6xl px-8 flex flex-col items-center justify-center">
+      <!-- Invoicely Hero Emblem -->
+      <div id="a5-emblem-wrap" class="relative flex items-center justify-center mb-6">
+        <div class="absolute w-44 h-44 rounded-full bg-blue-600/30 blur-2xl animate-pulse"></div>
+        <div class="relative w-28 h-28 rounded-3xl bg-blue-600 flex items-center justify-center shadow-[0_20px_50px_rgba(37,99,235,0.6)] ring-2 ring-white/30">
+          <svg class="w-16 h-16 text-white" viewBox="0 0 64 64" fill="none">
+            <path d="M18 14h22l10 10v28a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4Z" fill="#ffffff"/>
+            <path d="M40 14v10h10" stroke="#2563eb" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M20 32h18M20 38h14M20 44h10" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <h2 class="text-5xl sm:text-7xl font-black tracking-tight font-display text-center mb-3">
+        Invoicely
+      </h2>
+      <p class="text-lg sm:text-xl text-zinc-400 text-center max-w-xl mb-8 font-medium">
+        Invoices that don't have opinions.
+      </p>
+
+      <!-- 3 Glass Core Pillars -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+        <div class="px-5 py-2.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs sm:text-sm font-bold text-zinc-200 shadow-xl">
+          ✓ No signup · No credit card
+        </div>
+        <div class="px-5 py-2.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs sm:text-sm font-bold text-zinc-200 shadow-xl">
+          ✓ Selectable vector text
+        </div>
+        <div class="px-5 py-2.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs sm:text-sm font-bold text-zinc-200 shadow-xl">
+          ✓ 100% in-browser offline
+        </div>
+      </div>
+
+      <a
+        href="https://invoicely.app/playground"
+        target="_blank"
+        class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-zinc-950 font-black text-base hover:bg-zinc-100 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.2)] hover:scale-105"
+      >
+        Open the playground →
+      </a>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- CINEMATIC DIRECTOR HUD & TIMELINE CONTROL -->
+    <!-- ========================================================================= -->
+    <div class="absolute bottom-6 inset-x-8 max-w-4xl mx-auto z-20 flex flex-col gap-3">
+      <!-- Chapter Jump Indicator Dots -->
+      <div class="flex items-center justify-between px-2">
+        <button onclick="jumpTo(0)" id="dot-0" class="timeline-dot w-3 h-3 rounded-full bg-zinc-700 hover:bg-white active"></button>
+        <button onclick="jumpTo(10)" id="dot-1" class="timeline-dot w-3 h-3 rounded-full bg-zinc-700 hover:bg-white"></button>
+        <button onclick="jumpTo(20)" id="dot-2" class="timeline-dot w-3 h-3 rounded-full bg-zinc-700 hover:bg-white"></button>
+        <button onclick="jumpTo(30)" id="dot-3" class="timeline-dot w-3 h-3 rounded-full bg-zinc-700 hover:bg-white"></button>
+        <button onclick="jumpTo(40)" id="dot-4" class="timeline-dot w-3 h-3 rounded-full bg-zinc-700 hover:bg-white"></button>
+      </div>
+
+      <!-- Scrubber Bar & Synced Voiceover Bar -->
+      <div class="glass-panel p-4 rounded-2xl border border-white/10 flex items-center gap-4 shadow-2xl backdrop-blur">
+        <button id="btn-play" onclick="togglePlay()" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shrink-0 transition-all shadow-lg shadow-blue-600/40">
+          <svg id="icon-play" class="w-5 h-5 ml-0.5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="icon-pause" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+
+        <input type="range" id="seek-bar" min="0" max="50" step="0.05" value="0" class="w-full h-1.5 bg-zinc-800 rounded-lg cursor-pointer">
+
+        <div class="font-mono text-xs text-zinc-400 shrink-0 select-none">
+          <span id="time-current" class="text-white font-bold">00:00</span> / <span>00:50</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MASTER GSAP SCRIPT (NO BROWSER WINDOWS · PURE CINEMATIC MOTION) -->
+  <!-- ========================================================================= -->
+  <script>
+    const acts = [
+      document.getElementById('act-1'),
+      document.getElementById('act-2'),
+      document.getElementById('act-3'),
+      document.getElementById('act-4'),
+      document.getElementById('act-5'),
+    ];
+
+    const dots = [
+      document.getElementById('dot-0'),
+      document.getElementById('dot-1'),
+      document.getElementById('dot-2'),
+      document.getElementById('dot-3'),
+      document.getElementById('dot-4'),
+    ];
+
+    const seekBar = document.getElementById('seek-bar');
+    const timeCurrent = document.getElementById('time-current');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+
+    function setActiveDot(index) {
+      dots.forEach((dot, i) => {
+        if (i === index) dot.classList.add('active');
+        else dot.classList.remove('active');
+      });
+    }
+
+    function switchAct(index) {
+      setActiveDot(index);
+      acts.forEach((act, i) => {
+        if (i === index) {
+          gsap.set(act, { autoAlpha: 1, pointerEvents: 'auto' });
+        } else {
+          gsap.set(act, { autoAlpha: 0, pointerEvents: 'none' });
+        }
+      });
+    }
+
+    // Master GSAP Timeline (50s Loop)
+    const master = gsap.timeline({
+      paused: false,
+      repeat: -1,
+      onUpdate: () => {
+        const t = master.time();
+        seekBar.value = t % 50;
+        const mins = Math.floor((t % 50) / 60).toString().padStart(2, '0');
+        const secs = Math.floor(t % 50).toString().padStart(2, '0');
+        timeCurrent.innerText = `${mins}:${secs}`;
+      }
+    });
+
+    // ----------------------------------------------------
+    // ACT I (0s - 10s)
+    // ----------------------------------------------------
+    const a1 = gsap.timeline();
+    a1.add(() => switchAct(0), 0);
+    a1.fromTo('#a1-lead', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.2);
+    a1.fromTo('#a1-title', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.4);
+    a1.fromTo('#a1-bloat-svg', { x: -40, opacity: 0, scale: 0.95 }, { x: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' }, 0.8);
+    a1.fromTo('#a1-slam-stamp', { scale: 3, opacity: 0, rotation: -15 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.4, ease: 'back.out(2.5)' }, 2.5);
+    
+    // Laser Beam Cut
+    a1.fromTo('#a1-cutter-beam', { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: 'power4.in' }, 4.0);
+    a1.to('#a1-cutter-beam', { opacity: 0, duration: 0.2 }, 4.3);
+
+    // Pure Plane Reveal
+    a1.fromTo('#a1-pure-svg', { x: 40, opacity: 0, scale: 0.95 }, { x: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' }, 4.2);
+    a1.fromTo('#a1-pure-seal', { scale: 2.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)' }, 5.5);
+
+    // ----------------------------------------------------
+    // ACT II (10s - 20s)
+    // ----------------------------------------------------
+    const a2 = gsap.timeline();
+    a2.add(() => switchAct(1), 0);
+    a2.fromTo('#a2-title', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);
+    a2.fromTo('#a2-particle-1', { cx: 100 }, { cx: 500, duration: 2, repeat: 3, ease: 'power2.inOut' }, 0.5);
+    a2.fromTo('#a2-particle-2', { cx: 100 }, { cx: 500, duration: 1.6, repeat: 4, ease: 'power1.inOut' }, 0.6);
+    a2.fromTo('#a2-particle-3', { cx: 100 }, { cx: 500, duration: 2.2, repeat: 3, ease: 'power2.inOut' }, 0.7);
+    a2.fromTo('#a2-shield', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.5)' }, 0.8);
+    a2.fromTo('#a2-zero-ms', { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)' }, 2.8);
+
+    // ----------------------------------------------------
+    // ACT III (20s - 30s)
+    // ----------------------------------------------------
+    const a3 = gsap.timeline();
+    a3.add(() => switchAct(2), 0);
+    a3.fromTo('#a3-title', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);
+    a3.fromTo('#a3-node-1', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.5)' }, 0.5);
+    a3.fromTo('#a3-node-2', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.5)' }, 0.8);
+    a3.fromTo('#a3-node-3', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.5)' }, 1.1);
+    a3.fromTo('#a3-flying-token', { x: 160, y: 160 }, { x: 420, y: 70, duration: 1.2, ease: 'power2.inOut' }, 1.4);
+    a3.fromTo('#a3-stamp-badge', { scale: 2.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)' }, 2.6);
+
+    // ----------------------------------------------------
+    // ACT IV (30s - 40s)
+    // ----------------------------------------------------
+    const a4 = gsap.timeline();
+    a4.add(() => switchAct(3), 0);
+    a4.fromTo('#a4-title', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, 0.2);
+    a4.fromTo('#a4-agent-hex', { rotation: -45, scale: 0.6, opacity: 0 }, { rotation: 0, scale: 1, opacity: 1, duration: 0.8, ease: 'back.out(1.8)' }, 0.5);
+    a4.fromTo('#a4-hash-block', { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.6, ease: 'power3.out' }, 1.2);
+    a4.fromTo('#a4-cf-worker', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.5)' }, 1.6);
+    a4.fromTo('#a4-pdf-fan', { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.8)' }, 2.2);
+
+    // ----------------------------------------------------
+    // ACT V (40s - 50s)
+    // ----------------------------------------------------
+    const a5 = gsap.timeline();
+    a5.add(() => switchAct(4), 0);
+    a5.fromTo('#a5-emblem-wrap', { scale: 0.3, rotation: -20, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.85, ease: 'back.out(1.8)' }, 0.2);
+
+    // Assemble Master
+    master.add(a1, 0);
+    master.add(a2, 10);
+    master.add(a3, 20);
+    master.add(a4, 30);
+    master.add(a5, 40);
+
+    // Playback Controls
+    function togglePlay() {
+      if (master.paused()) {
+        master.play();
+        iconPlay.classList.add('hidden');
+        iconPause.classList.remove('hidden');
+      } else {
+        master.pause();
+        iconPlay.classList.remove('hidden');
+        iconPause.classList.add('hidden');
+      }
+    }
+
+    function jumpTo(time) {
+      master.seek(time);
+      if (master.paused()) {
+        master.play();
+        iconPlay.classList.add('hidden');
+        iconPause.classList.remove('hidden');
+      }
+    }
+
+    seekBar.addEventListener('input', (e) => {
+      master.seek(parseFloat(e.target.value));
+    });
+  </script>
+</body>
+</html>

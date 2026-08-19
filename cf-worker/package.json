@@ -1,0 +1,26 @@
+{
+  "name": "invoicely-render",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Self-hostable Cloudflare Worker that renders Invoicely JSON to PNG or PDF (Satori raster, or Browser Rendering vector). Deploy with wrangler deploy.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "postinstall": "node ./scripts/copy-wasm.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "marked": "^18.0.2",
+    "pdf-lib": "^1.17.1",
+    "react": "^19.2.5",
+    "satori": "^0.26.0"
+  },
+  "devDependencies": {
+    "@cloudflare/puppeteer": "^0.0.14",
+    "@cloudflare/workers-types": "^4.20241106.0",
+    "@types/react": "^19.2.14",
+    "typescript": "^5.6.3",
+    "wrangler": "^4.85.0"
+  }
+}

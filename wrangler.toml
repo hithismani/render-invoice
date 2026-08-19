@@ -1,0 +1,15 @@
+# One-click / repo-root deploy of the render Worker (Satori only).
+# Free-tier safe: no Browser Rendering binding.
+# Paid `engine=browser` still uses cf-worker/wrangler.toml.
+name = "invoicely-render"
+main = "cf-worker/src/worker.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = true
+
+[vars]
+INVOICELY_PRINT_URL = "https://invoicely.app/print-view"

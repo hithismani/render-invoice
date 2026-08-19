@@ -1,0 +1,25 @@
+{
+  "name": "invoicely-render",
+  "private": true,
+  "description": "One-click Cloudflare Worker: POST /v1/render → PNG or raster PDF.",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "marked": "^18.0.2",
+    "pdf-lib": "^1.17.1",
+    "react": "^19.2.5",
+    "satori": "^0.26.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.85.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "INVOICELY_PRINT_URL": {
+        "description": "Public print-view origin used only by `?engine=browser`. Default `https://invoicely.app/print-view` is fine. Point at your own `/print-view` if you also deployed the app."
+      }
+    }
+  }
+}
