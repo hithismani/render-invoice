@@ -16,6 +16,7 @@ pnpm build      # static export → ./out
 | --- | --- |
 | `/` | Landing page: interactive preview, features, and setup |
 | `/playground` | Full editor (form and JSON tabs, live preview, PDF export) |
+| `/developers` | API: share URLs, schema, and the two self-hosted workers |
 | `/examples` | Gallery of 6 curated invoice examples |
 | `/examples/[slug]` | Individual example pages with previews |
 | `/changelog` | Product updates |
@@ -60,7 +61,7 @@ pnpm build
 
 - **Storage**: `localStorage` for drafts and templates (`lib/storage.ts`, `lib/draft.ts`).
 - **Sharing**: compressed URL hash via `lz-string` (`lib/share.ts`), plus QR codes via `qrcode`.
-- **PDFs**: iframe + `window.print()` with dynamic `@page` rules to produce vector, selectable-text PDFs with single-page auto-fit or A4 options.
+- **PDFs**: playground and print-view use `SatoriInvoiceTemplate`. The Worker turns that SVG into a vector PDF (`lib/satoriSvgToPdf.ts`). Browser print is still available via `/print-view`.
 - **Validation**: Zod runs in-form, with errors mapped by path to fields (`schema/invoiceSchema.ts`).
 - **Reordering**: `@dnd-kit` for drag handles on columns, line items, summary rows, and key-value pairs.
 

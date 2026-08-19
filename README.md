@@ -14,7 +14,7 @@ Most invoice tools pick your columns, compute your tax, and keep the file on the
 - Any columns, any number of recipients, any summary rows. Drag to reorder all of them.
 - Markdown in any field
 - Logo and signature, from a URL or an upload
-- Classic or bold layout, any Google Font, any accent color, LTR or RTL
+- Classic or bold layout, curated typefaces (Inter and friends), any accent color, LTR or RTL
 - Vector PDF with selectable text. Auto-fit to one page, or A4.
 - Optional footer rule on the PDF that reopens that exact invoice in the editor
 - Local drafts, history, and templates. Share as a URL or a QR code.
@@ -35,23 +35,31 @@ https://renderinvoice.com/print-view#j=<same>
 
 A Google Sheets `=HYPERLINK` formula can open a finished invoice from a row. Agents can read [`/llms.txt`](https://renderinvoice.com/llms.txt) for the live schema.
 
-If you need PDF or PNG bytes instead of a link, deploy the Worker and `POST /v1/render`.
+If you need PDF bytes instead of a link, deploy a Worker and `POST /v1/render`.
 
 ## Deploy the render API (Cloudflare)
 
-`cf-worker/` is the backend. `POST` invoice JSON, get a PNG or PDF back.
+One invoice template (`SatoriInvoiceTemplate`) everywhere: playground, print-view, and the Worker. Two one-click deploys. Repo must stay **public**.
+
+### Free: vector PDF
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
+
+`POST /v1/render` → **vector** PDF (selectable text, path borders/radius, edit link). `?format=png` for image only — never stuffed into a PDF. Cloudflare free plan.
+
+```bash
+npx wrangler deploy
+```
+
+### Paid: Chromium print
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker)
 
-That button deploys Satori only (free tier): `POST /v1/render` → PNG or raster PDF. Repo must stay **public** for the button to work.
-
-`?engine=browser` (vector PDF, selectable text) needs Workers Paid + Browser Rendering. Deploy `cf-worker/` yourself:
+Same Worker plus Browser Rendering. `?engine=browser` prints `/print-view` in headless Chromium. Workers Paid.
 
 ```bash
 cd cf-worker && pnpm install && npx wrangler deploy
 ```
-
-Satori is 50 to 200 ms and about $0.15 per 1,000 invoices: a PNG, or that PNG wrapped in a PDF. `?engine=browser` is 500 to 2000 ms and prints a real vector PDF.
 
 ```bash
 curl -X POST https://your-worker.workers.dev/v1/render \
@@ -62,7 +70,7 @@ curl -X POST https://your-worker.workers.dev/v1/render \
 
 ## Repo
 
-- [`web/`](web/) — Next.js 15 static export. Playground, examples, print view.
-- [`cf-worker/`](cf-worker/) — optional render Worker. Imports the same Satori template the playground uses.
+- [`web/`](web/) — Next.js 15 static export. Playground, examples, print view. One invoice template: `SatoriInvoiceTemplate`.
+- [`cf-worker/`](cf-worker/) — render Worker. Satori vector PDF on the free plan; Browser Rendering if you deploy this folder on Workers Paid.
 
 More: [web/README.md](web/README.md) · [cf-worker/README.md](cf-worker/README.md) · [renderinvoice.com/developers](https://renderinvoice.com/developers)

@@ -8,13 +8,8 @@ output requirements.
 
 | Engine | Speed | Cost per 1000 | Output | When to use |
 | --- | --- | --- | --- | --- |
-| **`satori` (default)** | 50 to 200 ms | ~$0.15 | PNG **or** raster PDF | Batch jobs, email attachments, thumbnails, or automated processing |
-| **`browser`** | 500 to 2000 ms | ~$90 | Vector PDF, selectable text | Customer-facing PDFs where text selection, copy-paste, and search indexing matter |
-
-The Satori PDF is **raster** (a PNG wrapped in a PDF page), meaning text is not
-selectable. This is suitable for automated pipelines or delivery archives.
-For interactive documents, use Browser Rendering for a true vector PDF with
-selectable text matching the live preview.
+| **`satori` (default)** | 50 to 200 ms | ~$0.15 | Vector PDF (selectable text) or PNG | Default. Same template as the playground. |
+| **`browser`** | 500 to 2000 ms | ~$90 | Vector PDF via Chromium | Only if you want headless print of `/print-view`. Workers Paid. |
 
 The render template is **shared with the playground at
 [renderinvoice.com/playground](https://renderinvoice.com/playground)**: `cf-worker`
@@ -23,9 +18,9 @@ behavior matches the web UI across layouts, custom fields, and RTL text.
 
 ## Deploy
 
-One-click (Satori only, free tier):
+This folder is the **paid** deploy (Browser Rendering binding). Repo-root one-click is the same Worker **without** that binding: Satori vector PDF on the free plan.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
+[![Deploy browser worker](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker)
 
 ```bash
 cd cf-worker
@@ -34,13 +29,13 @@ npx wrangler login
 npx wrangler deploy
 ```
 
-- **Workers Paid plan** is required only if you use `?engine=browser`
-  (Cloudflare Browser Rendering needs it).
-- Satori runs on the free plan subject to standard Workers CPU limits.
+- **Workers Paid** is required to deploy this folder (the `[browser]` binding).
+- `?engine=satori` (default) is a vector PDF with selectable text. `?format=png` is still a raster image.
+- Free-plan one-click: deploy from the repo root (no `[browser]` binding).
 
 ## Use it
 
-### Default: fast raster PDF (Satori)
+### Default: vector PDF (Satori)
 
 `invoice.json` may be `{ "invoice": {…} }` or a bare invoice object.
 
@@ -73,22 +68,17 @@ curl -X POST "https://your-worker.workers.dev/v1/render?engine=browser" \
 
 ### Satori (`engine=satori`)
 
-1. The Worker calls the `invoiceElement(...)` factory used by the playground
-   (`web/components/SatoriInvoiceTemplate.tsx`) to avoid template divergence.
-2. Satori produces an SVG.
-3. `@resvg/resvg-wasm` rasterizes the SVG to a PNG at 2x DPI.
-4. For PDF output, `pdf-lib` wraps the PNG in a single-page PDF sized to the image.
-   Respects `invoice.autoSize`: `false` fits one A4 page, while
-   `true` (default) sizes the page to content.
+1. Same `invoiceElement(...)` template as the playground.
+2. **PDF:** Satori with `embedFont: false` → SVG with real `<text>` + path geometry →
+   `satoriSvgToPdf` (pdf-lib). Selectable text, path borders/radius, edit-link annotation.
+   Never embeds a full-page PNG.
+3. **PNG only:** Satori + resvg at 2x DPI (image response, not used inside PDF).
+4. `autoSize: false` shrinks the vector page onto one A4; default sizes the page to content.
 
-Everything runs inside the Worker process without a headless browser. WASM modules
-(`yoga.wasm` for Satori's flexbox and `resvg.wasm` for rasterization) are
-imported as **CompiledWasm bindings** via wrangler's `[[rules]]`. They are copied
-into `cf-worker/wasm/` by `scripts/copy-wasm.mjs` during postinstall so import paths
-remain stable. Inter fonts (Regular and Bold) are fetched once per Worker instance
-and cached in module scope.
+Runs entirely in the Worker (no Browser Rendering). WASM (`yoga.wasm`, and `resvg.wasm` for PNG)
+via wrangler `CompiledWasm` rules.
 
-The PDF response sets `X-Pdf-Type: raster` to indicate raster output.
+The PDF response sets `X-Pdf-Type: vector` (selectable text, path geometry).
 
 `includeEditLink` (default true) stamps a URI annotation on the footer rule
 pointing at `https://renderinvoice.com/playground#i=…`. Set `false` to omit.
