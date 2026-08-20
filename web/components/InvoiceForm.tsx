@@ -367,7 +367,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         <KVList items={metaBottom} onChange={setMetaBottom} label="field" />
       </Section>
 
-      <Section title="Footer" description="Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list." defaultOpen={false} sectionKey="footer">
+      <Section title="Footer" description="Markdown: **bold** *italic* #–####### {@18} {@18:span} - list. Line breaks kept." defaultOpen={false} sectionKey="footer">
         <input className={`${inputCls} mb-2`} placeholder="Top text (e.g., Thank you!)" value={value.footerText?.topText || ''} onChange={(e) => setFooter('topText', e.target.value)} />
         <input className={inputCls} placeholder="Bottom text" value={value.footerText?.bottomText || ''} onChange={(e) => setFooter('bottomText', e.target.value)} />
       </Section>

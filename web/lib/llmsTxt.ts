@@ -34,7 +34,8 @@ Example (agent builds the object, then):
 That is the free, zero-backend path. Do not invent a POST API on renderinvoice.com.
 There is none.
 
-PDF footer: when includeEditLink is true (default), the saved PDF stamps a
+PDF footer: when includeEditLink is true (default), the saved PDF draws a
+visible bottom bar (“Click this bar to reopen & edit…”) and stamps a full-width
 link back to /playground#i=… so the same invoice can be reopened.
 
 ## 2. Self-hosted Cloudflare Worker (optional render API)
@@ -56,7 +57,20 @@ playground. PDF with selectable text. Free plan.
 ${schema}
   }
 
+## Markdown (every text field)
+
 ${MARKDOWN_HELP}
+
+Supported tags:
+  **bold**  *italic*  ***both***  ~~strike~~  \`code\`  [label](url)
+  bare emails → mailto links in PDF
+  # ## ### #### ##### ###### #######   headings (scale from field base size)
+  {@18} line   {@p:18} line   {@18:inline span}   absolute px sizes
+  - item   * item   1. item   > quote   ---
+  single newline = hard break
+
+Not supported: tables, images, raw HTML, footnotes.
+Currency/punctuation as plain text: ₹ € £ ¥ ₩ ₽ • — – … → ← ·
 
 Constraints:
 - Every key used in lineItems must be present in the columns array.

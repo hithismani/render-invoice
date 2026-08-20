@@ -77,14 +77,22 @@ export interface RenderOpts {
 
 export async function renderSvg(invoice: Invoice, width = 900, opts: RenderOpts = {}): Promise<string> {
   await initSatori();
-  const { family, regular, bold } = await loadInvoiceFont(invoice.font);
+  const { family, regular, bold, fallbackRegular, fallbackBold } = await loadInvoiceFont(invoice.font);
+  const fonts = [
+    { name: family, data: regular, weight: 400 as const, style: 'normal' as const },
+    { name: family, data: bold, weight: 700 as const, style: 'normal' as const },
+  ];
+  // Inter as glyph fallback for ₹ € £ and punctuation missing from latin subsets.
+  if (family !== 'Inter') {
+    fonts.push(
+      { name: 'Inter', data: fallbackRegular, weight: 400, style: 'normal' },
+      { name: 'Inter', data: fallbackBold, weight: 700, style: 'normal' },
+    );
+  }
   return satori(invoiceElement(invoice, { forExport: opts.forExport }), {
     width,
     embedFont: opts.embedFont ?? true,
-    fonts: [
-      { name: family, data: regular, weight: 400, style: 'normal' },
-      { name: family, data: bold, weight: 700, style: 'normal' },
-    ],
+    fonts,
   });
 }
 
@@ -204,9 +212,20 @@ export async function renderVectorPdf(invoice: Invoice, width = 900): Promise<Ui
 export async function renderPdf(invoice: Invoice, width = 900): Promise<Uint8Array> {
   const fitToA4 = invoice.autoSize === false;
   const svg = await renderSvg(invoice, width, { forExport: true, embedFont: false });
-  const { regular, bold } = await loadInvoiceFont(invoice.font);
+  const { family, regular, bold, fallbackRegular, fallbackBold } = await loadInvoiceFont(invoice.font);
   const editUrl = invoice.includeEditLink === false ? undefined : shareUrl(invoice);
-  return satoriSvgToPdf(svg, { regular, bold }, { fitToA4, editUrl });
+  // Always attach Inter as PDF glyph fallback (₹ € £ • — etc.) when primary
+  // isn't already the full Inter TTF.
+  return satoriSvgToPdf(
+    svg,
+    {
+      regular,
+      bold,
+      fallbackRegular: family === 'Inter' ? undefined : fallbackRegular,
+      fallbackBold: family === 'Inter' ? undefined : fallbackBold,
+    },
+    { fitToA4, editUrl },
+  );
 }
 
 export function downloadPdfBytes(bytes: Uint8Array, filename = 'invoice.pdf'): void {

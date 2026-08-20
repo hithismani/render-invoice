@@ -17,6 +17,13 @@ export const metadata: Metadata = {
 
 const entries = [
   {
+    version: 'v1.5',
+    date: '2026-08-20',
+    tag: 'new',
+    title: 'Markdown everywhere, size overrides, currency glyphs',
+    body: 'Every text field renders markdown (bold/italic/strike/code/links, #–####### headings, {@18}/{@p:18} and {@18:span} sizes, lists, quotes). Single newlines kept. ₹ € £ and punctuation via Inter fallback. Field values wrap as normal prose. PDF edit bar is visible and clickable when includeEditLink is on.',
+  },
+  {
     version: 'v1.4',
     date: '2026-08-20',
     tag: 'new',

@@ -167,7 +167,7 @@ function Features() {
     { I: ILayers, title: 'Self-hostable', body: 'Clone it. Deploy the static app and the worker to your own Cloudflare in one click.' },
     { I: IColumns, title: 'Endless columns', body: 'Add as many line-item columns as the job needs. Rename them. Reorder them.' },
     { I: IUsers, title: 'Endless rows', body: 'One line or two hundred. Add recipients, shipments, and summary rows without limits.' },
-    { I: IBold, title: 'Markdown in any field', body: '**bold** *italic* ~~strike~~ `code` [links](url). Description and footer also take headings, lists, and quotes.' },
+    { I: IBold, title: 'Markdown in any field', body: '**bold** *italic* `code` [links] #–####### {@18} sizes, lists, quotes. Newlines kept. ₹ € £ via font fallback.' },
     { I: IImage, title: 'Logo & signature', body: 'URL or upload. Size it. No third-party image host required.' },
     { I: IMaximize, title: 'Auto-fit or A4', body: 'Single-page auto-fit, or shrink to a standard sheet.' },
   ];

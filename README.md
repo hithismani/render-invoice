@@ -10,7 +10,7 @@ Open [the playground](https://renderinvoice.com/playground), fill the form or pa
 
 - Form editor and a raw JSON editor, with a live preview
 - Any columns, any number of recipients, any summary rows. Drag to reorder all of them.
-- Markdown in any field: **bold** *italic* ~~strike~~ `code` [links](url), plus headings, lists, and quotes in description/footer
+- Markdown in every text field (see table below). Currency glyphs (₹ € £ ¥ …) via Inter fallback. PDF edit bar when `includeEditLink` is true (default).
 - Logo and signature, from a URL or an upload
 - Classic or bold layout, curated typefaces, any accent color, LTR or RTL
 - PDF with selectable text. Auto-fit to one page, or A4.
@@ -19,6 +19,28 @@ Open [the playground](https://renderinvoice.com/playground), fill the form or pa
 - Works offline. Installable as a PWA.
 
 Currency, dates, and totals are whatever you type. RenderInvoice never recalculates them.
+
+### Markdown tags (every text field)
+
+| Tag | Meaning |
+| --- | --- |
+| `**bold**` / `__bold__` | Bold |
+| `*italic*` / `_italic_` | Italic |
+| `***both***` | Bold + italic |
+| `~~strike~~` | Strikethrough |
+| `` `code` `` | Inline code |
+| `[label](url)` | Link (clickable in PDF) |
+| bare `user@host` | Autolinked mailto in PDF |
+| `#` … `#######` | Headings H1–H7 (scale from field base size) |
+| `{@18}` or `{@p:18}` | Absolute px size for the rest of that line |
+| `{@18:span text}` | Inline run at absolute px size |
+| `- item` / `* item` | Unordered list |
+| `1. item` | Ordered list |
+| `> quote` | Blockquote |
+| `---` | Horizontal rule |
+| single newline | Hard line break (kept) |
+
+Not supported: tables, images, raw HTML, footnotes. Glyphs like `₹ € £ ¥ ₩ ₽ • — …` work as plain text.
 
 **Supported typefaces:** Inter, Source Serif 4, IBM Plex Sans, Playfair Display, Space Grotesk, DM Sans, Fraunces, Libre Baskerville, Instrument Sans, Newsreader. Unknown `font` values fall back to Inter.
 

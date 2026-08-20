@@ -3,7 +3,7 @@
 import { forwardRef, useEffect } from 'react';
 import type { Invoice as InvoiceData } from '@/schema/invoiceSchema';
 import { InvoiceSchema, validateLineItemColumns } from '@/schema/invoiceSchema';
-import { formatMarkdown, displayKey } from '@/lib/formatMarkdown';
+import { formatMarkdown, displayKey, stripMarkdown } from '@/lib/formatMarkdown';
 import { sharePath } from '@/lib/share';
 import { fontStack, googleCssHref, satoriFontName } from '@/lib/invoiceFonts';
 import Disclaimer from './Disclaimer';
@@ -20,13 +20,15 @@ function Md({ children, as: As = 'span', className, style }: { children: string 
 
 function copyright(invoice: InvoiceData): string {
   const fromEntries = invoice.invoiceFrom ? Object.entries(invoice.invoiceFrom) : [];
-  const name =
+  const name = stripMarkdown(
     invoice.invoiceFrom?.['Issued By'] ||
-    invoice.invoiceFrom?.['Company'] ||
-    invoice.invoiceFrom?.['Legal Name'] ||
-    invoice.invoiceFrom?.['Name'] ||
-    fromEntries[0]?.[1] ||
-    '';
+      invoice.invoiceFrom?.['Company'] ||
+      invoice.invoiceFrom?.['Legal Name'] ||
+      invoice.invoiceFrom?.['Name'] ||
+      invoice.invoiceFrom?.['Raised By'] ||
+      fromEntries[0]?.[1] ||
+      '',
+  );
   const dateStr =
     invoice.metaTop?.['Invoice Date'] ||
     invoice.metaTop?.['Date'] ||
@@ -93,8 +95,10 @@ const Invoice = forwardRef<HTMLDivElement, Props>(function Invoice(
         {invoice.includeEditLink !== false && (
           <a
             href={sharePath(invoice)}
-            className="block -mx-4 sm:-mx-6 lg:-mx-8 -mb-10 h-4 border-t border-zinc-200"
-          />
+            className="block -mx-4 sm:-mx-6 lg:-mx-8 -mb-10 mt-1 border-t border-zinc-400 bg-zinc-50 py-1.5 text-center text-[10px] text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
+          >
+            Click this bar to reopen & edit in RenderInvoice
+          </a>
         )}
       </div>
     </>

@@ -23,7 +23,13 @@ const URL_RE = /^(https?:\/\/|www\.)\S+$/i;
 
 export async function satoriSvgToPdf(
   svg: string,
-  fonts: { regular: ArrayBuffer; bold: ArrayBuffer },
+  fonts: {
+    regular: ArrayBuffer;
+    bold: ArrayBuffer;
+    /** Optional glyph fallback (e.g. full Inter) for currency / punctuation. */
+    fallbackRegular?: ArrayBuffer;
+    fallbackBold?: ArrayBuffer;
+  },
   opts: {
     fitToA4?: boolean;
     editUrl?: string;
@@ -42,6 +48,8 @@ export async function satoriSvgToPdf(
 
   let regular: PDFFont;
   let bold: PDFFont;
+  let fallbackRegular: PDFFont | null = null;
+  let fallbackBold: PDFFont | null = null;
   try {
     regular = await pdf.embedFont(toBytes(fonts.regular), { subset: true });
     bold = await pdf.embedFont(toBytes(fonts.bold), { subset: true });
@@ -50,15 +58,38 @@ export async function satoriSvgToPdf(
     regular = await pdf.embedFont(StandardFonts.Helvetica);
     bold = await pdf.embedFont(StandardFonts.HelveticaBold);
   }
+  if (fonts.fallbackRegular) {
+    try {
+      fallbackRegular = await pdf.embedFont(toBytes(fonts.fallbackRegular), { subset: true });
+      fallbackBold = fonts.fallbackBold
+        ? await pdf.embedFont(toBytes(fonts.fallbackBold), { subset: true })
+        : fallbackRegular;
+    } catch {
+      /* primary only */
+    }
+  }
 
   const page = pdf.addPage([svgW, svgH]);
-  const links = await paint(svg, page, svgW, svgH, regular, bold, pdf, fillsFromDefs(svg));
+  const links = await paint(
+    svg,
+    page,
+    svgW,
+    svgH,
+    regular,
+    bold,
+    fallbackRegular,
+    fallbackBold,
+    pdf,
+    fillsFromDefs(svg),
+  );
 
   for (const L of links) {
     stampLink(pdf, L.uri, L.rect);
   }
+  // Full-width hit target over the bottom edit bar drawn by the template.
+  const EDIT_BAR_H = 28;
   if (opts.editUrl) {
-    stampLink(pdf, opts.editUrl, { x: 0, y: 0, w: svgW, h: 18 });
+    stampLink(pdf, opts.editUrl, { x: 0, y: 0, w: svgW, h: EDIT_BAR_H });
   }
 
   const raw = await pdf.save();
@@ -82,7 +113,7 @@ export async function satoriSvgToPdf(
     });
   }
   if (opts.editUrl) {
-    stampLink(out, opts.editUrl, { x: ox, y: oy, w: drawW, h: 18 * scale });
+    stampLink(out, opts.editUrl, { x: ox, y: oy, w: drawW, h: EDIT_BAR_H * scale });
   }
   return out.save();
 }
@@ -171,6 +202,71 @@ function resolveFill(raw: string | undefined, fills: Map<string, string>): strin
 type LinkHit = { uri: string; rect: { x: number; y: number; w: number; h: number } };
 type TextFrag = { x: number; y: number; w: number; h: number; text: string; fill: string };
 
+/** Draw text using primary font, falling back per-glyph for missing currency/etc. */
+function drawTextRun(
+  page: PDFPage,
+  text: string,
+  x0: number,
+  y: number,
+  size: number,
+  primary: PDFFont,
+  fallback: PDFFont | null,
+  color: RGB,
+  opacity: number,
+  /** When set, advances are scaled so the run matches Satori's laid-out width. */
+  targetWidth: number,
+  letterSpacing: number,
+): number {
+  const chars = [...text];
+  if (chars.length === 0) return 0;
+
+  type Slot = { ch: string; font: PDFFont; w: number };
+  const slots: Slot[] = chars.map((ch) => {
+    for (const font of fallback ? [primary, fallback] : [primary]) {
+      try {
+        const w = font.widthOfTextAtSize(ch, size);
+        // .notdef / missing often reports 0 width
+        if (w > 0.01) return { ch, font, w };
+      } catch {
+        /* try next */
+      }
+    }
+    // Last resort: advance half-em so layout doesn't collapse
+    return { ch, font: primary, w: size * 0.5 };
+  });
+
+  // Satori/CSS letter-spacing is added after every glyph (including the last),
+  // and the SVG width attribute includes that trailing tracking.
+  const natural =
+    slots.reduce((s, g) => s + g.w, 0) + letterSpacing * chars.length;
+  // Micro-fit to Satori width when metrics drift slightly. Avoid large scales
+  // (those usually mean a missing glyph we already substituted).
+  let scale = 1;
+  if (targetWidth > 0 && natural > 0) {
+    const ratio = targetWidth / natural;
+    if (ratio > 0.9 && ratio < 1.1) scale = ratio;
+  }
+
+  let x = x0;
+  for (let i = 0; i < slots.length; i++) {
+    const g = slots[i];
+    try {
+      page.drawText(g.ch, { x, y, size, font: g.font, color, opacity });
+    } catch {
+      if (fallback && g.font !== fallback) {
+        try {
+          page.drawText(g.ch, { x, y, size, font: fallback, color, opacity });
+        } catch {
+          /* skip glyph */
+        }
+      }
+    }
+    // Advance glyph width + tracking after every character (CSS behavior).
+    x += (g.w + letterSpacing) * scale;
+  }
+  return targetWidth > 0 ? targetWidth : x - x0;
+}
+
 async function paint(
   svg: string,
   page: PDFPage,
@@ -178,6 +274,8 @@ async function paint(
   svgH: number,
   regular: PDFFont,
   bold: PDFFont,
+  fallbackRegular: PDFFont | null,
+  fallbackBold: PDFFont | null,
   pdf: PDFDocument,
   fills: Map<string, string>,
 ): Promise<LinkHit[]> {
@@ -206,36 +304,32 @@ async function paint(
         weightRaw === 'bolder' ||
         (Number.isFinite(weightNum) && weightNum >= 500);
       const font = useBold ? bold : regular;
+      const fallback = useBold ? fallbackBold : fallbackRegular;
       const tracking = num(a, 'letter-spacing', 0);
       const fillC = fill ?? { color: rgb(0, 0, 0), opacity: 1 };
       const opacity = a.opacity != null ? Number(a.opacity) * (fillC.opacity ?? 1) : fillC.opacity;
       const x0 = num(a, 'x');
       const ySvg = num(a, 'y');
       const yPdf = svgH - ySvg;
-      let x = x0;
       const h = num(a, 'height', size * 1.2);
+      const targetW = num(a, 'width', 0);
 
-      if (!tracking) {
-        try {
-          page.drawText(text, { x, y: yPdf, size, font, color: fillC.color, opacity });
-        } catch { /* skip */ }
-        const w = num(a, 'width', font.widthOfTextAtSize(text, size));
-        frags.push({ x: x0, y: yPdf, w, h, text, fill: a.fill || '#000' });
-      } else {
-        let runW = 0;
-        for (const ch of text) {
-          try {
-            page.drawText(ch, { x, y: yPdf, size, font, color: fillC.color, opacity });
-            const cw = font.widthOfTextAtSize(ch, size);
-            x += cw + tracking;
-            runW += cw + tracking;
-          } catch {
-            x += size * 0.5 + tracking;
-            runW += size * 0.5 + tracking;
-          }
-        }
-        frags.push({ x: x0, y: yPdf, w: runW || num(a, 'width', size), h, text, fill: a.fill || '#000' });
-      }
+      // Always run through glyph-aware drawer so ₹ / • / — survive latin subsets,
+      // and so letter-spacing matches Satori's precomputed width.
+      const runW = drawTextRun(
+        page,
+        text,
+        x0,
+        yPdf,
+        size,
+        font,
+        fallback,
+        fillC.color,
+        opacity ?? 1,
+        targetW,
+        tracking,
+      );
+      frags.push({ x: x0, y: yPdf, w: runW || targetW || size, h, text, fill: a.fill || '#000' });
       continue;
     }
 
@@ -437,10 +531,11 @@ function parseColor(raw?: string): { color: RGB; opacity: number } | null {
 
 function decode(s: string): string {
   return s
-    .replace(/&nbsp;/g, ' ')
+    .replace(/&nbsp;/g, '\u00a0')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n));
 }

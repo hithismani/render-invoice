@@ -21,25 +21,25 @@ export const InvoiceSchema = z.object({
   invoiceHeading: validatedString.optional()
     .describe('The main heading or title for the invoice (e.g., "Invoice").'),
   invoiceDescription: validatedString.optional()
-    .describe('Subtitle. Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list 1. numbered > quote.'),
+    .describe('Subtitle. Full markdown: **bold** *italic* ~~strike~~ `code` [label](url) #–####### headings {@18}/ {@p:18} size {@18:span} - list 1. numbered > quote. Line breaks kept.'),
   invoiceFrom: z.record(z.string())
-    .describe('Sender details as key-value pairs. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
+    .describe('Sender key-value pairs. Keys and values accept full markdown including size overrides ({@18}, # headings).'),
   invoiceTo: z.array(z.record(z.string()))
-    .describe('Recipients as key-value objects. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
+    .describe('Recipients as key-value objects. Keys and values accept full markdown including size overrides.'),
   metaTop: z.record(z.string())
-    .describe('Metadata above line items. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
+    .describe('Metadata above line items. Keys and values accept full markdown including size overrides.'),
   metaBottom: z.record(z.string()).default({})
-    .describe('Metadata below line items. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
+    .describe('Metadata below line items. Keys and values accept full markdown including size overrides.'),
   columns: z.array(z.string()).min(1, 'At least one column is required')
-    .describe('Column headers for the line items table.'),
+    .describe('Column headers for the line items table. Markdown supported.'),
   lineItems: z.array(LineItemSchema).min(1, 'At least one line item is required')
-    .describe('Line item cells aligned with columns. Cell text accepts inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
+    .describe('Line item cells aligned with columns. Full markdown including currency glyphs (₹ € £) and size overrides.'),
   summary: z.array(z.object({
     label: validatedString.min(1, 'Summary label is required')
-      .describe('Label for a summary item.'),
+      .describe('Label for a summary item. Markdown supported.'),
     value: z.union([validatedString, z.number()])
       .refine((v) => v !== '', 'Summary value is required')
-      .describe('Value for the summary item.'),
+      .describe('Value for the summary item. Markdown and currency glyphs supported.'),
   })).min(1, 'At least one summary item is required')
     .describe('Invoice summary items.'),
   logoUrl: z.string().optional()
@@ -59,7 +59,7 @@ export const InvoiceSchema = z.object({
   footerText: z.object({
     topText: validatedString.optional(),
     bottomText: validatedString.optional(),
-  }).describe('Footer text. Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list 1. numbered > quote.'),
+  }).describe('Footer text. Full markdown (bold/italic/code/links/headings/lists/quotes), single newlines kept, size overrides {@18} / #–#######.'),
   isCancelled: z.boolean().optional(),
   cancelledNotes: z.string().optional()
     .describe('Notes shown when the invoice is cancelled. Same markdown as the description.'),

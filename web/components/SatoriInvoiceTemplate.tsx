@@ -6,25 +6,32 @@
  */
 
 import React from 'react';
-import { marked, type Tokens } from 'marked';
 // Relative import (not `@/schema/...`) so this module resolves cleanly when
 // imported from the cf-worker too — the worker's bundler doesn't honor v1's
 // tsconfig path aliases.
 import type { Invoice } from '../schema/invoiceSchema';
-import { Markdown } from './SatoriMarkdown';
+import { Markdown, inlineMarkdownWords, stripMarkdown } from './SatoriMarkdown';
 import { satoriFontName } from '../lib/invoiceFonts';
 
 const PAGE_WIDTH = 900;
 
+/** Primary typeface; Inter is listed second so missing glyphs (₹ etc.) fall back. */
+function fontFamilyOf(invoice: Invoice): string {
+  const primary = satoriFontName(invoice.font);
+  return primary === 'Inter' ? 'Inter' : `${primary}, Inter`;
+}
+
 function copyrightOf(inv: Invoice): string {
   const from = inv.invoiceFrom || {};
-  const name =
+  const name = stripMarkdown(
     from['Issued By'] ||
-    from['Company'] ||
-    from['Legal Name'] ||
-    from['Name'] ||
-    Object.values(from)[0] ||
-    '';
+      from['Company'] ||
+      from['Legal Name'] ||
+      from['Name'] ||
+      from['Raised By'] ||
+      Object.values(from)[0] ||
+      '',
+  );
   const dateStr =
     inv.metaTop?.['Invoice Date'] ||
     inv.metaTop?.['Date'] ||
@@ -95,8 +102,8 @@ function TableHead({ cols, accent }: { cols: string[]; accent: string }): React.
   return (
     <div style={{ display: 'flex', flexDirection: 'row', padding: '12px 48px', borderBottom: '1px solid #e5e7eb', gap: 8 }}>
       {cols.map((c, i) => (
-        <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: accent, fontWeight: 600, textAlign: i === cols.length - 1 ? 'right' : 'left' }}>
-          {c}
+        <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: accent, fontWeight: 600, textAlign: i === cols.length - 1 ? 'right' : 'left', justifyContent: i === cols.length - 1 ? 'flex-end' : 'flex-start' }}>
+          <Markdown text={c} compact style={{ fontSize: 11, color: accent, fontWeight: 600 }} />
         </div>
       ))}
     </div>
@@ -109,8 +116,8 @@ function TableRows({ cols, lineItems }: { cols: string[]; lineItems: Array<Recor
       {cols.map((c, i) => {
         const v = item[c];
         return (
-          <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 13, color: '#111827', textAlign: i === cols.length - 1 ? 'right' : 'left' }}>
-            {v != null ? String(v) : ''}
+          <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 13, color: '#111827', textAlign: i === cols.length - 1 ? 'right' : 'left', justifyContent: i === cols.length - 1 ? 'flex-end' : 'flex-start' }}>
+            {v != null ? <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#111827' }} /> : null}
           </div>
         );
       })}
@@ -123,7 +130,7 @@ function TableRows({ cols, lineItems }: { cols: string[]; lineItems: Array<Recor
 function CancelledBadge({ notes }: { notes?: string }): React.ReactElement {
   return (
     <div style={{ display: 'flex', position: 'absolute', top: 0, right: 0, backgroundColor: '#ef4444', color: '#ffffff', padding: '8px 16px', fontSize: 13, fontWeight: 600, zIndex: 10 }}>
-      {notes || 'Cancelled'}
+      <Markdown text={notes || 'Cancelled'} compact style={{ fontSize: 13, fontWeight: 600, color: '#ffffff' }} />
     </div>
   );
 }
@@ -157,10 +164,10 @@ function BoldPartyBlock({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
       <div style={{ display: 'flex', fontSize: 11, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: accent, marginBottom: 4, wordBreak: 'break-word' }}>
-        {headerKey}
+        <Markdown text={headerKey} compact style={{ fontSize: 11, fontWeight: 600, color: accent }} />
       </div>
       <div style={{ display: 'flex', fontSize: 14, fontWeight: 600, color: '#18181b', wordBreak: 'break-word' }}>
-        {headerValue}
+        <Markdown text={headerValue} compact style={{ fontSize: 14, fontWeight: 600, color: '#18181b' }} />
       </div>
       {rest.map(([k, v]) => (
         <Field key={k} label={k} value={v} labelStyle={{ color: '#71717a' }} />
@@ -170,22 +177,13 @@ function BoldPartyBlock({
 }
 
 /**
- * Field renders a label + value as a *paragraph*, not a tabular row. When the
- * value wraps, wrapped lines flow back to the left edge of the container
- * (under the label), the way you'd read a printed sentence. This is closer
- * to "**Label:** value continues across multiple lines if it has to" than to
- * a 2-column key/value layout.
+ * Field = one paragraph line: `Label:` + value words share a single flex-wrap
+ * row. When the value wraps, the next word drops to the LEFT edge (under the
+ * label), like normal prose — not a 2-column layout where wraps indent under
+ * the value only.
  *
- * Implementation: each word becomes its own flex item inside a `flexWrap`
- * row. The label is the first item (nowrap, styled). Subsequent items are
- * per-word value spans separated by `gap: 4`. When the row exceeds the
- * container width, the next word wraps to a new visible line at the left
- * edge — exactly the natural paragraph behavior.
- *
- * Why per-word spans instead of one big span: Satori treats inline spans as
- * non-breakable units. A single `<span>{value}</span>` with multi-word text
- * doesn't word-wrap inside a constrained flex item — it overflows. Splitting
- * to one span per word gives flex layout the break opportunities it needs.
+ * Satori won't break inside a multi-word span, so value markdown is flattened
+ * to one span per word (see inlineMarkdownWords).
  */
 function Field({
   label,
@@ -196,127 +194,41 @@ function Field({
   value: string;
   labelStyle: React.CSSProperties;
 }): React.ReactElement {
-  const lines = String(value ?? '').split('\n');
-  const [first = '', ...rest] = lines;
+  const labelWords = label ? inlineMarkdownWords(label, { fontSize: 13, ...labelStyle }) : [];
+  const valueWords = inlineMarkdownWords(String(value ?? ''), { fontSize: 13, color: '#111827' });
+  // Glue ":" onto the last label word so gap:4 doesn't produce "By :".
+  const labelNodes =
+    labelWords.length === 0
+      ? label
+        ? [<span key="colon" style={{ fontSize: 13, ...labelStyle }}>:</span>]
+        : []
+      : labelWords.map((node, i) =>
+          i === labelWords.length - 1 ? (
+            <div key={`lbl-${i}`} style={{ display: 'flex', flexDirection: 'row', flexShrink: 0 }}>
+              {node}
+              <span style={{ fontSize: 13, ...labelStyle }}>:</span>
+            </div>
+          ) : (
+            node
+          ),
+        );
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', fontSize: 13, color: '#111827', minWidth: 0, gap: 2 }}>
-      <FieldLine label={label} value={first} labelStyle={labelStyle} />
-      {rest.map((line, i) => (
-        <FieldLine key={i} value={line} />
-      ))}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        fontSize: 13,
+        color: '#111827',
+        minWidth: 0,
+        gap: 4,
+      }}
+    >
+      {labelNodes}
+      {valueWords}
     </div>
   );
-}
-
-function FieldLine({
-  label,
-  value,
-  labelStyle,
-}: {
-  label?: string;
-  value: string;
-  labelStyle?: React.CSSProperties;
-}): React.ReactElement {
-  const tokens = inlineLexValue(value);
-  return (
-    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', minWidth: 0, gap: 4 }}>
-      {label && (
-        <span style={{ ...labelStyle, whiteSpace: 'nowrap' }}>{`${label}:`}</span>
-      )}
-      {tokensToWordSpans(tokens, {}, { current: 0 })}
-    </div>
-  );
-}
-
-/** Parse a single-line value as inline markdown. Handles **bold**, *italic*,
- *  `code`, [links](url), ~~strike~~ — anything marked recognizes inline.
- *  Falls back to a plain text token if anything goes wrong, so a stray
- *  unmatched asterisk never breaks the field. */
-function inlineLexValue(value: string): Tokens.Generic[] {
-  if (!value) return [];
-  try {
-    const blocks = marked.lexer(value);
-    const para = blocks.find((b) => b.type === 'paragraph') as Tokens.Paragraph | undefined;
-    if (para?.tokens && para.tokens.length > 0) return para.tokens as Tokens.Generic[];
-  } catch {
-    // fall through to plain text
-  }
-  return [{ type: 'text', text: value, raw: value } as unknown as Tokens.Generic];
-}
-
-/** Walk inline markdown tokens and emit one `<span>` per word, with inline
- *  style accumulated from any wrapping emphasis (bold/italic/code/link).
- *
- *  Why per-word: Satori's flex-wrap rows wrap on flex-item boundaries, not
- *  inside a span's text. Splitting `<span>"Reasonably Long Corporation"</span>`
- *  into three spans gives the layout three break opportunities. The Field's
- *  parent flex container has `gap: 4` so word spacing is visually preserved.
- */
-function tokensToWordSpans(
-  tokens: Tokens.Generic[],
-  style: React.CSSProperties,
-  ctr: { current: number },
-): React.ReactNode[] {
-  const out: React.ReactNode[] = [];
-  for (const tok of tokens) {
-    switch (tok.type) {
-      case 'text': {
-        const t = tok as Tokens.Text;
-        if (t.tokens && t.tokens.length > 0) {
-          out.push(...tokensToWordSpans(t.tokens as Tokens.Generic[], style, ctr));
-        } else {
-          for (const w of t.text.split(/\s+/).filter(Boolean)) {
-            out.push(<span key={ctr.current++} style={style}>{w}</span>);
-          }
-        }
-        break;
-      }
-      case 'strong': {
-        const s = tok as Tokens.Strong;
-        out.push(...tokensToWordSpans(s.tokens as Tokens.Generic[], { ...style, fontWeight: 700 }, ctr));
-        break;
-      }
-      case 'em': {
-        const e = tok as Tokens.Em;
-        out.push(...tokensToWordSpans(e.tokens as Tokens.Generic[], { ...style, fontStyle: 'italic' }, ctr));
-        break;
-      }
-      case 'codespan': {
-        const c = tok as Tokens.Codespan;
-        for (const w of c.text.split(/\s+/).filter(Boolean)) {
-          out.push(
-            <span key={ctr.current++} style={{ ...style, fontFamily: 'monospace', backgroundColor: '#f4f4f5', padding: '0 3px', borderRadius: 2 }}>{w}</span>,
-          );
-        }
-        break;
-      }
-      case 'link': {
-        const l = tok as Tokens.Link;
-        out.push(...tokensToWordSpans(l.tokens as Tokens.Generic[], { ...style, color: '#2563eb', textDecoration: 'underline' }, ctr));
-        break;
-      }
-      case 'del': {
-        const d = tok as Tokens.Del;
-        out.push(...tokensToWordSpans(d.tokens as Tokens.Generic[], { ...style, textDecoration: 'line-through' }, ctr));
-        break;
-      }
-      case 'escape': {
-        const e = tok as Tokens.Escape;
-        for (const w of e.text.split(/\s+/).filter(Boolean)) {
-          out.push(<span key={ctr.current++} style={style}>{w}</span>);
-        }
-        break;
-      }
-      default: {
-        if ('text' in tok && typeof tok.text === 'string') {
-          for (const w of tok.text.split(/\s+/).filter(Boolean)) {
-            out.push(<span key={ctr.current++} style={style}>{w}</span>);
-          }
-        }
-      }
-    }
-  }
-  return out;
 }
 
 /* ═════════════════════════════════════════════════════════════════
@@ -335,19 +247,19 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
   // when amountsVerifiedHideDisclaimer:true) doesn't collapse the layout —
   // gap kicks in uniformly between whichever sections do render.
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: satoriFontName(invoice.font), color: '#111827', position: 'relative', paddingTop: 32, paddingBottom: 24, gap: 14 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: fontFamilyOf(invoice), color: '#111827', position: 'relative', paddingTop: 32, paddingBottom: 24, gap: 14 }}>
       {(invoice.isCancelled || invoice.cancelledNotes) && <CancelledBadge notes={invoice.cancelledNotes} />}
 
       {/* Logo + Heading */}
       {invoice.logoUrl ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: logoJustify, padding: '0 48px', gap: 8 }}>
           <LogoImage url={invoice.logoUrl} size={invoice.logoSize} />
-          {invoice.invoiceHeading && <div style={{ display: 'flex', fontSize: 24, fontWeight: 700, color: '#1f2937' }}>{invoice.invoiceHeading}</div>}
+          {invoice.invoiceHeading && <Markdown text={invoice.invoiceHeading} style={{ fontSize: 24, fontWeight: 700, color: '#1f2937' }} />}
           {invoice.invoiceDescription && <Markdown text={invoice.invoiceDescription} style={{ fontSize: 14, color: '#4b5563' }} />}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', padding: '0 48px', gap: 8 }}>
-          {invoice.invoiceHeading && <div style={{ display: 'flex', fontSize: 24, fontWeight: 700, color: '#1f2937' }}>{invoice.invoiceHeading}</div>}
+          {invoice.invoiceHeading && <Markdown text={invoice.invoiceHeading} style={{ fontSize: 24, fontWeight: 700, color: '#1f2937' }} />}
           {invoice.invoiceDescription && <Markdown text={invoice.invoiceDescription} style={{ fontSize: 14, color: '#4b5563' }} />}
         </div>
       )}
@@ -380,8 +292,8 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
       <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
         {Object.entries(invoice.metaTop || {}).map(([k, v]) => (
           <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-            <span style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>{k}:</span>
-            <span style={{ fontSize: 13, color: '#1f2937' }}>{String(v)}</span>
+            <Markdown text={`${k}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} />
+            <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
           </div>
         ))}
       </div>
@@ -398,9 +310,9 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
           {(invoice.summary || []).map((s, i) => {
             const isLast = i === (invoice.summary?.length || 0) - 1;
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '6px 0', borderTop: isLast ? `2px solid ${accent}` : '1px solid #f3f4f6', marginTop: isLast ? 6 : 0 }}>
-                <span style={{ fontSize: 13, color: isLast ? '#111827' : '#6b7280', fontWeight: isLast ? 700 : 400 }}>{s.label}</span>
-                <span style={{ fontSize: isLast ? 16 : 13, color: isLast ? accent : '#111827', fontWeight: isLast ? 700 : 500 }}>{String(s.value)}</span>
+              <div key={i} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '6px 0', borderTop: isLast ? `2px solid ${accent}` : '1px solid #f3f4f6', marginTop: isLast ? 6 : 0, gap: 12 }}>
+                <Markdown text={s.label} compact style={{ fontSize: 13, color: isLast ? '#111827' : '#6b7280', fontWeight: isLast ? 700 : 400 }} />
+                <Markdown text={String(s.value)} compact style={{ fontSize: isLast ? 16 : 13, color: isLast ? accent : '#111827', fontWeight: isLast ? 700 : 500 }} />
               </div>
             );
           })}
@@ -412,8 +324,8 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
           {Object.entries(invoice.metaBottom).map(([k, v]) => (
             <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-              <span style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>{k}:</span>
-              <span style={{ fontSize: 13, color: '#1f2937' }}>{String(v)}</span>
+              <Markdown text={`${k}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} />
+              <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
             </div>
           ))}
         </div>
@@ -436,7 +348,7 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
 
       {invoice.invoiceFrom?.Email && (
         <div style={{ display: 'flex', padding: '0 48px' }}>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#1f2937' }}>{invoice.invoiceFrom.Email}</span>
+          <Markdown text={invoice.invoiceFrom.Email} compact style={{ fontSize: 13, fontWeight: 500, color: '#1f2937' }} />
         </div>
       )}
 
@@ -491,7 +403,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
   // edges (no horizontal padding), so it lives flush. Everything else is
   // horizontal-padding-only.
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: satoriFontName(invoice.font), color: '#111827', position: 'relative', paddingBottom: 24, gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: fontFamilyOf(invoice), color: '#111827', position: 'relative', paddingBottom: 24, gap: 16 }}>
       {(invoice.isCancelled || invoice.cancelledNotes) && <CancelledBadge notes={invoice.cancelledNotes} />}
 
       {/* Accent header — top corners flat in exports (PDF/SVG/PNG) so the
@@ -506,9 +418,9 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
           )}
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, textAlign: logoTextAlign }}>
             <div style={{ display: 'flex', fontSize: 11, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.8 }}>
-              {invoice.invoiceHeading || 'Invoice'}
+              <Markdown text={invoice.invoiceHeading || 'Invoice'} compact style={{ fontSize: 11, fontWeight: 600, color: '#ffffff', opacity: 0.8 }} />
             </div>
-            {invNum && <div style={{ display: 'flex', fontSize: 36, fontWeight: 800, marginTop: 4 }}>{invNum}</div>}
+            {invNum && <Markdown text={invNum} compact style={{ fontSize: 36, fontWeight: 800, marginTop: 4, color: '#ffffff' }} />}
             {invoice.invoiceDescription && <Markdown text={invoice.invoiceDescription} style={{ fontSize: 14, opacity: 0.8, marginTop: 8, color: '#ffffff' }} />}
           </div>
         </div>
@@ -549,8 +461,8 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '16px', margin: '0 48px', borderRadius: 8, backgroundColor: `${accent}14`, flexWrap: 'wrap' }}>
           {Object.entries(invoice.metaTop).map(([k, v]) => (
             <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-              <span style={{ fontSize: 11, color: '#71717a', fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase' }}>{k}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#18181b' }}>{String(v)}</span>
+              <Markdown text={k} compact style={{ fontSize: 11, color: '#71717a', fontWeight: 600 }} />
+              <Markdown text={String(v)} compact style={{ fontSize: 13, fontWeight: 600, color: '#18181b' }} />
             </div>
           ))}
         </div>
@@ -560,8 +472,8 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       <div style={{ display: 'flex', flexDirection: 'column', margin: '0 48px', borderRadius: 8, border: '1px solid #e4e4e7', overflow: 'hidden' }}>
         <div style={{ display: 'flex', flexDirection: 'row', padding: '12px 16px', backgroundColor: accent, color: '#ffffff', gap: 8 }}>
           {cols.map((c, i) => (
-            <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', textAlign: i === cols.length - 1 ? 'right' : 'left' }}>
-              {c}
+            <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', textAlign: i === cols.length - 1 ? 'right' : 'left', justifyContent: i === cols.length - 1 ? 'flex-end' : 'flex-start' }}>
+              <Markdown text={c} compact style={{ fontSize: 11, fontWeight: 600, color: '#ffffff' }} />
             </div>
           ))}
         </div>
@@ -570,8 +482,8 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
             {cols.map((c, i) => {
               const v = item[c];
               return (
-                <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 13, color: '#27272a', textAlign: i === cols.length - 1 ? 'right' : 'left' }}>
-                  {v != null ? String(v) : ''}
+                <div key={c} style={{ display: 'flex', flex: columnFlex(c), ...cellOverflow, fontSize: 13, color: '#27272a', textAlign: i === cols.length - 1 ? 'right' : 'left', justifyContent: i === cols.length - 1 ? 'flex-end' : 'flex-start' }}>
+                  {v != null ? <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#27272a' }} /> : null}
                 </div>
               );
             })}
@@ -585,9 +497,9 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
           {(invoice.summary || []).map((s, i) => {
             const isLast = i === (invoice.summary?.length || 0) - 1;
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px 16px', backgroundColor: isLast ? accent : i % 2 ? '#fafafa' : '#ffffff', color: isLast ? '#ffffff' : undefined }}>
-                <span style={{ fontSize: 13, fontWeight: isLast ? 700 : 400, color: isLast ? '#ffffff' : '#52525b' }}>{s.label}</span>
-                <span style={{ fontSize: isLast ? 16 : 13, fontWeight: isLast ? 700 : 500, color: isLast ? '#ffffff' : '#18181b' }}>{String(s.value)}</span>
+              <div key={i} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px 16px', backgroundColor: isLast ? accent : i % 2 ? '#fafafa' : '#ffffff', color: isLast ? '#ffffff' : undefined, gap: 12 }}>
+                <Markdown text={s.label} compact style={{ fontSize: 13, fontWeight: isLast ? 700 : 400, color: isLast ? '#ffffff' : '#52525b' }} />
+                <Markdown text={String(s.value)} compact style={{ fontSize: isLast ? 16 : 13, fontWeight: isLast ? 700 : 500, color: isLast ? '#ffffff' : '#18181b' }} />
               </div>
             );
           })}
@@ -599,8 +511,8 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, flexWrap: 'wrap', padding: '0 48px' }}>
           {Object.entries(invoice.metaBottom).map(([k, v]) => (
             <div key={k} style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 180, padding: 16, borderRadius: 8, backgroundColor: '#fafafa', border: '1px solid #f4f4f5', gap: 2 }}>
-              <div style={{ display: 'flex', fontSize: 11, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase', color: '#71717a', marginBottom: 2 }}>{k}</div>
-              <span style={{ fontSize: 13, color: '#3f3f46' }}>{String(v)}</span>
+              <Markdown text={k} compact style={{ fontSize: 11, fontWeight: 600, color: '#71717a', marginBottom: 2 }} />
+              <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#3f3f46' }} />
             </div>
           ))}
         </div>
@@ -661,8 +573,25 @@ export function invoiceElement(invoice: Invoice, opts: InvoiceRenderOpts = {}): 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, direction: dir, backgroundColor: '#ffffff' }}>
       {template}
+      {/* PDF stamps a full-width link over this strip (see satoriSvgToPdf editUrl). */}
       {invoice.includeEditLink !== false && (
-        <div style={{ display: 'flex', width: '100%', height: 16, borderTop: '1px solid #e5e7eb' }} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: 22,
+            marginTop: 4,
+            borderTop: '1px solid #a1a1aa',
+            backgroundColor: '#fafafa',
+          }}
+        >
+          <span style={{ fontSize: 9, color: '#71717a', letterSpacing: 0.3 }}>
+            {'Click this bar to reopen & edit in RenderInvoice'}
+          </span>
+        </div>
       )}
     </div>
   );

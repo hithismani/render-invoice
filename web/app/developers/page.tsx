@@ -9,7 +9,7 @@ import SchemaReference from '@/components/SchemaReference';
 import CopySchemaButton from '@/components/CopySchemaButton';
 import CopyPrompt from '@/components/CopyPrompt';
 import { GSHEETS_AI_PROMPT } from '@/lib/aiPrompts';
-import { MARKDOWN_HELP } from '@/lib/markdownHelp';
+import { MARKDOWN_HELP, MARKDOWN_TAGS, MARKDOWN_NOT_SUPPORTED } from '@/lib/markdownHelp';
 
 export const metadata: Metadata = {
   title: 'Invoice API',
@@ -203,6 +203,32 @@ export default function DevelopersPage() {
           </a>
         </Card>
 
+        {/* Markdown */}
+        <Card id="markdown" className="p-8 scroll-mt-20">
+          <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Markdown</div>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight">Every text field.</h2>
+          <p className="mt-3 text-zinc-600 leading-relaxed max-w-3xl">{MARKDOWN_HELP}</p>
+          <div className="mt-5 overflow-x-auto rounded-lg border border-zinc-200">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-zinc-50 text-xs uppercase tracking-wider text-zinc-500">
+                <tr>
+                  <th className="px-4 py-2.5 font-semibold">Tag</th>
+                  <th className="px-4 py-2.5 font-semibold">Meaning</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MARKDOWN_TAGS.map((row) => (
+                  <tr key={row.tag} className="bg-white">
+                    <td className="px-4 py-2 font-mono text-xs text-zinc-900 whitespace-nowrap">{row.tag}</td>
+                    <td className="px-4 py-2 text-zinc-600">{row.meaning}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">Not supported: {MARKDOWN_NOT_SUPPORTED}.</p>
+        </Card>
+
         {/* Schema reference */}
         <Card id="schema" className="p-8 scroll-mt-20">
           <div className="flex items-end justify-between flex-wrap gap-3 mb-4">
@@ -210,9 +236,8 @@ export default function DevelopersPage() {
               <div className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Schema reference</div>
               <h2 className="mt-2 text-2xl font-bold tracking-tight">The invoice contract.</h2>
               <p className="mt-2 text-zinc-600 max-w-3xl">
-                Every field accepted by the JSON editor and render worker.
+                Every field accepted by the JSON editor and render worker. Text fields accept the markdown tags above.
               </p>
-              <p className="mt-2 text-sm text-zinc-500 max-w-3xl">{MARKDOWN_HELP}</p>
             </div>
             <CopySchemaButton />
           </div>

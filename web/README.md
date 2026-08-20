@@ -1,6 +1,8 @@
 # RenderInvoice (v1)
 
-A browser-based invoice generator built with Next.js 15 (App Router, static export), Tailwind CSS, and Zod. Exports vector PDFs via Satori without an external backend. Text fields accept markdown (`**bold**` `*italic*` `~~strike~~` `` `code` `` `[label](url)`, plus headings/lists/quotes in description and footer).
+A browser-based invoice generator built with Next.js 15 (App Router, static export), Tailwind CSS, and Zod. Exports vector PDFs via Satori without an external backend.
+
+**Markdown in every text field:** `**bold**` `*italic*` `~~strike~~` `` `code` `` `[label](url)` `#`…`#######` headings `{@18}` / `{@p:18}` line size `{@18:span}` inline size `-` / `1.` lists `>` quotes `---` hr. Single newlines kept. Not supported: tables, images, HTML. See root `README.md` for the full tag table.
 
 ## Run locally
 
