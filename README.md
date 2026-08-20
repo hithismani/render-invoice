@@ -66,14 +66,19 @@ curl -X POST https://your-worker.workers.dev/v1/render \
 
 ## Repo layout
 
+- [`web/`](web/) — Next.js static site (playground, examples, print-view). **This is what Vercel/Pages deploys.**
+- [`workers/`](workers/) — git submodule → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker) (`cf-worker/` inside). **Dev only** — not required for the website build.
+
 ```bash
+# Site only (enough for Vercel Root Directory = web)
+git clone https://github.com/hithismani/render-invoice.git
+
+# Full checkout including worker submodule (local API work)
 git clone --recurse-submodules https://github.com/hithismani/render-invoice.git
-# or after clone:
-git submodule update --init --recursive
+# or: git submodule update --init --recursive
 ```
 
-- [`web/`](web/) — Next.js static site (playground, examples, print-view)
-- [`workers/`](workers/) — submodule → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker) (`cf-worker/` inside)
+Vercel: set **Root Directory** to `web`. Do not enable “Include git submodules” — the site does not import `workers/`.
 
 How the PDF is drawn: [licenses](https://renderinvoice.com/licenses).
 

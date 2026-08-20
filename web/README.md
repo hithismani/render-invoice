@@ -19,7 +19,7 @@ pnpm build      # static export → ./out
 | `/developers` | API: share URLs, schema, and the self-hosted PDF worker |
 | `/licenses` | Open-source credits (Satori and friends) |
 
-Worker package lives in the sibling submodule `../workers/cf-worker` → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker).
+Worker package (optional, local only): monorepo path `../workers/cf-worker` → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker). Not part of the Vercel/site build.
 | `/examples` | Gallery of 6 curated invoice examples |
 | `/examples/[slug]` | Individual example pages with previews |
 | `/changelog` | Product updates |
