@@ -42,7 +42,7 @@ link back to /playground#i=… so the same invoice can be reopened.
 Only if you need programmatic PDF bytes. One Worker. Same template as the
 playground. PDF with selectable text. Free plan.
 
-    https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main
+    https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice-worker/tree/main/cf-worker
     POST https://<your-worker>/v1/render
     POST https://<your-worker>/v1/render?format=png
 

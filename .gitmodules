@@ -1,0 +1,3 @@
+[submodule "workers"]
+	path = workers
+	url = git@github.com:hithismani/render-invoice-worker.git

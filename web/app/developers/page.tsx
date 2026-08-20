@@ -63,7 +63,7 @@ export default function DevelopersPage() {
               <p className="mt-3 text-zinc-600 leading-relaxed">
                 Send a <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">POST /v1/render</code> request with <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-xs">{`{ "invoice": {…} }`}</code> (or a bare invoice object). Same template as the playground. You get a PDF with selectable text. Cloudflare free plan.
               </p>
-              <a href={DEPLOY.satori} className="mt-5 inline-block">
+              <a href={DEPLOY.worker} className="mt-5 inline-block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy PDF worker to Cloudflare" />
               </a>

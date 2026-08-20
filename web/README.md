@@ -18,6 +18,8 @@ pnpm build      # static export → ./out
 | `/playground` | Full editor (form and JSON tabs, live preview, PDF export) |
 | `/developers` | API: share URLs, schema, and the self-hosted PDF worker |
 | `/licenses` | Open-source credits (Satori and friends) |
+
+Worker package lives in the sibling submodule `../workers/cf-worker` → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker).
 | `/examples` | Gallery of 6 curated invoice examples |
 | `/examples/[slug]` | Individual example pages with previews |
 | `/changelog` | Product updates |

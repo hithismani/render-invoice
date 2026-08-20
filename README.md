@@ -4,8 +4,6 @@ An unopinionated invoice generator. You supply the data. It renders the PDF.
 
 Open [the playground](https://renderinvoice.com/playground), fill the form or paste JSON, download a PDF. The text is selectable. No account. Nothing is uploaded. Drafts live in IndexedDB on your machine.
 
-Most invoice tools pick your columns, compute your tax, and keep the file on their server. This one does none of that. You name the fields. You type the totals. Your accountant checks the numbers, not the software.
-
 [Playground](https://renderinvoice.com/playground) · [Examples](https://renderinvoice.com/examples) · [API docs](https://renderinvoice.com/developers) · [llms.txt](https://renderinvoice.com/llms.txt) · [Licenses](https://renderinvoice.com/licenses)
 
 ## What it does
@@ -26,44 +24,34 @@ Currency, dates, and totals are whatever you type. RenderInvoice never recalcula
 
 ## For scripts and agents
 
-The invoice is JSON. Put it in the URL hash and the page hydrates itself. There is no hosted render API on renderinvoice.com.
-
 ```
 https://renderinvoice.com/playground#j=<encodeURIComponent(JSON.stringify(invoice))>
 https://renderinvoice.com/print-view#j=<same>
 ```
 
-`#j=` is plain JSON. `#i=` is the same payload compressed with lz-string.
+`#j=` is plain JSON. `#i=` is lz-string compressed.
 
-Agents can read [`/llms.txt`](https://renderinvoice.com/llms.txt) for the live schema. For PDF **bytes**, self-host the Cloudflare Worker and `POST /v1/render`.
+Agents: [`/llms.txt`](https://renderinvoice.com/llms.txt). For PDF **bytes**, self-host the worker:
 
-## API
+## PDF worker (separate repo)
+
+Public package: [hithismani/render-invoice-worker](https://github.com/hithismani/render-invoice-worker)  
+Vendored here as the git submodule `workers/` (`workers/cf-worker`).
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice-worker/tree/main/cf-worker)
+
+```bash
+git clone https://github.com/hithismani/render-invoice-worker.git
+cd render-invoice-worker/cf-worker
+pnpm install
+npx wrangler secret put API_KEY_SECRET
+npx wrangler deploy
+```
 
 ```http
 POST /v1/render
 Authorization: Bearer <API_KEY_SECRET>
 Content-Type: application/json
-```
-
-```json
-{ "invoice": { "...": "..." } }
-```
-
-Bare invoice objects are also accepted. Response: PDF bytes (`?format=png` for an image). Missing or wrong key → `401`. IP not on allowlist → `403`. Bad body → `400`.
-
-`API_KEY_SECRET` is **required**. Optional `ALLOWED_IPS` is a comma-separated list of caller IPs.
-
-`autoSize` (default true) sizes the page to the invoice. `autoSize: false` scales onto one A4.
-
-## Deploy the PDF worker
-
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main)
-
-Uses the repo-root `wrangler.toml`. Free Cloudflare plan. Same template as the playground. Repo must stay **public** for the button.
-
-```bash
-npx wrangler secret put API_KEY_SECRET
-npx wrangler deploy
 ```
 
 ```bash
@@ -74,27 +62,23 @@ curl -X POST https://your-worker.workers.dev/v1/render \
   --output invoice.pdf
 ```
 
-How the PDF is drawn: [licenses](https://renderinvoice.com/licenses).
-
-## Estimated costs
-
-Planning estimates only, not provider quotes:
-
-| Deployment | Estimate | Notes |
-| --- | ---: | --- |
-| Cloudflare Worker | $0 free plan | Subject to Cloudflare free limits |
+`autoSize` (default true) sizes the page to content. `autoSize: false` fits one A4.
 
 ## Repo layout
 
-- [`web/`](web/) — Next.js static site (playground, examples, print-view)
-- [`cf-worker/`](cf-worker/) — Cloudflare Worker (PDF / PNG)
+```bash
+git clone --recurse-submodules https://github.com/hithismani/render-invoice.git
+# or after clone:
+git submodule update --init --recursive
+```
 
-More: [web/README.md](web/README.md) · [cf-worker/README.md](cf-worker/README.md) · [renderinvoice.com/developers](https://renderinvoice.com/developers)
+- [`web/`](web/) — Next.js static site (playground, examples, print-view)
+- [`workers/`](workers/) — submodule → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker) (`cf-worker/` inside)
+
+How the PDF is drawn: [licenses](https://renderinvoice.com/licenses).
 
 ## Disclaimer
 
-Provided **as-is, without warranties or guarantees** of any kind, including merchantability, fitness for a particular purpose, accuracy of rendered invoices, uptime, or continued free-tier availability.
+Provided **as-is, without warranties or guarantees**. Verify totals and legal requirements before sending invoices.
 
-You must verify totals, tax, and legal requirements before sending invoices. Free hosting tiers may sleep, throttle, change, or end without notice. Self-hosted deployments are your responsibility for secrets, IP allowlists, security, and scaling.
-
-See [Terms of service](https://businessaddons.com/disclaimers/terms-of-service) and [Privacy policy](https://businessaddons.com/disclaimers/privacy-policy). A [BusinessAddons](https://businessaddons.com) product.
+See [Terms](https://businessaddons.com/disclaimers/terms-of-service) and [Privacy](https://businessaddons.com/disclaimers/privacy-policy). A [BusinessAddons](https://businessaddons.com) product.

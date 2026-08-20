@@ -1,19 +1,9 @@
 {
   "name": "renderinvoice",
   "private": true,
-  "description": "One-click Cloudflare Worker: POST /v1/render → PDF with selectable text.",
+  "description": "RenderInvoice monorepo — web site + workers/ submodule",
   "scripts": {
-    "deploy": "wrangler deploy"
-  },
-  "dependencies": {
-    "@pdf-lib/fontkit": "^1.1.1",
-    "@resvg/resvg-wasm": "^2.6.2",
-    "marked": "^18.0.2",
-    "pdf-lib": "^1.17.1",
-    "react": "^19.2.5",
-    "satori": "^0.26.0"
-  },
-  "devDependencies": {
-    "wrangler": "^4.85.0"
+    "submodule:init": "git submodule update --init --recursive",
+    "worker:deploy": "pnpm --dir workers/cf-worker deploy"
   }
 }
