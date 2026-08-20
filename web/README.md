@@ -1,6 +1,6 @@
 # RenderInvoice (v1)
 
-A browser-based invoice generator built with Next.js 15 (App Router, static export), Tailwind CSS, and Zod. Exports vector PDFs through the browser print pipeline without an external backend.
+A browser-based invoice generator built with Next.js 15 (App Router, static export), Tailwind CSS, and Zod. Exports vector PDFs via Satori without an external backend. Text fields accept markdown (`**bold**` `*italic*` `~~strike~~` `` `code` `` `[label](url)`, plus headings/lists/quotes in description and footer).
 
 ## Run locally
 
@@ -16,7 +16,8 @@ pnpm build      # static export → ./out
 | --- | --- |
 | `/` | Landing page: interactive preview, features, and setup |
 | `/playground` | Full editor (form and JSON tabs, live preview, PDF export) |
-| `/developers` | API: share URLs, schema, and the two self-hosted workers |
+| `/developers` | API: share URLs, schema, and the self-hosted PDF worker |
+| `/licenses` | Open-source credits (Satori and friends) |
 | `/examples` | Gallery of 6 curated invoice examples |
 | `/examples/[slug]` | Individual example pages with previews |
 | `/changelog` | Product updates |
@@ -61,7 +62,7 @@ pnpm build
 
 - **Storage**: `localStorage` for drafts and templates (`lib/storage.ts`, `lib/draft.ts`).
 - **Sharing**: compressed URL hash via `lz-string` (`lib/share.ts`), plus QR codes via `qrcode`.
-- **PDFs**: playground and print-view use `SatoriInvoiceTemplate`. The Worker turns that SVG into a vector PDF (`lib/satoriSvgToPdf.ts`). Browser print is still available via `/print-view`.
+- **PDFs**: playground and Worker use `SatoriInvoiceTemplate` → `satoriSvgToPdf`. `/print-view` is a chrome-less page for browser Save as PDF.
 - **Validation**: Zod runs in-form, with errors mapped by path to fields (`schema/invoiceSchema.ts`).
 - **Reordering**: `@dnd-kit` for drag handles on columns, line items, summary rows, and key-value pairs.
 

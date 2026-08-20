@@ -1,7 +1,7 @@
 {
   "name": "renderinvoice",
   "private": true,
-  "description": "One-click Cloudflare Worker: POST /v1/render → vector PDF (Satori).",
+  "description": "One-click Cloudflare Worker: POST /v1/render → PDF with selectable text.",
   "scripts": {
     "deploy": "wrangler deploy"
   },

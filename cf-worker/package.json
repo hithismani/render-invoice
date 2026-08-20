@@ -2,7 +2,7 @@
   "name": "renderinvoice",
   "private": true,
   "version": "0.1.0",
-  "description": "Self-hostable Cloudflare Worker that renders RenderInvoice JSON to PNG or PDF (Satori raster, or Browser Rendering vector). Deploy with wrangler deploy.",
+  "description": "Self-hostable Cloudflare Worker that renders RenderInvoice JSON to a PDF or PNG. Deploy with wrangler deploy.",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
@@ -18,7 +18,6 @@
     "satori": "^0.26.0"
   },
   "devDependencies": {
-    "@cloudflare/puppeteer": "^0.0.14",
     "@cloudflare/workers-types": "^4.20241106.0",
     "@types/react": "^19.2.14",
     "typescript": "^5.6.3",

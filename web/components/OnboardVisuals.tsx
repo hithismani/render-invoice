@@ -89,7 +89,7 @@ export function VisualEditor() {
       <div className="flex-1 rounded-t-lg bg-white p-2.5 shadow-lg flex flex-col justify-between text-left">
         <div>
           <div className="text-[8px] font-bold text-zinc-900 leading-tight">Acme Studio</div>
-          <div className="text-[6px] text-zinc-400 mt-0.5">Live vector preview</div>
+          <div className="text-[6px] text-zinc-400 mt-0.5">Live preview</div>
         </div>
         <div className="flex justify-between items-baseline font-mono border-t border-zinc-100 pt-1">
           <span className="text-[6px] text-zinc-400 font-sans">Total</span>
@@ -106,7 +106,7 @@ export function VisualExport() {
       {/* Mini PDF card with clickable footer */}
       <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 w-[125px] shrink-0 text-left">
         <div className="text-[9px] text-white/40 mb-1 flex justify-between items-center">
-          <span className="font-medium">Vector PDF</span>
+          <span className="font-medium">PDF</span>
         </div>
         <div className="h-[78px] rounded-md bg-white p-2 flex flex-col justify-between overflow-hidden shadow-sm">
           <div>

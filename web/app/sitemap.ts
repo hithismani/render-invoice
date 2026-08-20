@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/changelog`, lastModified: now, changeFrequency: 'weekly', priority: 0.5 },
     { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: 'yearly', priority: 0.4 },
     { url: `${SITE_URL}/pricing`, lastModified: now, changeFrequency: 'yearly', priority: 0.4 },
+    { url: `${SITE_URL}/licenses`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     ...TEMPLATES.map((t) => ({
       url: `${SITE_URL}/examples/${t.slug}`,
       lastModified: now,

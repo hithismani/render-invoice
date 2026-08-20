@@ -50,12 +50,9 @@ async function loadFixtures(filter?: string): Promise<Fixture[]> {
 
 async function startWranglerDev(): Promise<ChildProcess> {
   console.log(`Starting wrangler dev (cwd=${WORKER_DIR}, port=${PORT})…`);
-  // Use wrangler.dev.toml — same worker code, but with the Browser Rendering
-  // binding removed so wrangler dev can boot locally. The Satori engine path
-  // (which is what we exercise here) doesn't need the BROWSER binding.
   // log-level=info is needed: the "Ready on http" message comes from the
   // [wrangler:inf] logger; --log-level warn would suppress it and we'd time out.
-  const proc = spawn('npx', ['wrangler', 'dev', '--config', 'wrangler.dev.toml', '--port', String(PORT), '--ip', '127.0.0.1', '--log-level', 'info'], {
+  const proc = spawn('npx', ['wrangler', 'dev', '--config', 'wrangler.toml', '--port', String(PORT), '--ip', '127.0.0.1', '--log-level', 'info'], {
     cwd: WORKER_DIR,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, FORCE_COLOR: '0' },

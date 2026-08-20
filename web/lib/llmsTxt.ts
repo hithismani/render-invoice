@@ -1,26 +1,13 @@
-import { invoiceSchemaFields, type SchemaField } from './schemaFields';
-
-function dumpFields(fields: SchemaField[], indent: number): string {
-  const pad = ' '.repeat(indent);
-  return fields.map((f) => {
-    const opt = f.optional ? '?' : '';
-    const note = [
-      f.defaultValue !== undefined ? `default ${f.defaultValue}` : '',
-      f.description || '',
-    ].filter(Boolean).join(', ');
-    const line = `${pad}${f.key}${opt}: ${f.type},${note ? `  // ${note}` : ''}`;
-    if (!f.children?.length) return line;
-    return `${line}\n${dumpFields(f.children, indent + 2)}`;
-  }).join('\n');
-}
+import { dumpSchemaText } from './schemaFields';
+import { MARKDOWN_HELP } from './markdownHelp';
 
 export function generateLlmsTxt(): string {
-  const schema = dumpFields(invoiceSchemaFields(), 4);
+  const schema = dumpSchemaText(undefined, 4);
   return `# RenderInvoice: AI agent integration guide
 
 RenderInvoice is a browser-only invoice generator at https://renderinvoice.com.
 There is no RenderInvoice-hosted backend. This file is generated from the
-live Zod schema, which is the source of truth.
+invoice schema.
 
 ## 1. Share-URL protocol (stateless, no infrastructure)
 
@@ -52,25 +39,24 @@ link back to /playground#i=… so the same invoice can be reopened.
 
 ## 2. Self-hosted Cloudflare Worker (optional render API)
 
-Only if you need programmatic PDF bytes. Two workers:
+Only if you need programmatic PDF bytes. One Worker. Same template as the
+playground. PDF with selectable text. Free plan.
 
-  Free — Satori vector PDF (same template as the playground)
     https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main
     POST https://<your-worker>/v1/render
     POST https://<your-worker>/v1/render?format=png
 
-  Paid — Browser Rendering (prints /print-view, also Satori)
-    https://deploy.workers.cloudflare.com/?url=https://github.com/hithismani/render-invoice/tree/main/cf-worker
-    POST https://<your-worker>/v1/render?engine=browser
-
   Content-Type: application/json
   { "invoice": <Invoice> }     // or a bare invoice object
+  autoSize defaults true (page = content). autoSize: false fits one A4.
 
-## 3. Invoice JSON schema (generated from Zod)
+## 3. Invoice JSON schema
 
   {
 ${schema}
   }
+
+${MARKDOWN_HELP}
 
 Constraints:
 - Every key used in lineItems must be present in the columns array.

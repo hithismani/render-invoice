@@ -214,7 +214,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => goTo(id)}
-        className={`w-full text-left px-2.5 py-2 rounded-md text-sm font-medium transition-colors inline-flex items-center justify-between gap-2 ${tab === id ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50'}`}
+        className={`flex-1 lg:flex-none lg:w-full text-left px-2.5 py-2 rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center lg:justify-between gap-2 ${tab === id ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50'}`}
       >
         {label}
         {n > 0 && <span className="size-4 rounded-full bg-red-500 text-white text-[9px] font-bold grid place-items-center">{n}</span>}
@@ -223,8 +223,8 @@ export default function InvoiceForm({ value, onChange }: Props) {
   };
 
   return (
-    <div ref={rootRef} className="flex gap-4 items-start">
-      <nav className="sticky top-0 z-10 w-[5.75rem] shrink-0 flex flex-col gap-0.5">
+    <div ref={rootRef} className="flex flex-col lg:flex-row gap-4 items-start">
+      <nav className="sticky top-0 z-10 w-full lg:w-[5.75rem] shrink-0 flex flex-row lg:flex-col gap-0.5">
         <TabBtn id="content" label="Content" />
         <TabBtn id="design" label="Design" />
         <TabBtn id="settings" label="Settings" />
@@ -237,16 +237,16 @@ export default function InvoiceForm({ value, onChange }: Props) {
       )}
 
       <div id="form-tab-content" data-form-panel="content">
-        <Section title="Heading" description="The big title on top of your invoice." sectionKey="heading">
+        <Section title="Heading" description="Title plus subtitle. Subtitle accepts markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list." sectionKey="heading">
         <input className={`${inputCls} mb-2`} placeholder="e.g., Invoice" value={value.invoiceHeading || ''} onChange={(e) => set('invoiceHeading', e.target.value)} />
         <input className={inputCls} placeholder="e.g., Consulting services, September 2024" value={value.invoiceDescription || ''} onChange={(e) => set('invoiceDescription', e.target.value)} />
       </Section>
 
-      <Section title="Invoice From" description="Sender details. Drag rows to reorder." sectionKey="from">
+      <Section title="Invoice From" description="Sender details. Drag to reorder. Values accept **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="from">
         <KVList items={from} onChange={setFrom} label="field" />
       </Section>
 
-      <Section title="Invoice To" description="One block per recipient. Bill-to, ship-to, etc." sectionKey="to">
+      <Section title="Invoice To" description="One block per recipient. Values accept **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="to">
         {to.length === 0 ? (
           <EmptyState message="No recipients yet." onAdd={() => setTo([[{ key: 'Bill To', value: '' }]])} ctaLabel="Add Recipient" />
         ) : (
@@ -304,7 +304,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         )}
       </Section>
 
-      <Section title="Line Items" description="Each row is one item. Drag to reorder." sectionKey="lineItems">
+      <Section title="Line Items" description="Each row is one item. Cell text accepts **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="lineItems">
         {(value.lineItems || []).length === 0 ? (
           <EmptyState message="No line items yet." onAdd={addLineItem} ctaLabel="Add Line Item" />
         ) : (
@@ -367,7 +367,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         <KVList items={metaBottom} onChange={setMetaBottom} label="field" />
       </Section>
 
-      <Section title="Footer" defaultOpen={false} sectionKey="footer">
+      <Section title="Footer" description="Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list." defaultOpen={false} sectionKey="footer">
         <input className={`${inputCls} mb-2`} placeholder="Top text (e.g., Thank you!)" value={value.footerText?.topText || ''} onChange={(e) => setFooter('topText', e.target.value)} />
         <input className={inputCls} placeholder="Bottom text" value={value.footerText?.bottomText || ''} onChange={(e) => setFooter('bottomText', e.target.value)} />
       </Section>
@@ -523,7 +523,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         </Section>
 
         {value.isCancelled && (
-          <Section title="Cancellation Notes" sectionKey="cancelled">
+          <Section title="Cancellation Notes" description="Same markdown as the description: **bold** *italic* lists headings quotes." sectionKey="cancelled">
             <textarea className={inputCls} rows={3} value={value.cancelledNotes || ''} onChange={(e) => set('cancelledNotes', e.target.value)} />
           </Section>
         )}

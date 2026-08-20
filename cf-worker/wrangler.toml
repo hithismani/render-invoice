@@ -1,26 +1,12 @@
 name = "renderinvoice"
 main = "src/worker.ts"
 compatibility_date = "2024-11-01"
-# pdf-lib + @cloudflare/puppeteer's transitive deps reach for node:buffer /
-# node:stream — Workers runtime polyfills those when nodejs_compat is on.
+# pdf-lib + fontkit reach for node:buffer / node:stream.
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Workers refuse runtime WASM compilation. Treat any `.wasm`
-# import as a pre-compiled WebAssembly.Module so resvg-wasm and satori's
-# yoga.wasm can be `await initWasm(boundModule)`'d instead of
-# fetched-and-compiled at request time.
 [[rules]]
 type = "CompiledWasm"
 globs = ["**/*.wasm"]
 fallthrough = true
 
-# Cloudflare Browser Rendering — spins up a headless Chromium per request
-# and navigates to our public /print-view page to generate a vector PDF.
-# Requires a Workers Paid plan ($5/mo). See:
-# https://developers.cloudflare.com/browser-rendering/
-[browser]
-binding = "BROWSER"
-
-# Rotate-signed JWT secret for API-key verification. Set with:
-#   wrangler secret put API_KEY_SECRET
-# Then mint keys off-worker by signing { sub: <customer>, exp: <ts> } with that secret.
+# Set with: wrangler secret put API_KEY_SECRET

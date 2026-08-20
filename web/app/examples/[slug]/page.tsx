@@ -150,7 +150,7 @@ function TemplatePhilosophySection({ template }: { template: TemplateDef }) {
               <span className="text-zinc-400">Make it your own in seconds.</span>
             </h2>
             <p className="mt-4 text-sm sm:text-base text-zinc-300 leading-relaxed text-pretty">
-              Every field in this {template.name.toLowerCase()} example is fully editable. Open it in the playground to adjust columns, swap rates, and download your vector PDF.
+              Every field in this {template.name.toLowerCase()} example is fully editable. Open it in the playground to adjust columns, swap rates, and download a PDF.
             </p>
           </div>
 
@@ -175,7 +175,7 @@ function TemplatePhilosophySection({ template }: { template: TemplateDef }) {
                 <div className="text-blue-400 font-mono text-xs font-bold mb-1.5">STEP 03</div>
                 <div className="font-semibold text-white text-base">Export PDF</div>
                 <p className="mt-2 text-xs text-zinc-400 leading-relaxed">
-                  Download a vector PDF with selectable text, or copy a stateless link to share with clients.
+                  Download a PDF with selectable text, or copy a link to share with clients.
                 </p>
               </div>
             </div>

@@ -11,6 +11,7 @@ import { useLayoutEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ISparkles } from '@/components/Icons';
 import SchemaDialog from '@/components/SchemaDialog';
+import CopySchemaButton from '@/components/CopySchemaButton';
 import { exampleInvoice, type Invoice as InvoiceData } from '@/schema/invoiceSchema';
 import { resolveFilename } from '@/lib/downloadPdf';
 import { decodeShareHash } from '@/lib/share';
@@ -236,11 +237,13 @@ export default function PlaygroundPage() {
                   <div className="mb-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
                     <ISparkles className="size-3.5 mt-0.5 shrink-0" />
                     <div>
-                      <strong className="font-semibold">This is the raw schema.</strong> Editing JSON directly is flexible, but missing commas or invalid types will prevent the preview from rendering. If you prefer a guided editor,
+                      <strong className="font-semibold">This is the invoice JSON.</strong> Missing commas or invalid types will break the preview.
                       {' '}
-                      <button type="button" onClick={() => switchTab('form')} className="underline underline-offset-2 font-medium hover:text-amber-950">switch back to the Form view</button>. Or
-                      {' '}
-                      <button type="button" onClick={() => setSchemaOpen(true)} className="underline underline-offset-2 font-medium hover:text-amber-950">view the schema reference</button>.
+                      <button type="button" onClick={() => switchTab('form')} className="underline underline-offset-2 font-medium hover:text-amber-950">Form view</button>
+                      {' · '}
+                      <button type="button" onClick={() => setSchemaOpen(true)} className="underline underline-offset-2 font-medium hover:text-amber-950">Schema</button>
+                      {' · '}
+                      <CopySchemaButton className="align-middle" />
                     </div>
                   </div>
                 </div>

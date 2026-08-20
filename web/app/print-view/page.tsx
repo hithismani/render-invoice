@@ -7,10 +7,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * Minimal, chrome-less invoice renderer used by the self-hosted Cloudflare
- * Worker (and any other server-side PDF pipeline). Reads an invoice from the
- * URL hash (#i=<lz-string>) and renders just <Invoice>. No nav, no footer,
- * no playground JS — ready for headless Chromium to print.
+ * Chrome-less invoice view. Reads invoice JSON from the URL hash and
+ * renders the Satori template. No nav. For browser Save as PDF / print.
+ * The Worker does not use this page.
  */
 export default function PrintViewPage() {
   return <PrintViewClient />;

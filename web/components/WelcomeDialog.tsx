@@ -24,11 +24,11 @@ const STEPS = [
   {
     kicker: 'The editor',
     title: 'Form on the left, live preview on the right.',
-    body: 'Content, Design, and Settings stack as you scroll down. Pick a typeface from the curated list, an accent color, and a layout variant, or paste raw JSON directly.',
+    body: 'Content, Design, and Settings stack as you scroll down. Text fields accept markdown: **bold**, *italic*, ~~strike~~, `code`, [links](url), headings, lists, and quotes. Or paste raw JSON.',
   },
   {
     kicker: 'Leave with a file',
-    title: 'Save a vector PDF or share a link.',
+    title: 'Save a PDF or share a link.',
     body: 'Click Save PDF to download. Every generated PDF includes a subtle footer rule (if enabled in settings): clicking that line in the PDF opens this exact invoice back in the editor whenever you need to adjust it.',
   },
 ];

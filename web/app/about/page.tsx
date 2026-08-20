@@ -29,7 +29,7 @@ export default function AboutPage() {
             Most invoice software enforces rigid assumptions, such as fixed tax formulas or mandatory field layouts. When an invoice requires multiple recipient locations, retainer credits, or custom column names, those tools quickly become frustrating.
           </p>
           <p>
-            RenderInvoice treats an invoice as <strong>data you already have</strong>. You define the columns, summary rows, and recipient details. The app renders the layout and exports a clean vector PDF directly in your browser.
+            RenderInvoice treats an invoice as <strong>data you already have</strong>. You define the columns, summary rows, and recipient details. The app renders the layout and exports a PDF with selectable text, right in your browser.
           </p>
           <p>
             There are no backend databases, user accounts, or tracking scripts. Your invoice data remains in your browser tab. Drafts and templates save to <code className="px-1.5 py-0.5 rounded bg-zinc-100">IndexedDB</code>, and links use an encoded URL hash. When you return to the page, your draft restores automatically.

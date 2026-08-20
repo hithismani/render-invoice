@@ -17,25 +17,32 @@ export const metadata: Metadata = {
 
 const entries = [
   {
+    version: 'v1.4',
+    date: '2026-08-20',
+    tag: 'new',
+    title: 'One PDF path. Text you can select.',
+    body: 'The Worker and the playground now share the same PDF. Selectable text, same look as the preview, free Cloudflare plan. autoSize still sizes the page to content, or scales onto one A4.',
+  },
+  {
     version: 'v1.3',
     date: '2026-08-19',
     tag: 'new',
-    title: 'Satori vector PDF on the free plan',
-    body: 'The default free Worker path (Satori) emits a real vector PDF with selectable text from the same template as the playground. No second layout, no PNG-in-PDF. Chromium print-view remains an optional deploy if you want headless Browser Rendering.',
+    title: 'Selectable PDF text on the free plan',
+    body: 'The Worker emits a real PDF with selectable text from the same template as the playground. No second layout, no image-stuffed PDF.',
   },
   {
     version: 'v1.2',
     date: '2026-04-25',
     tag: 'new',
     title: 'Inter font and design trim',
-    body: 'The classic and bold designs now bundle the Inter font to prevent system font inconsistencies across operating systems. Removed the minimal design, refined default export settings, and added Satori render fixtures to keep worker output aligned with the browser preview.',
+    body: 'The classic and bold designs now bundle the Inter font to prevent system font inconsistencies across operating systems. Removed the minimal design and refined default export settings.',
   },
   {
     version: 'v1.1',
     date: '2026-04-14',
     tag: 'new',
-    title: 'Satori render path and social cards',
-    body: 'The self-hosted Cloudflare Worker now defaults to a Satori pipeline, rendering in 50 to 200 ms per invoice at roughly $0.15 per 1,000 requests. Vector PDFs with selectable text remain available using ?engine=browser. Added ?format=pdf|png output options, and each example page now includes its own open graph image.',
+    title: 'Self-hosted PDF worker and social cards',
+    body: 'The Cloudflare Worker renders invoices in 50 to 200 ms. Added ?format=pdf|png, and each example page now includes its own open graph image.',
   },
   {
     version: 'v1.0',

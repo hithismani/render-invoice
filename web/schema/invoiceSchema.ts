@@ -21,19 +21,19 @@ export const InvoiceSchema = z.object({
   invoiceHeading: validatedString.optional()
     .describe('The main heading or title for the invoice (e.g., "Invoice").'),
   invoiceDescription: validatedString.optional()
-    .describe('A brief description or subtitle for the invoice.'),
+    .describe('Subtitle. Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list 1. numbered > quote.'),
   invoiceFrom: z.record(z.string())
-    .describe('Sender details as dynamic key-value pairs.'),
+    .describe('Sender details as key-value pairs. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
   invoiceTo: z.array(z.record(z.string()))
-    .describe('Recipients as array of dynamic key-value pair objects.'),
+    .describe('Recipients as key-value objects. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
   metaTop: z.record(z.string())
-    .describe('Metadata displayed before line items.'),
+    .describe('Metadata above line items. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
   metaBottom: z.record(z.string()).default({})
-    .describe('Metadata displayed after line items.'),
+    .describe('Metadata below line items. Values accept inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
   columns: z.array(z.string()).min(1, 'At least one column is required')
     .describe('Column headers for the line items table.'),
   lineItems: z.array(LineItemSchema).min(1, 'At least one line item is required')
-    .describe('Line item data aligned with columns.'),
+    .describe('Line item cells aligned with columns. Cell text accepts inline markdown: **bold** *italic* ~~strike~~ `code` [label](url).'),
   summary: z.array(z.object({
     label: validatedString.min(1, 'Summary label is required')
       .describe('Label for a summary item.'),
@@ -59,9 +59,10 @@ export const InvoiceSchema = z.object({
   footerText: z.object({
     topText: validatedString.optional(),
     bottomText: validatedString.optional(),
-  }).describe('Footer text.'),
+  }).describe('Footer text. Markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list 1. numbered > quote.'),
   isCancelled: z.boolean().optional(),
-  cancelledNotes: z.string().optional(),
+  cancelledNotes: z.string().optional()
+    .describe('Notes shown when the invoice is cancelled. Same markdown as the description.'),
   amountsVerifiedHideDisclaimer: z.boolean().default(false)
     .describe('If false, a disclaimer about verifying amounts will be displayed.'),
   showBuiltWith: z.boolean().default(false)

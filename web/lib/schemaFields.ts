@@ -64,3 +64,17 @@ export function introspect(schema: z.ZodObject<any>): SchemaField[] {
 export function invoiceSchemaFields(): SchemaField[] {
   return introspect(InvoiceSchema as unknown as z.ZodObject<any>);
 }
+
+export function dumpSchemaText(fields = invoiceSchemaFields(), indent = 2): string {
+  const pad = ' '.repeat(indent);
+  return fields.map((f) => {
+    const opt = f.optional ? '?' : '';
+    const note = [
+      f.defaultValue !== undefined ? `default ${f.defaultValue}` : '',
+      f.description || '',
+    ].filter(Boolean).join(', ');
+    const line = `${pad}${f.key}${opt}: ${f.type},${note ? `  // ${note}` : ''}`;
+    if (!f.children?.length) return line;
+    return `${line}\n${dumpSchemaText(f.children, indent + 2)}`;
+  }).join('\n');
+}

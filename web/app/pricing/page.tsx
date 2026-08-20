@@ -41,7 +41,7 @@ export default function PricingPage() {
                 'Unlimited invoices',
                 'All 6+ examples',
                 'Unlimited local drafts',
-                'Vector PDF export',
+                'PDF export (selectable text)',
                 'Shareable URLs with QR codes',
                 'JSON / form dual editor',
                 'Drag-to-reorder everything',

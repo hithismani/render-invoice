@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import SchemaReference from './SchemaReference';
-import { Badge } from './ui/badge';
+import CopySchemaButton from './CopySchemaButton';
+import { MARKDOWN_HELP } from '@/lib/markdownHelp';
 
 export default function SchemaDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   useEffect(() => {
@@ -19,13 +20,14 @@ export default function SchemaDialog({ open, onClose }: { open: boolean; onClose
       <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-zinc-100 flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-lg font-bold tracking-tight text-zinc-900">Invoice schema</h3>
-              <Badge variant="blue">Zod · source of truth</Badge>
+              <CopySchemaButton />
             </div>
             <p className="text-sm text-zinc-500 mt-0.5">
-              Every field the JSON editor accepts. Your line-item keys must match the <code className="font-mono bg-zinc-100 px-1 rounded">columns</code> array.
+              Every field the JSON editor accepts. Line-item keys must match the <code className="font-mono bg-zinc-100 px-1 rounded">columns</code> array.
             </p>
+            <p className="text-xs text-zinc-500 mt-1.5">{MARKDOWN_HELP}</p>
           </div>
           <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 p-1">
             <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>

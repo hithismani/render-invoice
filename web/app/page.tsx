@@ -53,14 +53,14 @@ function Hero() {
         <div className="animate-in-up">
           <Badge variant="outline" className="mb-6">
             <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            100% browser · zero backend · vector PDFs
+            100% browser · zero backend · selectable PDF text
           </Badge>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-balance leading-[1.02]">
             Invoices that<br />
             <span className="gradient-text">don&rsquo;t have opinions.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg sm:text-xl text-zinc-600 text-pretty">
-            Every invoice tool tells you how to bill. RenderInvoice simply renders your data with a flexible schema, live preview, and vector PDF export. No sign-up required, and nothing leaves your browser.
+            Every invoice tool tells you how to bill. RenderInvoice simply renders your data with a flexible schema, live preview, and a PDF you can select text in. No sign-up required, and nothing leaves your browser.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/playground" variant="default" size="lg">
@@ -114,7 +114,7 @@ function Why() {
             Every invoice tool has opinions. <br className="hidden sm:inline" /><span className="text-zinc-400">This one doesn&rsquo;t.</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-zinc-300 leading-relaxed text-pretty">
-            Your invoice generator shouldn&rsquo;t try to be your compliance team or tax advisor. It should simply take your data, render a clean vector PDF, and let you hand it over to accounting and compliance to verify.
+            Your invoice generator shouldn&rsquo;t try to be your compliance team or tax advisor. It should simply take your data, make a PDF, and let you hand it over to accounting and compliance to verify.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ function HowItWorks() {
   const steps = [
     { n: '01', title: 'Describe', body: 'Fill out the form or paste JSON. Add the exact fields your invoice requires.' },
     { n: '02', title: 'Preview', body: 'Review the live preview. Validation catches column and key mismatches inline.' },
-    { n: '03', title: 'Download', body: 'Print directly to a vector PDF with selectable text in one click.' },
+    { n: '03', title: 'Download', body: 'Save a PDF. The text is selectable — copy a line, search the file.' },
   ];
   return (
     <section id="how" className="relative py-24 sm:py-32">
@@ -167,7 +167,7 @@ function Features() {
     { I: ILayers, title: 'Self-hostable', body: 'Clone it. Deploy the static app and the worker to your own Cloudflare in one click.' },
     { I: IColumns, title: 'Endless columns', body: 'Add as many line-item columns as the job needs. Rename them. Reorder them.' },
     { I: IUsers, title: 'Endless rows', body: 'One line or two hundred. Add recipients, shipments, and summary rows without limits.' },
-    { I: IBold, title: 'Markdown in any field', body: 'Bold, italic, strikethrough, and links wherever you need them.' },
+    { I: IBold, title: 'Markdown in any field', body: '**bold** *italic* ~~strike~~ `code` [links](url). Description and footer also take headings, lists, and quotes.' },
     { I: IImage, title: 'Logo & signature', body: 'URL or upload. Size it. No third-party image host required.' },
     { I: IMaximize, title: 'Auto-fit or A4', body: 'Single-page auto-fit, or shrink to a standard sheet.' },
   ];
@@ -237,7 +237,7 @@ function DevelopersStrip() {
             </div>
           </div>
           <div className="bg-black/40 backdrop-blur rounded-2xl border border-white/10 p-6 text-xs font-mono leading-relaxed">
-            <div className="text-zinc-400 mb-2"># 1. Deploy (free, Satori vector PDF)</div>
+            <div className="text-zinc-400 mb-2"># 1. Deploy the PDF worker (free)</div>
             <div className="text-zinc-200">npx wrangler deploy</div>
             <div className="text-zinc-400 mt-4 mb-2"># 2. Render invoices via curl</div>
             <pre className="text-zinc-200 whitespace-pre overflow-x-auto">{`curl -X POST \\

@@ -4,7 +4,7 @@ The integration is pure link-building. An Apps Script reads the active row, buil
 
   https://renderinvoice.com/playground#j=<encodeURIComponent(JSON.stringify(invoice))>
 
-Opening that URL pre-fills every field in the playground. From there I (or my client) review and download a vector PDF. No API calls, no auth, no Cloudflare Worker, and no Drive integration.
+Opening that URL pre-fills every field in the playground. From there I (or my client) review and download a PDF. No API calls, no auth, no Cloudflare Worker, and no Drive integration.
 
 Please:
 1. Propose a Google Sheet column layout that matches my business (described below). Keep one row per invoice. Include columns for: From block, Bill To block, invoice meta (number, date, due, project), line items (description / qty / rate / amount up to N rows), summary rows (subtotal, tax, total), and design settings (accentColor hex, design = "classic" or "bold").
@@ -20,6 +20,7 @@ Constraints from the schema:
 - Every key used in lineItems[] rows must also appear in columns[].
 - summary[].value is a string or number that I compute in the sheet; RenderInvoice never calculates totals, formats currency, or applies tax.
 - Pre-fill design ("classic" or "bold") and accentColor (#RRGGBB).
+- Text fields accept markdown: **bold** *italic* ~~strike~~ \`code\` [label](url). Description and footer also take # headings, - lists, 1. numbered, > quotes.
 
 My business: <describe your invoicing, e.g., "UK design freelancer billing hourly + 20% VAT", "SaaS with monthly seats and proration", "agency with retainers and split shipping addresses">.
 

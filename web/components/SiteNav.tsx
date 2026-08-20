@@ -70,8 +70,7 @@ export default function SiteNav() {
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1 text-sm">
             <Link href="/examples" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-zinc-700 hover:bg-zinc-50">Examples</Link>
             <Link href="/developers" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-zinc-700 hover:bg-zinc-50">API</Link>
-            <Link href="/developers#satori" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-zinc-500 hover:bg-zinc-50 pl-5 text-xs">Vector PDF · free</Link>
-            <Link href="/developers#browser" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-zinc-500 hover:bg-zinc-50 pl-5 text-xs">Chromium print · optional</Link>
+            <Link href="/developers#worker" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-zinc-500 hover:bg-zinc-50 pl-5 text-xs">PDF worker · free</Link>
             <a
               href={REPO.url}
               target="_blank"
