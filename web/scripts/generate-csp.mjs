@@ -3,18 +3,16 @@
  *
  * Next's static export inlines RSC/hydration bootstrap <script> blocks whose
  * contents change per page and per build, so a static `script-src 'self'`
- * would block hydration and break the site. Hash-based CSP fixes that, but a
- * single global hash list across all pages weighs >15KB — so we emit one
- * scoped CSP per exported page instead:
+ * would block hydration and break the site. Two deploy targets, two policies:
  *
- *   1. hash the inline (attribute-less) scripts of every exported HTML file,
- *   2. write out/_headers with a catch-all block (404 page hashes — it is
- *      served on unmatched URLs) followed by one block per page,
- *   3. patch vercel.json with the same catch-all + per-page rules.
+ *   - Cloudflare (out/_headers): hash-based, one scoped CSP per page. The
+ *     _headers file ships in the SAME build artifact as the HTML, so hashes
+ *     always match. Strict: blocks inline event handlers + foreign scripts.
  *
- * Both formats apply all matching rules with the last duplicate winning, so
- * per-page blocks must come after the catch-all. Hash-based CSP still blocks
- * inline event handlers, javascript: URLs, and third-party scripts.
+ *   - Vercel (vercel.json): portable policy with 'unsafe-inline' for scripts.
+ *     Vercel rebuilds the HTML itself and snapshots vercel.json before the
+ *     build, so committed hashes can never match what it serves. See the
+ *     note at the vercel.json section below.
  */
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -71,7 +69,15 @@ for (const [path, hashes] of [...pages].sort(([a], [b]) => a.localeCompare(b))) 
 blocks.push('/_next/static/*\n  Cache-Control: public, max-age=31536000, immutable');
 writeFileSync(join(OUT, '_headers'), `${blocks.join('\n')}\n`);
 
-// 2) Vercel (vercel.json, same catch-all + per-page shape).
+// 2) Vercel (vercel.json) — PORTABLE policy, no hashes.
+//
+// Vercel runs its own `next build` and snapshots vercel.json BEFORE the
+// build, so per-build script hashes can never match the HTML it serves
+// (mismatch = every inline script blocked = white page). The only stable
+// option there is 'unsafe-inline' for scripts. Primary XSS defense is
+// library-level: formatMarkdown escapes all user HTML before it can reach
+// dangerouslySetInnerHTML. Cloudflare deploys keep the strict hashed CSP
+// above because out/_headers ships in the same artifact as the HTML.
 const vercelPath = join(ROOT, 'vercel.json');
 const vercel = JSON.parse(readFileSync(vercelPath, 'utf8'));
 const baseHeaders = [
@@ -80,12 +86,14 @@ const baseHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'interest-cohort=()' },
 ];
-const rules = [
+const VERCEL_CSP =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://api.github.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'";
+vercel.headers = [
   {
     source: '/:path*',
     headers: [
       ...baseHeaders,
-      { key: 'Content-Security-Policy', value: CSP(defaultHashes) },
+      { key: 'Content-Security-Policy', value: VERCEL_CSP },
     ],
   },
   {
@@ -93,13 +101,6 @@ const rules = [
     headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
   },
 ];
-for (const [path, hashes] of [...pages].sort(([a], [b]) => a.localeCompare(b))) {
-  rules.push({
-    source: path,
-    headers: [{ key: 'Content-Security-Policy', value: CSP(hashes) }],
-  });
-}
-vercel.headers = rules;
 writeFileSync(vercelPath, `${JSON.stringify(vercel, null, 2)}\n`);
 
 rmSync(join(ROOT, 'public', '_headers'), { force: true });
