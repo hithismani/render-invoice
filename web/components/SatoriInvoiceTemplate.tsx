@@ -589,7 +589,7 @@ export function invoiceElement(invoice: Invoice, opts: InvoiceRenderOpts = {}): 
           }}
         >
           <span style={{ fontSize: 9, color: '#71717a', letterSpacing: 0.3 }}>
-            {'Click this bar to reopen & edit in RenderInvoice'}
+            {'\u00a0'}
           </span>
         </div>
       )}

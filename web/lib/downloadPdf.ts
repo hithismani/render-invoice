@@ -40,6 +40,10 @@ function collectLinkTags(): string {
     .join('\n');
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 /**
  * Vector PDF via the browser's print pipeline.
  * - Mounts the invoice in a hidden iframe at a fixed capture width
@@ -70,7 +74,7 @@ export async function downloadInvoicePdf(element: HTMLElement, invoice: Partial<
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>${filename}</title>
+    <title>${escapeHtml(filename)}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />

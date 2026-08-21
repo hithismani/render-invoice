@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "postinstall": "node scripts/copy-wasm.mjs",
+    "dev": "node scripts/copy-wasm.mjs && next dev",
+    "build": "node scripts/copy-wasm.mjs && next build && node scripts/generate-csp.mjs",
     "deploy": "wrangler deploy",
     "start": "next start",
     "lint": "next lint",
-    "test:fixtures": "tsx __tests__/invoice-fixtures/render.ts",
-    "test:fixtures:worker": "tsx __tests__/invoice-fixtures/render-worker.ts"
+    "test": "pnpm --dir .. test:web",
+    "test:security": "pnpm --dir .. test:security"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

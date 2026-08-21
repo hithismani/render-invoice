@@ -24,11 +24,11 @@ const URL_RE = /^(https?:\/\/|www\.)\S+$/i;
 export async function satoriSvgToPdf(
   svg: string,
   fonts: {
-    regular: ArrayBuffer;
-    bold: ArrayBuffer;
+    regular: ArrayBuffer | Uint8Array;
+    bold: ArrayBuffer | Uint8Array;
     /** Optional glyph fallback (e.g. full Inter) for currency / punctuation. */
-    fallbackRegular?: ArrayBuffer;
-    fallbackBold?: ArrayBuffer;
+    fallbackRegular?: ArrayBuffer | Uint8Array;
+    fallbackBold?: ArrayBuffer | Uint8Array;
   },
   opts: {
     fitToA4?: boolean;

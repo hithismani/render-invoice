@@ -4,6 +4,11 @@
   "description": "RenderInvoice monorepo — web site + workers/ submodule",
   "scripts": {
     "submodule:init": "git submodule update --init --recursive",
-    "worker:deploy": "pnpm --dir workers/cf-worker deploy"
+    "worker:deploy": "pnpm --dir workers/cf-worker deploy",
+    "test": "pnpm test:web && pnpm test:security && pnpm test:worker && pnpm test:security:worker",
+    "test:web": "bash tests/run.sh render-web.ts",
+    "test:worker": "bash tests/run.sh render-worker.ts",
+    "test:security": "bash tests/run.sh security-web.ts",
+    "test:security:worker": "bash tests/run.sh security-worker.ts"
   }
 }

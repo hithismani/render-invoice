@@ -21,10 +21,10 @@ import { satoriSvgToPdf } from '@/lib/satoriSvgToPdf';
 // Loading the full TTFs (one network fetch, browser-cached) gives Satori the
 // complete Latin + Latin-Ext + General-Punctuation + Symbols coverage Inter
 // actually ships, so every character renders as `<text>` in Inter.
-const RESVG_WASM_URL =
-  'https://cdn.jsdelivr.net/npm/@resvg/resvg-wasm@2.6.2/index_bg.wasm';
-const SATORI_WASM_URL =
-  'https://cdn.jsdelivr.net/npm/satori@0.26.0/yoga.wasm';
+// Same-origin WASM: scripts/copy-wasm.mjs materializes lockfile-pinned copies
+// from node_modules into public/wasm at install/build (not committed, not CDN).
+const RESVG_WASM_URL = '/wasm/resvg.wasm';
+const SATORI_WASM_URL = '/wasm/yoga.wasm';
 
 let resvgReady = false;
 let satoriWasmReady = false;

@@ -35,7 +35,7 @@ That is the free, zero-backend path. Do not invent a POST API on renderinvoice.c
 There is none.
 
 PDF footer: when includeEditLink is true (default), the saved PDF draws a
-visible bottom bar (“Click this bar to reopen & edit…”) and stamps a full-width
+visible bottom bar (edit link hit target) and stamps a full-width
 link back to /playground#i=… so the same invoice can be reopened.
 
 ## 2. Self-hosted Cloudflare Worker (optional render API)

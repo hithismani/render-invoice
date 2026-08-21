@@ -1,4 +1,5 @@
 import type { Invoice } from '@/schema/invoiceSchema';
+import { InvoiceSchema } from '@/schema/invoiceSchema';
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 
 export function encodeShareHash(invoice: Invoice): string {
@@ -6,27 +7,33 @@ export function encodeShareHash(invoice: Invoice): string {
   return `#i=${compressToEncodedURIComponent(json)}`;
 }
 
+/**
+ * Share links carry attacker-controlled JSON (anyone can hand a victim a
+ * crafted URL), so every payload is schema-validated before it reaches any
+ * renderer. Invalid or non-invoice shapes are rejected outright.
+ */
 export function decodeShareHash(hash: string): Invoice | null {
   // #j=<urlencoded JSON> — uncompressed form. Used by integrations (e.g.
   // Google Sheets Apps Script) that can't bundle lz-string. Longer URLs,
   // but trivially constructible from any environment with JSON.stringify.
   const j = hash.match(/[#&]j=([^&]+)/);
+  let raw: unknown = null;
   if (j) {
+    try { raw = JSON.parse(decodeURIComponent(j[1])); } catch { return null; }
+  } else {
+    const m = hash.match(/[#&]i=([^&]+)/);
+    if (!m) return null;
     try {
-      return JSON.parse(decodeURIComponent(j[1])) as Invoice;
+      const json = decompressFromEncodedURIComponent(m[1]);
+      if (!json) return null;
+      raw = JSON.parse(json);
     } catch {
       return null;
     }
   }
-  const m = hash.match(/[#&]i=([^&]+)/);
-  if (!m) return null;
-  try {
-    const json = decompressFromEncodedURIComponent(m[1]);
-    if (!json) return null;
-    return JSON.parse(json) as Invoice;
-  } catch {
-    return null;
-  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const parsed = InvoiceSchema.safeParse(raw);
+  return parsed.success ? parsed.data : null;
 }
 
 function origin(): string {

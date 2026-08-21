@@ -97,7 +97,7 @@ const Invoice = forwardRef<HTMLDivElement, Props>(function Invoice(
             href={sharePath(invoice)}
             className="block -mx-4 sm:-mx-6 lg:-mx-8 -mb-10 mt-1 border-t border-zinc-400 bg-zinc-50 py-1.5 text-center text-[10px] text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
           >
-            Click this bar to reopen & edit in RenderInvoice
+            {'\u00a0'}
           </a>
         )}
       </div>

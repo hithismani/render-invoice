@@ -1,8 +1,23 @@
 /** Lightweight HTML markdown for the DOM invoice preview (non-Satori). */
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Only these href schemes survive markdown links. Blocks javascript:, data:, vbscript:. */
+const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/|#|\.\/)/i;
+
 export function formatMarkdown(text: string | number | undefined | null): string {
   if (text === null || typeof text === 'undefined') return '';
-  let html = String(text);
+  // Escape user content BEFORE any transforms so raw HTML can never reach
+  // dangerouslySetInnerHTML. Markdown syntax chars (* _ ` ~ [ ] ( ) { } @ #)
+  // are unaffected by entity escaping, so the rules below still apply.
+  let html = escapeHtml(String(text));
 
   // Size overrides
   html = html.replace(/\{@(\d+(?:\.\d+)?):([^}]*)\}/g, '<span style="font-size:$1px">$2</span>');
@@ -25,7 +40,11 @@ export function formatMarkdown(text: string | number | undefined | null): string
   html = html.replace(/_(.*?)_/g, '<em>$1</em>');
   html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label: string, url: string) => {
+    const u = url.trim();
+    if (!SAFE_HREF.test(u)) return label;
+    return `<a href="${u}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  });
   html = html.replaceAll(/\n/g, '<br>');
   return html;
 }

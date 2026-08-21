@@ -5,5 +5,8 @@ out
 *.tsbuildinfo
 next-env.d.ts
 
+# Materialized at install/build from lockfile-pinned deps (scripts/copy-wasm.mjs)
+public/wasm/
+
 __tests__/invoice-fixtures/output/
 __tests__/invoice-fixtures/.cache/
