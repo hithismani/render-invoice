@@ -32,8 +32,13 @@ export function decodeShareHash(hash: string): Invoice | null {
     }
   }
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-  const parsed = InvoiceSchema.safeParse(raw);
-  return parsed.success ? parsed.data : null;
+  // Lenient on purpose: third-party integrations (Apps Script, API users) send
+  // partial invoices — often just { logoUrl } or a few fields. Partial parsing
+  // still enforces types on whatever IS present, drops unknown keys, and keeps
+  // the logoUrl/signatureUrl scheme refines (no javascript:/data:text/html).
+  // Renderers tolerate missing fields defensively.
+  const parsed = InvoiceSchema.partial().safeParse(raw);
+  return parsed.success ? (parsed.data as Invoice) : null;
 }
 
 function origin(): string {

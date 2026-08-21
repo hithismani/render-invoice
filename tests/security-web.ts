@@ -48,13 +48,32 @@ const good = decodeShareHash(encodeShareHash(exampleInvoice));
 check('lz round-trip', !!good && good.invoiceHeading === exampleInvoice.invoiceHeading);
 check('j= form accepted', !!decodeShareHash(`#j=${encodeURIComponent(JSON.stringify(exampleInvoice))}`));
 check(
-  'missing summary rejected',
-  decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ ...exampleInvoice, summary: undefined }))}`) === null,
+  'partial invoice accepted (logo only)',
+  !!decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ logoUrl: 'data:image/png;base64,iVBORw0KGgo=' }))}`),
+);
+check(
+  'partial invoice accepted (few fields)',
+  !!decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ invoiceHeading: 'Hi', metaTop: { 'Invoice Number': 'INV-1' } }))}`),
+);
+check(
+  'unknown keys stripped',
+  (() => {
+    const d = decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ invoiceHeading: 'X', evil: '<script>' }))}`);
+    return !!d && !('evil' in (d as unknown as Record<string, unknown>));
+  })(),
+);
+check(
+  'bad logoUrl scheme rejected',
+  decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ logoUrl: 'javascript:alert(1)' }))}`) === null,
 );
 check(
   'bad accentColor rejected',
   decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ ...exampleInvoice, accentColor: 'red;<script>' }))}`) ===
     null,
+);
+check(
+  'wrong-typed field rejected',
+  decodeShareHash(`#j=${encodeURIComponent(JSON.stringify({ columns: 'not-an-array' }))}`) === null,
 );
 check('non-object rejected', decodeShareHash(`#j=${encodeURIComponent('[1,2]')}`) === null);
 check('garbage lz rejected', decodeShareHash('#i=!!!!') === null);
