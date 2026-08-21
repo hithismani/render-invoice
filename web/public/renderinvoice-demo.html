@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RenderInvoice embed demo</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif}
+  .err{padding:40px;font-size:14px;color:#b91c1c}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  function boot() {
+    if (!window.RenderInvoicePlayground) {
+      document.getElementById('app').innerHTML = '<div class="err">renderinvoice.js not found next to this file.</div>';
+      return;
+    }
+    var opts = {};
+    if (params.get('data')) {
+      try { opts.invoice = JSON.parse(decodeURIComponent(params.get('data'))); } catch (e) {}
+    }
+    window.RI_APP = RenderInvoicePlayground.mount('#app', opts);
+  }
+  var min = document.createElement('script');
+  min.src = './renderinvoice.min.js';
+  min.onload = boot;
+  min.onerror = function () {
+    var full = document.createElement('script');
+    full.src = './renderinvoice.js';
+    full.onload = boot;
+    document.head.appendChild(full);
+  };
+  document.head.appendChild(min);
+})();
+</script>
+</body>
+</html>
