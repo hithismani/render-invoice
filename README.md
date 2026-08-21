@@ -86,6 +86,22 @@ curl -X POST https://your-worker.workers.dev/v1/render \
 
 `autoSize` (default true) sizes the page to content. `autoSize: false` fits one A4.
 
+## Reference wrapper (embeds, Apps Script, custom UIs)
+
+Building your own editor or integration around invoice JSON? Use the static
+playground package as the reference implementation instead of reverse-engineering
+the schema:
+
+- [`web/public/renderinvoice.js`](web/public/renderinvoice.js) — dependency-free renderer + form UI, served as `/renderinvoice.min.js` (`RenderInvoicePlayground.render/validate/mount`)
+- [`web/public/renderinvoice-demo.html`](web/public/renderinvoice-demo.html) — minimal usage example (mounts the package into a div)
+
+It mirrors `web/schema/invoiceSchema.ts` (defaults, enums, validation messages)
+and both invoice templates, so any wrapper stays visually and behaviorally in
+sync with the site. The file is host-agnostic: load it from any page — including
+Google Apps Script via `HtmlService` — and call
+`RenderInvoicePlayground.mount('#app')`. Share links use the same `#j=` / `#i=`
+hash formats as [`web/lib/share.ts`](web/lib/share.ts).
+
 ## Repo layout
 
 - [`web/`](web/) — Next.js static site (playground, examples, print-view). **This is what Vercel/Pages deploys.**

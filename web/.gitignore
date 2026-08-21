@@ -8,5 +8,10 @@ next-env.d.ts
 # Materialized at install/build from lockfile-pinned deps (scripts/copy-wasm.mjs)
 public/wasm/
 
+# Generated from public/renderinvoice.js at build (scripts/minify-embed.mjs)
+public/renderinvoice.min.js
+public/renderinvoice.min.js.gz
+public/renderinvoice.min.js.br
+
 __tests__/invoice-fixtures/output/
 __tests__/invoice-fixtures/.cache/
