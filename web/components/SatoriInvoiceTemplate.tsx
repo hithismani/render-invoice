@@ -21,6 +21,11 @@ function fontFamilyOf(invoice: Invoice): string {
   return primary === 'Inter' ? 'Inter' : `${primary}, Inter`;
 }
 
+/** Drop blank values so empty placeholders like "Raised By": "" never print a lonely label. */
+function filledEntries(rec: Record<string, string> | undefined): Array<[string, string]> {
+  return Object.entries(rec || {}).filter(([, v]) => String(v ?? '').trim() !== '') as Array<[string, string]>;
+}
+
 function copyrightOf(inv: Invoice): string {
   const from = inv.invoiceFrom || {};
   const name = stripMarkdown(
@@ -288,13 +293,13 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
           a single row evenly, 4–5 wrap into 2 rows, etc. */}
       <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: '0 48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 220px', minWidth: 0, border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, gap: 4 }}>
-          {Object.entries(invoice.invoiceFrom || {}).map(([k, v]) => (
+          {filledEntries(invoice.invoiceFrom).map(([k, v]) => (
             <Field key={k} label={displayKey(k)} value={String(v)} labelStyle={{ fontWeight: 500 }} />
           ))}
         </div>
         {(invoice.invoiceTo || []).map((recipient, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', flex: '1 1 220px', minWidth: 0, border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, gap: 4 }}>
-            {Object.entries(recipient).map(([k, v]) => (
+            {filledEntries(recipient).map(([k, v]) => (
               <Field key={k} label={displayKey(k)} value={String(v)} labelStyle={{ fontWeight: 500 }} />
             ))}
           </div>
@@ -303,7 +308,7 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
 
       {/* Meta top */}
       <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
-        {Object.entries(invoice.metaTop || {}).map(([k, v]) => {
+        {filledEntries(invoice.metaTop).map(([k, v]) => {
           const lbl = displayKey(k);
           return (
             <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
@@ -336,9 +341,9 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
       </div>
 
       {/* Meta bottom */}
-      {invoice.metaBottom && Object.keys(invoice.metaBottom).length > 0 && (
+      {filledEntries(invoice.metaBottom).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
-          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+          {filledEntries(invoice.metaBottom).map(([k, v]) => {
             const lbl = displayKey(k);
             return (
               <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
@@ -460,7 +465,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16, padding: '0 48px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 240px', minWidth: 0, gap: 6 }}>
           <BoldPartyBlock
-            entries={Object.entries(invoice.invoiceFrom || {}).map(([k, v]) => [displayKey(k), String(v)] as [string, string])}
+            entries={filledEntries(invoice.invoiceFrom).map(([k, v]) => [displayKey(k), String(v)] as [string, string])}
             accent={accent}
           />
         </div>
@@ -468,7 +473,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
           {(invoice.invoiceTo || []).map((recipient, i) => (
             <BoldPartyBlock
               key={i}
-              entries={Object.entries(recipient).map(([k, v]) => [displayKey(k), String(v)] as [string, string])}
+              entries={filledEntries(recipient).map(([k, v]) => [displayKey(k), String(v)] as [string, string])}
               accent={accent}
             />
           ))}
@@ -476,9 +481,9 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       </div>
 
       {/* Meta top (accent box) */}
-      {invoice.metaTop && Object.keys(invoice.metaTop).length > 0 && (
+      {filledEntries(invoice.metaTop).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '16px', margin: '0 48px', borderRadius: 8, backgroundColor: `${accent}14`, flexWrap: 'wrap' }}>
-          {Object.entries(invoice.metaTop).map(([k, v]) => {
+          {filledEntries(invoice.metaTop).map(([k, v]) => {
             const lbl = displayKey(k);
             return (
               <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
@@ -529,9 +534,9 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       </div>
 
       {/* Meta bottom */}
-      {invoice.metaBottom && Object.keys(invoice.metaBottom).length > 0 && (
+      {filledEntries(invoice.metaBottom).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, flexWrap: 'wrap', padding: '0 48px' }}>
-          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+          {filledEntries(invoice.metaBottom).map(([k, v]) => {
             const lbl = displayKey(k);
             return (
               <div key={k} style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 180, padding: 16, borderRadius: 8, backgroundColor: '#fafafa', border: '1px solid #f4f4f5', gap: 2 }}>

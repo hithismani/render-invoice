@@ -47,3 +47,6 @@ app.db
 
 # Claude Code session artifacts
 .claude/
+
+# local debug screenshots
+image.png
