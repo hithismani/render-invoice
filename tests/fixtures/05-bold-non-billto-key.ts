@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '05-bold-non-billto-key',
-  description: 'Bold with custom recipient keys (Customer, Patient) — header should be dynamic, not "Bill to"',
+  description: 'Bold with custom recipient keys (Customer, Patient) - header should be dynamic, not "Bill to"',
   invoice: {
     ...exampleInvoice,
     design: 'bold' as const,

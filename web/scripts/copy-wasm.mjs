@@ -15,7 +15,7 @@ const OUT = join(ROOT, 'public', 'wasm');
 const NM = join(ROOT, 'node_modules');
 
 if (!existsSync(NM)) {
-  console.error('copy-wasm: node_modules missing — run pnpm install first');
+  console.error('copy-wasm: node_modules missing - run pnpm install first');
   process.exit(1);
 }
 mkdirSync(OUT, { recursive: true });

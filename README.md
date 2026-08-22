@@ -22,13 +22,15 @@ Currency, dates, and totals are whatever you type. RenderInvoice never recalcula
 
 ### Markdown tags (every text field)
 
+Applies to: heading, description, from/to keys & values, meta keys & values, columns, line-item cells, summary, footer, cancelled notes.
+
 | Tag | Meaning |
 | --- | --- |
-| `**bold**` / `__bold__` | Bold |
-| `*italic*` / `_italic_` | Italic |
-| `***both***` | Bold + italic |
-| `~~strike~~` | Strikethrough |
-| `` `code` `` | Inline code |
+| `**text**` / `__text__` | Bold |
+| `*text*` / `_text_` | Italic |
+| `***text***` | Bold + italic |
+| `~~text~~` | Strikethrough |
+| `` `code` `` | Inline code (monospace chip) |
 | `[label](url)` | Link (clickable in PDF) |
 | bare `user@host` | Autolinked mailto in PDF |
 | `#` … `#######` | Headings H1–H7 (scale from field base size) |
@@ -39,8 +41,9 @@ Currency, dates, and totals are whatever you type. RenderInvoice never recalcula
 | `> quote` | Blockquote |
 | `---` | Horizontal rule |
 | single newline | Hard line break (kept) |
+| `@Label@` as a key | Hide the key label; print the value only (from / to / meta) |
 
-Not supported: tables, images, raw HTML, footnotes. Glyphs like `₹ € £ ¥ ₩ ₽ • — …` work as plain text.
+Not supported: tables, images, raw HTML, footnotes, task lists. Glyphs like `₹ € £ ¥ ₩ ₽ • — …` work as plain text.
 
 **Supported typefaces:** Inter, Source Serif 4, IBM Plex Sans, Playfair Display, Space Grotesk, DM Sans, Fraunces, Libre Baskerville, Instrument Sans, Newsreader. Unknown `font` values fall back to Inter.
 
@@ -92,20 +95,20 @@ Building your own editor or integration around invoice JSON? Use the static
 playground package as the reference implementation instead of reverse-engineering
 the schema:
 
-- [`web/public/renderinvoice.js`](web/public/renderinvoice.js) — dependency-free renderer + form UI, served as `/renderinvoice.min.js` (`RenderInvoicePlayground.render/validate/mount`)
-- [`web/public/renderinvoice-demo.html`](web/public/renderinvoice-demo.html) — minimal usage example (mounts the package into a div)
+- [`web/public/renderinvoice.js`](web/public/renderinvoice.js) - dependency-free renderer + form UI, served as `/renderinvoice.min.js` (`RenderInvoicePlayground.render/validate/mount`)
+- [`web/public/renderinvoice-demo.html`](web/public/renderinvoice-demo.html) - minimal usage example (mounts the package into a div)
 
 It mirrors `web/schema/invoiceSchema.ts` (defaults, enums, validation messages)
 and both invoice templates, so any wrapper stays visually and behaviorally in
-sync with the site. The file is host-agnostic: load it from any page — including
-Google Apps Script via `HtmlService` — and call
+sync with the site. The file is host-agnostic: load it from any page - including
+Google Apps Script via `HtmlService` - and call
 `RenderInvoicePlayground.mount('#app')`. Share links use the same `#j=` / `#i=`
 hash formats as [`web/lib/share.ts`](web/lib/share.ts).
 
 ## Repo layout
 
-- [`web/`](web/) — Next.js static site (playground, examples, print-view). **This is what Vercel/Pages deploys.**
-- [`workers/`](workers/) — git submodule → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker) (`cf-worker/` inside). **Dev only** — not required for the website build.
+- [`web/`](web/) - Next.js static site (playground, examples, print-view). **This is what Vercel/Pages deploys.**
+- [`workers/`](workers/) - git submodule → [render-invoice-worker](https://github.com/hithismani/render-invoice-worker) (`cf-worker/` inside). **Dev only** - not required for the website build.
 
 ```bash
 # Site only (enough for Vercel Root Directory = web)
@@ -116,7 +119,7 @@ git clone --recurse-submodules https://github.com/hithismani/render-invoice.git
 # or: git submodule update --init --recursive
 ```
 
-Vercel: set **Root Directory** to `web`. Do not enable “Include git submodules” — the site does not import `workers/`.
+Vercel: set **Root Directory** to `web`. Do not enable “Include git submodules” - the site does not import `workers/`.
 
 How the PDF is drawn: [licenses](https://renderinvoice.com/licenses).
 

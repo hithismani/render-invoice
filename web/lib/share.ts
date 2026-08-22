@@ -13,7 +13,7 @@ export function encodeShareHash(invoice: Invoice): string {
  * renderer. Invalid or non-invoice shapes are rejected outright.
  */
 export function decodeShareHash(hash: string): Invoice | null {
-  // #j=<urlencoded JSON> — uncompressed form. Used by integrations (e.g.
+  // #j=<urlencoded JSON> - uncompressed form. Used by integrations (e.g.
   // Google Sheets Apps Script) that can't bundle lz-string. Longer URLs,
   // but trivially constructible from any environment with JSON.stringify.
   const j = hash.match(/[#&]j=([^&]+)/);
@@ -33,7 +33,7 @@ export function decodeShareHash(hash: string): Invoice | null {
   }
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   // Lenient on purpose: third-party integrations (Apps Script, API users) send
-  // partial invoices — often just { logoUrl } or a few fields. Partial parsing
+  // partial invoices - often just { logoUrl } or a few fields. Partial parsing
   // still enforces types on whatever IS present, drops unknown keys, and keeps
   // the logoUrl/signatureUrl scheme refines (no javascript:/data:text/html).
   // Renderers tolerate missing fields defensively.

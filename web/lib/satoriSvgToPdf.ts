@@ -95,7 +95,7 @@ export async function satoriSvgToPdf(
   const raw = await pdf.save();
 
   // Always land on portrait A4 *width*.
-  // - autoSize (fitToA4=false): height = max(A4, scaled content) — short invoices
+  // - autoSize (fitToA4=false): height = max(A4, scaled content) - short invoices
   //   get a full A4 sheet; tall ones grow past A4 but stay A4-wide portrait.
   // - fitToA4=true: scale uniformly onto one A4 page (may shrink).
   const out = await PDFDocument.create();

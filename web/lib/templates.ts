@@ -16,7 +16,7 @@ export interface TemplateDef {
  * not real invoices to copy verbatim.
  *
  * The disclaimer shows on every template (amountsVerifiedHideDisclaimer: false)
- * — users toggle it off from Settings once they've reviewed their amounts.
+ * - users toggle it off from Settings once they've reviewed their amounts.
  */
 
 export const TEMPLATES: TemplateDef[] = [

@@ -40,7 +40,7 @@ for (const file of walkHtml(OUT)) {
     rel === 'index.html' ? '/' : `/${rel.replace(/\.html$/, '')}`;
   const html = readFileSync(file, 'utf8');
   const hashes = new Set();
-  // Bare "<script>" only — tags with attributes (src, type…) are skipped;
+  // Bare "<script>" only - tags with attributes (src, type…) are skipped;
   // JSON-LD and friends are non-executable and don't need allowlisting.
   for (const m of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
     if (m[1].trim().length === 0) continue;
@@ -69,7 +69,7 @@ for (const [path, hashes] of [...pages].sort(([a], [b]) => a.localeCompare(b))) 
 blocks.push('/_next/static/*\n  Cache-Control: public, max-age=31536000, immutable');
 writeFileSync(join(OUT, '_headers'), `${blocks.join('\n')}\n`);
 
-// 2) Vercel (vercel.json) — PORTABLE policy, no hashes.
+// 2) Vercel (vercel.json) - PORTABLE policy, no hashes.
 //
 // Vercel runs its own `next build` and snapshots vercel.json BEFORE the
 // build, so per-build script hashes can never match the HTML it serves

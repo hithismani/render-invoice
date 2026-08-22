@@ -1,5 +1,5 @@
 /**
- * Web pipeline fixture harness — SVG / PNG / vector PDF via the playground
+ * Web pipeline fixture harness - SVG / PNG / vector PDF via the playground
  * template (satori + resvg + satoriSvgToPdf).
  *
  * Run from monorepo root:  pnpm test:web
@@ -45,7 +45,7 @@ async function loadFixtures(filter?: string): Promise<Fixture[]> {
   for (const f of wanted) {
     const mod = (await import(join(FIXTURES_DIR, f))) as { default: Fixture };
     if (!mod.default?.invoice) {
-      console.warn(`! ${f} has no default export with .invoice — skipping`);
+      console.warn(`! ${f} has no default export with .invoice - skipping`);
       continue;
     }
     out.push({ ...mod.default, name: mod.default.name || f.replace(/\.ts$/, '') });
@@ -146,7 +146,7 @@ async function main() {
     failures.forEach((f) => console.log(`  - ${f}`));
     process.exit(1);
   }
-  console.log(`\n[web] Done in ${Date.now() - t0}ms — outputs in ${OUTPUT_DIR}`);
+  console.log(`\n[web] Done in ${Date.now() - t0}ms - outputs in ${OUTPUT_DIR}`);
 }
 
 function printTimingSummary(timings: Record<string, number[]>): void {

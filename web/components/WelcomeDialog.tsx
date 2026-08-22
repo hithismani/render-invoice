@@ -24,12 +24,12 @@ const STEPS = [
   {
     kicker: 'The editor',
     title: 'Form on the left, live preview on the right.',
-    body: 'Content, Design, and Settings stack as you scroll down. Every text field accepts markdown: **bold** *italic* ~~strike~~ `code` [links](url) #–####### {@18} sizes, lists, quotes. Single newlines kept. Or paste raw JSON.',
+    body: 'Content, Design, and Settings stack as you scroll down. Text fields support markdown - click the Md ? control on any section for the full cheat sheet. Or paste raw JSON.',
   },
   {
     kicker: 'Leave with a file',
     title: 'Save a PDF or share a link.',
-    body: 'Click Save PDF to download. When “PDF edit link” is on (default), the PDF ends with a bar — click it to reopen this exact invoice in the editor.',
+    body: 'Click Save PDF to download. When “PDF edit link” is on (default), the PDF ends with a bar - click it to reopen this exact invoice in the editor.',
   },
 ];
 

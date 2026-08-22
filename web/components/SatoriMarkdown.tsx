@@ -2,7 +2,7 @@
  * Satori-safe markdown renderer.
  *
  * Why we have this: Satori's CSS subset doesn't support inline HTML markup
- * cleanly — `<br>` inside `<span>` is unreliable, lists (`<ul>`/`<ol>`/`<li>`)
+ * cleanly - `<br>` inside `<span>` is unreliable, lists (`<ul>`/`<ol>`/`<li>`)
  * aren't natively supported, and bare whitespace text nodes between sibling
  * spans get collapsed. So instead of feeding markdown's HTML output into
  * Satori (which breaks), we lex markdown ourselves and emit a flex-only
@@ -24,7 +24,7 @@
  *       {@p:12} same as {@12} (paragraph size alias)
  *
  * Intentionally NOT supported:
- *   - tables (don't fit Satori's flex model — use the line-items table instead)
+ *   - tables (don't fit Satori's flex model - use the line-items table instead)
  *   - images, HTML passthrough, footnotes
  */
 
@@ -63,7 +63,7 @@ function baseFontSize(style?: React.CSSProperties): number {
   return 13;
 }
 
-// Private-use sentinels — marked leaves these alone (unlike HTML comments,
+// Private-use sentinels - marked leaves these alone (unlike HTML comments,
 // which get swallowed as raw html blocks along with following text).
 const SZ_OPEN = '\uE010'; // block size open  SZ_OPEN + "18" + SZ_CLOSE
 const SZ_CLOSE = '\uE011';
@@ -356,7 +356,7 @@ function Paragraph({
             flexWrap: 'wrap',
             minWidth: 0,
             fontSize,
-            // Per-word spans (see renderInline) — gap is the only reliable
+            // Per-word spans (see renderInline) - gap is the only reliable
             // inter-word space under Satori's flex model.
             gap: 4,
           }}
@@ -426,7 +426,7 @@ function wordSpans(text: string, style: React.CSSProperties): React.ReactNode[] 
 
 /**
  * Flatten inline markdown to per-word `<span>`s (with style accumulated through
- * bold/italic/link/…). Nested wrapper spans are intentionally avoided — Satori
+ * bold/italic/link/…). Nested wrapper spans are intentionally avoided - Satori
  * won't break inside a multi-word span, so emphasis must paint onto each word.
  */
 function renderInline(
@@ -506,7 +506,7 @@ function renderInline(
 }
 
 /**
- * Inline markdown as a flat list of word spans — for embedding inside a parent
+ * Inline markdown as a flat list of word spans - for embedding inside a parent
  * flex-wrap row (e.g. Field: `Label:` + words share one wrapping line).
  */
 export function inlineMarkdownWords(
@@ -539,7 +539,7 @@ export function inlineMarkdownWords(
       } else if (tok.type === 'space') {
         continue;
       } else {
-        // lists / quotes etc. — flatten plain text fallback
+        // lists / quotes etc. - flatten plain text fallback
         if ('text' in tok && typeof (tok as { text?: string }).text === 'string') {
           out.push(...wordSpans(String((tok as { text: string }).text), style));
         }

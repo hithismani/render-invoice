@@ -2,11 +2,11 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '13-markdown-rich',
-  description: 'Markdown in description, footer, and cancelled notes — bold, italic, code, links, lists, blockquote',
+  description: 'Markdown in description, footer, and cancelled notes - bold, italic, code, links, lists, blockquote',
   invoice: {
     ...exampleInvoice,
     invoiceDescription:
-      'Invoice covers **September 2023** consulting services delivered under SOW-118.\nReview and remit per terms below — questions to [billing@example.com](mailto:billing@example.com).',
+      'Invoice covers **September 2023** consulting services delivered under SOW-118.\nReview and remit per terms below - questions to [billing@example.com](mailto:billing@example.com).',
     footerText: {
       topText: '**Thank you for your business!**',
       bottomText:

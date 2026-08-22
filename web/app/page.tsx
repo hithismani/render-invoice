@@ -133,7 +133,7 @@ function HowItWorks() {
   const steps = [
     { n: '01', title: 'Describe', body: 'Fill out the form or paste JSON. Add the exact fields your invoice requires.' },
     { n: '02', title: 'Preview', body: 'Review the live preview. Validation catches column and key mismatches inline.' },
-    { n: '03', title: 'Download', body: 'Save a PDF. The text is selectable — copy a line, search the file.' },
+    { n: '03', title: 'Download', body: 'Save a PDF. The text is selectable - copy a line, search the file.' },
   ];
   return (
     <section id="how" className="relative py-24 sm:py-32">
@@ -167,9 +167,9 @@ function Features() {
     { I: ILayers, title: 'Self-hostable', body: 'Clone it. Deploy the static app and the worker to your own Cloudflare in one click.' },
     { I: IColumns, title: 'Endless columns', body: 'Add as many line-item columns as the job needs. Rename them. Reorder them.' },
     { I: IUsers, title: 'Endless rows', body: 'One line or two hundred. Add recipients, shipments, and summary rows without limits.' },
-    { I: IBold, title: 'Markdown in any field', body: '**bold** *italic* `code` [links] #–####### {@18} sizes, lists, quotes. Newlines kept. ₹ € £ via font fallback.' },
+    { I: IBold, title: 'Markdown in any field', body: '**bold** *italic* `code` [links] #–####### {@18} sizes, lists, quotes. Hide KV labels with @key@. Newlines kept. ₹ € £ via font fallback.' },
     { I: IImage, title: 'Logo & signature', body: 'URL or upload. Size it. No third-party image host required.' },
-    { I: IMaximize, title: 'Auto-fit or A4', body: 'Single-page auto-fit, or shrink to a standard sheet.' },
+    { I: IMaximize, title: 'Auto-fit or A4', body: 'A4 width with height that grows with content - or scale onto one A4 sheet.' },
   ];
 
   return (

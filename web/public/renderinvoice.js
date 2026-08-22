@@ -1,5 +1,5 @@
 /*!
- * RenderInvoice Playground — shared embed (schema-adapted, dependency-free).
+ * RenderInvoice Playground - shared embed (schema-adapted, dependency-free).
  * Source of truth mirror of web/schema/invoiceSchema.ts + SatoriInvoiceTemplate.tsx.
  *
  * Serve from web/public (Next serves /renderinvoice.js) or any CDN. Consumers:
@@ -262,7 +262,7 @@ var RenderInvoicePlayground = (function () {
     document.head.appendChild(s);
   }
 
-  /* ═══ Schema mirror — web/schema/invoiceSchema.ts ═══ */
+  /* ═══ Schema mirror - web/schema/invoiceSchema.ts ═══ */
 
   var FONTS = ['Inter', 'Source Serif 4', 'IBM Plex Sans', 'Playfair Display', 'Space Grotesk', 'DM Sans', 'Fraunces', 'Libre Baskerville', 'Instrument Sans', 'Newsreader'];
 

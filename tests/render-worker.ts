@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker HTTP harness — spawns `wrangler dev` against workers/cf-worker,
+ * Cloudflare Worker HTTP harness - spawns `wrangler dev` against workers/cf-worker,
  * POSTs every shared fixture, writes *.worker.{png,pdf}.
  *
  * Run from monorepo root:  pnpm test:worker
@@ -23,7 +23,7 @@ const DEV_VARS = join(WORKER_DIR, '.dev.vars');
 const PORT = 8788;
 const READY_MARKER = /Ready on http/i;
 const WRANGLER_TIMEOUT_MS = 90_000;
-/** Matches wrangler .dev.vars — not a real secret. */
+/** Matches wrangler .dev.vars - not a real secret. */
 const TEST_API_KEY = 'fixture-test-key';
 
 if (!existsSync(OUTPUT_DIR)) mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -223,7 +223,7 @@ async function main() {
     failures.forEach((f) => console.log(`  - ${f}`));
     process.exit(1);
   }
-  console.log(`\n[worker] Done — outputs in ${OUTPUT_DIR}`);
+  console.log(`\n[worker] Done - outputs in ${OUTPUT_DIR}`);
 }
 
 main().catch((e) => {

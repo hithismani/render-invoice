@@ -64,7 +64,7 @@ export async function appendHistory(invoice: Invoice): Promise<void> {
     const trimmed = list.slice(-MAX);
     await write(trimmed);
   } catch {
-    /* ignore — history is a nice-to-have */
+    /* ignore - history is a nice-to-have */
   }
 }
 

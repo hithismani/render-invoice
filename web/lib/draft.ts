@@ -108,7 +108,7 @@ export async function nextInvoiceNumber(prefix = 'INV'): Promise<string> {
     await set(NUM_KEY, next);
     void requestPersistence();
   } catch {
-    /* ignore — still return the incremented number so UX works */
+    /* ignore - still return the incremented number so UX works */
   }
   return `${prefix}-${String(next).padStart(4, '0')}`;
 }

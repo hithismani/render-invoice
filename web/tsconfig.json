@@ -16,8 +16,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     // `react-jsx` (automatic runtime) instead of `preserve` so that esbuild
-    // — used by Wrangler when bundling the cf-worker, which now imports v1's
-    // SatoriInvoiceTemplate.tsx for 1:1 parity — actually transforms JSX.
+    // - used by Wrangler when bundling the cf-worker, which now imports v1's
+    // SatoriInvoiceTemplate.tsx for 1:1 parity - actually transforms JSX.
     // With `preserve` the bundle contained raw `<` tokens and the Worker
     // refused to start. Next.js compiles JSX via SWC (not tsc) so this only
     // affects how external bundlers see v1 .tsx files.

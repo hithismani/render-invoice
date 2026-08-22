@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '04-bold-many-recipients',
-  description: 'Bold with same 5 recipients — section headers must reflect actual first key, not "Bill to"',
+  description: 'Bold with same 5 recipients - section headers must reflect actual first key, not "Bill to"',
   invoice: {
     ...exampleInvoice,
     design: 'bold' as const,

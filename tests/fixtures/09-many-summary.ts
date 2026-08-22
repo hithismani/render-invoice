@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '09-many-summary',
-  description: 'Many summary rows — Subtotal, Discount, Shipping, multi-region taxes, Total',
+  description: 'Many summary rows - Subtotal, Discount, Shipping, multi-region taxes, Total',
   invoice: {
     ...exampleInvoice,
     summary: [

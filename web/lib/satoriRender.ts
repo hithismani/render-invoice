@@ -15,7 +15,7 @@ import { satoriSvgToPdf } from '@/lib/satoriSvgToPdf';
 // missing General Punctuation glyphs (•, —, →, etc.) that show up in the
 // Markdown component's bullet lists and free-text fields. When Satori hits
 // a glyph not in any provided font, it falls back to a built-in serif and
-// outlines that glyph as a `<path>` — that's why the rendered SVG had Times-
+// outlines that glyph as a `<path>` - that's why the rendered SVG had Times-
 // shaped path blobs scattered through it.
 //
 // Loading the full TTFs (one network fetch, browser-cached) gives Satori the
@@ -110,13 +110,13 @@ export async function renderPng(invoice: Invoice, width = 900): Promise<Uint8Arr
  *      elements (font-family="inter" font-size="..." font-weight="...").
  *   2. Parse the SVG string into a live SVGElement via DOMParser, attached
  *      off-screen so svg2pdf can read computed layout.
- *   3. Reuse the same Inter TTFs Satori already loaded (from /public/fonts/) —
+ *   3. Reuse the same Inter TTFs Satori already loaded (from /public/fonts/) -
  *      one fetch, one cache, both pipelines.
  *   4. Register both weights with jsPDF via addFileToVFS + addFont so
  *      svg2pdf's findFirstAvailableFontFamily picks Inter (not Helvetica).
  *      Crucially, the bold variant is registered with style='bold' (not
  *      'normal' with weight=700) so svg2pdf's lookup actually finds it.
- *   5. Call pdf.svg(svgEl) — svg2pdf walks the SVG and emits Tj operators
+ *   5. Call pdf.svg(svgEl) - svg2pdf walks the SVG and emits Tj operators
  *      for each <text>, producing real selectable PDF text.
  *
  * Result: PDF with vector-perfect Inter text, copyable / selectable.
@@ -164,7 +164,7 @@ export async function renderVectorPdf(invoice: Invoice, width = 900): Promise<Ui
 
     // Register Inter at every weight svg2pdf might ask for. The CRITICAL
     // detail: jsPDF's `addFont(file, name, style, weight)` does NOT use the
-    // `style` argument verbatim — it calls combineFontStyleAndFontWeight on
+    // `style` argument verbatim - it calls combineFontStyleAndFontWeight on
     // (style, weight) and stores under the *combined* key. So we always
     // pass the BASE style ('normal' or 'italic') plus the numeric weight
     // and let jsPDF produce the canonical key:
@@ -176,13 +176,13 @@ export async function renderVectorPdf(invoice: Invoice, width = 900): Promise<Ui
     //    addFont(.., 'inter', 'normal', 500)  → key '500normal'
     //    addFont(.., 'inter', 'italic', 600)  → key '600italic'  …etc.
     //
-    // (My earlier attempt passed style='600normal' AND weight=600 — jsPDF
+    // (My earlier attempt passed style='600normal' AND weight=600 - jsPDF
     // combined those to '600' + '600normal' = '600600normal'. The console
     // warning still showed `'600normal'` because that's what svg2pdf was
     // looking for; ours was registered under a doubled-up key, so it
     // missed and fell back to Times.)
     //
-    // Italic uses Regular (no synthetic slant) — bundling Inter-Italic.ttf
+    // Italic uses Regular (no synthetic slant) - bundling Inter-Italic.ttf
     // is a follow-up if real italic in the PDF matters.
     const tag = family.replace(/\s+/g, '');
     const key = family.toLowerCase();
@@ -214,7 +214,7 @@ export async function renderPdf(invoice: Invoice, width = 900): Promise<Uint8Arr
   const svg = await renderSvg(invoice, width, { forExport: true, embedFont: false });
   const { family, regular, bold, fallbackRegular, fallbackBold } = await loadInvoiceFont(invoice.font);
   const editUrl = invoice.includeEditLink === false ? undefined : shareUrl(invoice);
-  // Always attach Inter as PDF glyph fallback (₹ € £ • — etc.) when primary
+  // Always attach Inter as PDF glyph fallback (₹ € £ • - etc.) when primary
   // isn't already the full Inter TTF.
   return satoriSvgToPdf(
     svg,

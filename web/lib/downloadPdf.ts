@@ -17,7 +17,7 @@ export function resolveFilename(invoice: Partial<Invoice>): string {
 
 /**
  * Serialize every active stylesheet on the live page into a single CSS string.
- * Same-origin rules only — cross-origin sheets (e.g. Google Fonts) throw on
+ * Same-origin rules only - cross-origin sheets (e.g. Google Fonts) throw on
  * `cssRules` access and are silently skipped.
  */
 function collectInlineCss(): string {
@@ -27,7 +27,7 @@ function collectInlineCss(): string {
       const rules = sheet.cssRules;
       for (const rule of Array.from(rules)) chunks.push(rule.cssText);
     } catch {
-      /* cross-origin — skip */
+      /* cross-origin - skip */
     }
   }
   return chunks.join('\n');

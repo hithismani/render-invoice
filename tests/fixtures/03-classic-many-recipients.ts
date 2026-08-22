@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '03-classic-many-recipients',
-  description: 'Classic with 5 recipients (Bill To, Ship To, Approver, Auditor, CC) — must wrap',
+  description: 'Classic with 5 recipients (Bill To, Ship To, Approver, Auditor, CC) - must wrap',
   invoice: {
     ...exampleInvoice,
     design: 'classic' as const,

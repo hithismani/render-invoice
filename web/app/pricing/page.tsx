@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     'RenderInvoice is a free invoice generator. Unlimited invoices, PDF export, and a self-hostable Cloudflare Worker. No accounts or paywalls.',
   alternates: { canonical: '/pricing' },
   openGraph: {
-    title: 'Pricing — RenderInvoice is free forever',
+    title: 'Pricing - RenderInvoice is free forever',
     description: 'Unlimited invoices, PDF export, and a self-hostable render API. $0 forever.',
     url: '/pricing',
   },

@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '17-cell-unbreakable',
-  description: 'Line items with unbreakable values (long URLs, long IDs) — must wrap inside the cell, not blow out the row',
+  description: 'Line items with unbreakable values (long URLs, long IDs) - must wrap inside the cell, not blow out the row',
   invoice: {
     ...exampleInvoice,
     columns: ['Reference', 'Description', 'Qty', 'Total'],

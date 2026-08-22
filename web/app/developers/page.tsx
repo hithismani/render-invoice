@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     'Render invoices from JSON. Self-host a Cloudflare Worker for PDF or PNG, or pass invoice JSON in a URL hash. Schema, llms.txt, and Google Sheets included.',
   alternates: { canonical: '/developers' },
   openGraph: {
-    title: 'Invoice API — RenderInvoice',
+    title: 'Invoice API - RenderInvoice',
     description: 'POST JSON, get PDF or PNG. Or skip the backend and put invoice JSON in a URL hash.',
     url: '/developers',
   },
@@ -220,7 +220,10 @@ export default function DevelopersPage() {
                 {MARKDOWN_TAGS.map((row) => (
                   <tr key={row.tag} className="bg-white">
                     <td className="px-4 py-2 font-mono text-xs text-zinc-900 whitespace-nowrap">{row.tag}</td>
-                    <td className="px-4 py-2 text-zinc-600">{row.meaning}</td>
+                    <td className="px-4 py-2 text-zinc-600">
+                      <span className="text-[10px] uppercase tracking-wider text-zinc-400 mr-2">{row.group}</span>
+                      {row.meaning}
+                    </td>
                   </tr>
                 ))}
               </tbody>

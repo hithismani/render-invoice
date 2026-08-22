@@ -7,6 +7,7 @@ import { nextInvoiceNumber } from '@/lib/draft';
 import { SortableList, DragHandle } from './Sortable';
 import ImageField from './ImageField';
 import { POPULAR_FONTS, satoriFontName } from '@/lib/invoiceFonts';
+import MarkdownHelpDialog, { MarkdownHelpButton } from './MarkdownHelpDialog';
 
 interface Props {
   value: Invoice;
@@ -51,16 +52,36 @@ const SECTION_TAB: Record<string, FormTab> = {
   disclaimer: 'settings', cancelled: 'settings', filename: 'settings',
 };
 
-function Section({ title, description, children, defaultOpen = true, sectionKey }: { title: string; description?: string; children: React.ReactNode; defaultOpen?: boolean; sectionKey?: string }) {
+function Section({
+  title,
+  description,
+  children,
+  defaultOpen = true,
+  sectionKey,
+  markdown,
+  onMarkdownHelp,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+  sectionKey?: string;
+  /** Show markdown cheat-sheet control next to the title. */
+  markdown?: boolean;
+  onMarkdownHelp?: () => void;
+}) {
   const formTab = sectionKey ? SECTION_TAB[sectionKey] : undefined;
   return (
     <details data-section-key={sectionKey} data-form-tab={formTab} open={defaultOpen} className="group mb-4 rounded-lg border border-gray-100 bg-white transition-colors open:border-gray-200">
       <summary className="list-none cursor-pointer p-4 flex items-center justify-between gap-2 hover:bg-gray-50 transition-colors rounded-t-lg">
-        <div>
-          <div className="text-base font-semibold text-gray-900">{title}</div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <div className="text-base font-semibold text-gray-900">{title}</div>
+            {markdown && onMarkdownHelp ? <MarkdownHelpButton onClick={onMarkdownHelp} /> : null}
+          </div>
           {description && <div className="mt-0.5 text-xs text-gray-500">{description}</div>}
         </div>
-        <svg className="size-4 text-gray-400 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        <svg className="size-4 shrink-0 text-gray-400 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
       </summary>
       <div className="px-4 pb-4">{children}</div>
     </details>
@@ -117,6 +138,8 @@ function getErrorMap(value: Invoice): Record<string, string> {
 }
 
 export default function InvoiceForm({ value, onChange }: Props) {
+  const [mdHelpOpen, setMdHelpOpen] = useState(false);
+  const openMdHelp = () => setMdHelpOpen(true);
   const set = <K extends keyof Invoice>(k: K, v: Invoice[K]) => onChange({ ...value, [k]: v });
   const errors = getErrorMap(value);
 
@@ -224,6 +247,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
 
   return (
     <div ref={rootRef} className="flex flex-col lg:flex-row gap-4 items-start">
+      <MarkdownHelpDialog open={mdHelpOpen} onClose={() => setMdHelpOpen(false)} />
       <nav className="sticky top-0 z-10 w-full lg:w-[5.75rem] shrink-0 flex flex-row lg:flex-col gap-0.5">
         <TabBtn id="content" label="Content" />
         <TabBtn id="design" label="Design" />
@@ -237,16 +261,16 @@ export default function InvoiceForm({ value, onChange }: Props) {
       )}
 
       <div id="form-tab-content" data-form-panel="content">
-        <Section title="Heading" description="Title plus subtitle. Subtitle accepts markdown: **bold** *italic* ~~strike~~ `code` [label](url) # heading - list." sectionKey="heading">
+        <Section title="Heading" description="Title and subtitle for the invoice." sectionKey="heading" markdown onMarkdownHelp={openMdHelp}>
         <input className={`${inputCls} mb-2`} placeholder="e.g., Invoice" value={value.invoiceHeading || ''} onChange={(e) => set('invoiceHeading', e.target.value)} />
         <input className={inputCls} placeholder="e.g., Consulting services, September 2024" value={value.invoiceDescription || ''} onChange={(e) => set('invoiceDescription', e.target.value)} />
       </Section>
 
-      <Section title="Invoice From" description="Sender details. Drag to reorder. Values accept **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="from">
+      <Section title="Invoice From" description="Sender details. Drag to reorder. Wrap a key in @…@ to hide its label." sectionKey="from" markdown onMarkdownHelp={openMdHelp}>
         <KVList items={from} onChange={setFrom} label="field" />
       </Section>
 
-      <Section title="Invoice To" description="One block per recipient. Values accept **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="to">
+      <Section title="Invoice To" description="One block per recipient. Wrap a key in @…@ to hide its label." sectionKey="to" markdown onMarkdownHelp={openMdHelp}>
         {to.length === 0 ? (
           <EmptyState message="No recipients yet." onAdd={() => setTo([[{ key: 'Bill To', value: '' }]])} ctaLabel="Add Recipient" />
         ) : (
@@ -264,7 +288,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         )}
       </Section>
 
-      <Section title="Meta (Top)" description="Invoice number, date, and due date shown above line items." sectionKey="metaTop">
+      <Section title="Meta (Top)" description="Invoice number, date, and due date shown above line items." sectionKey="metaTop" markdown onMarkdownHelp={openMdHelp}>
         <button
           type="button"
           onClick={async () => {
@@ -281,7 +305,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         <KVList items={metaTop} onChange={setMetaTop} label="field" />
       </Section>
 
-      <Section title="Columns" description="Column headers for the line items table. Drag to reorder." sectionKey="columns">
+      <Section title="Columns" description="Column headers for the line items table. Drag to reorder." sectionKey="columns" markdown onMarkdownHelp={openMdHelp}>
         {(value.columns || []).length === 0 ? (
           <EmptyState message="No columns yet." onAdd={() => setColumns(['Description', 'Quantity', 'Price', 'Amount'])} ctaLabel="Use default columns" />
         ) : (
@@ -304,7 +328,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         )}
       </Section>
 
-      <Section title="Line Items" description="Each row is one item. Cell text accepts **bold** *italic* ~~strike~~ `code` [label](url)." sectionKey="lineItems">
+      <Section title="Line Items" description="Each row is one item. Cells align with the columns above." sectionKey="lineItems" markdown onMarkdownHelp={openMdHelp}>
         {(value.lineItems || []).length === 0 ? (
           <EmptyState message="No line items yet." onAdd={addLineItem} ctaLabel="Add Line Item" />
         ) : (
@@ -336,7 +360,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         )}
       </Section>
 
-      <Section title="Summary" description="Subtotal, tax, discounts, and total rows." sectionKey="summary">
+      <Section title="Summary" description="Subtotal, tax, discounts, and total rows." sectionKey="summary" markdown onMarkdownHelp={openMdHelp}>
         {(value.summary || []).length === 0 ? (
           <EmptyState message="No summary rows yet." onAdd={addSummary} ctaLabel="Add Summary Row" />
         ) : (
@@ -363,11 +387,11 @@ export default function InvoiceForm({ value, onChange }: Props) {
         )}
       </Section>
 
-      <Section title="Meta (Bottom)" description="Payment terms and notes shown below line items." defaultOpen={false} sectionKey="metaBottom">
+      <Section title="Meta (Bottom)" description="Payment terms and notes shown below line items." defaultOpen={false} sectionKey="metaBottom" markdown onMarkdownHelp={openMdHelp}>
         <KVList items={metaBottom} onChange={setMetaBottom} label="field" />
       </Section>
 
-      <Section title="Footer" description="Markdown: **bold** *italic* #–####### {@18} {@18:span} - list. Line breaks kept." defaultOpen={false} sectionKey="footer">
+      <Section title="Footer" description="Top and bottom lines under the signature area." defaultOpen={false} sectionKey="footer" markdown onMarkdownHelp={openMdHelp}>
         <input className={`${inputCls} mb-2`} placeholder="Top text (e.g., Thank you!)" value={value.footerText?.topText || ''} onChange={(e) => setFooter('topText', e.target.value)} />
         <input className={inputCls} placeholder="Bottom text" value={value.footerText?.bottomText || ''} onChange={(e) => setFooter('bottomText', e.target.value)} />
       </Section>
@@ -523,7 +547,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         </Section>
 
         {value.isCancelled && (
-          <Section title="Cancellation Notes" description="Same markdown as the description: **bold** *italic* lists headings quotes." sectionKey="cancelled">
+          <Section title="Cancellation Notes" description="Shown on the cancelled badge and notes strip." sectionKey="cancelled" markdown onMarkdownHelp={openMdHelp}>
             <textarea className={inputCls} rows={3} value={value.cancelledNotes || ''} onChange={(e) => set('cancelledNotes', e.target.value)} />
           </Section>
         )}

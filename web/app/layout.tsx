@@ -6,7 +6,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://renderinvoice.com'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'RenderInvoice — Unopinionated Invoice Generator',
+    default: 'RenderInvoice - Unopinionated Invoice Generator',
     template: '%s · RenderInvoice',
   },
   description:
@@ -27,14 +27,14 @@ export const metadata: Metadata = {
     type: 'website',
     url: SITE_URL,
     siteName: 'RenderInvoice',
-    title: 'RenderInvoice — Unopinionated Invoice Generator',
+    title: 'RenderInvoice - Unopinionated Invoice Generator',
     description:
       'Build invoices in the browser, or POST JSON to a Cloudflare Worker and get a PDF or PNG. No account, no lock-in.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RenderInvoice — Unopinionated Invoice Generator',
+    title: 'RenderInvoice - Unopinionated Invoice Generator',
     description: 'Build invoices in the browser or render PDF/PNG from JSON. No account, no lock-in.',
     images: ['/opengraph-image'],
   },

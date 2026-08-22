@@ -221,7 +221,7 @@ export default function PlaygroundPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-4 sm:gap-5 items-start">
-          {/* Editor — stacks on top on mobile */}
+          {/* Editor - stacks on top on mobile */}
           <Card className="overflow-hidden order-1">
             <div className="px-4 sm:px-5 pt-3 flex items-center gap-1 border-b border-zinc-100 bg-white">
               <TabBtn active={tab === 'form'} onClick={() => switchTab('form')}>Form</TabBtn>
@@ -271,7 +271,7 @@ export default function PlaygroundPage() {
             )}
           </Card>
 
-          {/* Preview — below editor on mobile */}
+          {/* Preview - below editor on mobile */}
           <Card className="order-2 lg:sticky lg:top-[72px] self-start overflow-hidden">
             <div className="px-4 py-2.5 border-b border-zinc-100 flex items-center justify-between bg-white">
               <div className="flex items-center gap-2 min-w-0">

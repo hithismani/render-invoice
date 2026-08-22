@@ -20,7 +20,7 @@ Constraints from the schema:
 - Every key used in lineItems[] rows must also appear in columns[].
 - summary[].value is a string or number that I compute in the sheet; RenderInvoice never calculates totals, formats currency, or applies tax.
 - Pre-fill design ("classic" or "bold") and accentColor (#RRGGBB).
-- Every text field accepts markdown: **bold** *italic* ~~strike~~ \`code\` [label](url), #–####### headings, {@18} / {@p:18} absolute size, {@18:span} inline size, - lists, 1. numbered, > quotes. Single newlines are kept. Currency glyphs (₹ € £ ¥) are fine as plain text.
+- Every text field accepts markdown: **bold** *italic* ~~strike~~ \`code\` [label](url), #–####### headings, {@18} / {@p:18} absolute size, {@18:span} inline size, - lists, 1. numbered, > quotes. Single newlines are kept. Wrap a key in @Label@ to hide it (from/to/meta). Currency glyphs (₹ € £ ¥) are fine as plain text.
 
 My business: <describe your invoicing, e.g., "UK design freelancer billing hourly + 20% VAT", "SaaS with monthly seats and proration", "agency with retainers and split shipping addresses">.
 

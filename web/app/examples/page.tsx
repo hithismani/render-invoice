@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     'Ready-made invoice examples for freelancers, SaaS, agencies, UK VAT, US sales tax, and multi-shipment. Customize any template and download a PDF.',
   alternates: { canonical: '/examples' },
   openGraph: {
-    title: 'Invoice Examples & PDF Templates — RenderInvoice',
+    title: 'Invoice Examples & PDF Templates - RenderInvoice',
     description: 'Freelance, SaaS, agency, VAT, and sales-tax invoice examples you can edit and export as PDF.',
     url: '/examples',
   },

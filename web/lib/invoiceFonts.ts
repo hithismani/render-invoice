@@ -60,7 +60,7 @@ export type LoadedFont = {
   family: string;
   regular: ArrayBuffer;
   bold: ArrayBuffer;
-  /** Full Inter — covers ₹ € £ ¥ and general punctuation missing from latin subsets. */
+  /** Full Inter - covers ₹ € £ ¥ and general punctuation missing from latin subsets. */
   fallbackRegular: ArrayBuffer;
   fallbackBold: ArrayBuffer;
 };

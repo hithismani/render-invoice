@@ -168,7 +168,7 @@ export default function PlaygroundNav({
 
         <span className="text-zinc-700">/</span>
 
-        {/* Doc name — suppressHydrationWarning because password-manager
+        {/* Doc name - suppressHydrationWarning because password-manager
             extensions (LastPass, 1Password, Bitwarden) inject icon markup
             next to <input> fields and break React hydration. */}
         <div className="flex-1 min-w-0 flex items-center gap-2" suppressHydrationWarning>

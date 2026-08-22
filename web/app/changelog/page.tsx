@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     'Product updates for RenderInvoice, the unopinionated invoice generator. New render engines, templates, and PDF export changes.',
   alternates: { canonical: '/changelog' },
   openGraph: {
-    title: 'Changelog — RenderInvoice',
+    title: 'Changelog - RenderInvoice',
     description: 'Updates to the invoice generator, render worker, and PDF export.',
     url: '/changelog',
   },
@@ -21,7 +21,7 @@ const entries = [
     date: '2026-08-20',
     tag: 'new',
     title: 'Markdown everywhere, size overrides, currency glyphs',
-    body: 'Every text field renders markdown (bold/italic/strike/code/links, #–####### headings, {@18}/{@p:18} and {@18:span} sizes, lists, quotes). Single newlines kept. ₹ € £ and punctuation via Inter fallback. Field values wrap as normal prose. PDF edit bar is visible and clickable when includeEditLink is on.',
+    body: 'Every text field renders markdown (bold/italic/strike/code/links, #–####### headings, {@18}/{@p:18} and {@18:span} sizes, lists, quotes). Hide from/to/meta labels with @key@. Single newlines kept. ₹ € £ and punctuation via Inter fallback. PDF edit bar is visible and clickable when includeEditLink is on.',
   },
   {
     version: 'v1.4',

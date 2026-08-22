@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '06-many-columns',
-  description: 'Line items with 7 columns — wide tables must not crush content',
+  description: 'Line items with 7 columns - wide tables must not crush content',
   invoice: {
     ...exampleInvoice,
     columns: ['SKU', 'Description', 'Qty', 'Unit Price', 'Discount', 'Tax', 'Total'],

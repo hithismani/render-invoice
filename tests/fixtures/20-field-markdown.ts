@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '20-field-markdown',
-  description: 'Markdown inside Field values — **bold**, *italic*, `code`, [links] inside From/To rows',
+  description: 'Markdown inside Field values - **bold**, *italic*, `code`, [links] inside From/To rows',
   invoice: {
     ...exampleInvoice,
     invoiceFrom: {
@@ -16,7 +16,7 @@ export default {
       {
         'Bill To': '**Acme Corp.**',
         Address: '456 Acme Avenue\nAcme City, AC 67890',
-        'Reference': 'See `PO-2024-118` — *priority* shipping',
+        'Reference': 'See `PO-2024-118` - *priority* shipping',
       },
     ],
   },

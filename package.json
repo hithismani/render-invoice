@@ -1,7 +1,7 @@
 {
   "name": "renderinvoice",
   "private": true,
-  "description": "RenderInvoice monorepo — web site + workers/ submodule",
+  "description": "RenderInvoice monorepo - web site + workers/ submodule",
   "scripts": {
     "submodule:init": "git submodule update --init --recursive",
     "worker:deploy": "pnpm --dir workers/cf-worker deploy",

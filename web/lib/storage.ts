@@ -43,7 +43,7 @@ async function migrate(): Promise<void> {
     const parsed = JSON.parse(raw) as Template[];
     if (Array.isArray(parsed) && parsed.length > 0) {
       await set(KEY, parsed);
-      // Don't delete from localStorage — keep as backup.
+      // Don't delete from localStorage - keep as backup.
     }
   } catch {
     /* ignore */

@@ -3,8 +3,6 @@
 import { useEffect } from 'react';
 import SchemaReference from './SchemaReference';
 import CopySchemaButton from './CopySchemaButton';
-import { MARKDOWN_HELP } from '@/lib/markdownHelp';
-
 export default function SchemaDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   useEffect(() => {
     if (!open) return;
@@ -26,8 +24,12 @@ export default function SchemaDialog({ open, onClose }: { open: boolean; onClose
             </div>
             <p className="text-sm text-zinc-500 mt-0.5">
               Every field the JSON editor accepts. Line-item keys must match the <code className="font-mono bg-zinc-100 px-1 rounded">columns</code> array.
+              Text fields support markdown - use the Md ? control on form sections, or see{' '}
+              <a href="/developers#markdown" className="text-blue-600 hover:underline" target="_blank" rel="noreferrer">
+                /developers#markdown
+              </a>
+              .
             </p>
-            <p className="text-xs text-zinc-500 mt-1.5">{MARKDOWN_HELP}</p>
           </div>
           <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 p-1">
             <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>

@@ -11,7 +11,7 @@ function check(name: string, cond: boolean, detail?: string): void {
   if (cond) console.log(`  ok    ${name}`);
   else {
     failures++;
-    console.error(`  FAIL  ${name}${detail ? ` — ${detail}` : ''}`);
+    console.error(`  FAIL  ${name}${detail ? ` - ${detail}` : ''}`);
   }
 }
 

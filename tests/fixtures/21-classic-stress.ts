@@ -1,6 +1,6 @@
 import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
-// 5 recipients × 7 columns simultaneously — the worst-case combo. Ensures
+// 5 recipients × 7 columns simultaneously - the worst-case combo. Ensures
 // From/To wrap doesn't conflict with line items column width distribution.
 export default {
   name: '21-classic-stress',

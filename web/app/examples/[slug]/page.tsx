@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     keywords: [...t.keywords, 'invoice example', 'invoice template', 'invoice PDF'],
     alternates: { canonical: `/examples/${t.slug}` },
     openGraph: {
-      title: `${t.name} Invoice Example — RenderInvoice`,
+      title: `${t.name} Invoice Example - RenderInvoice`,
       description: t.description,
       url: `/examples/${t.slug}`,
     },

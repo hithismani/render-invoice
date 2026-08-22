@@ -1,8 +1,9 @@
 import { dumpSchemaText } from './schemaFields';
-import { MARKDOWN_HELP } from './markdownHelp';
+import { markdownReferenceBlock } from './markdownHelp';
 
 export function generateLlmsTxt(): string {
   const schema = dumpSchemaText(undefined, 4);
+  const mdRef = markdownReferenceBlock();
   return `# RenderInvoice: AI agent integration guide
 
 RenderInvoice is a browser-only invoice generator at https://renderinvoice.com.
@@ -57,20 +58,7 @@ playground. PDF with selectable text. Free plan.
 ${schema}
   }
 
-## Markdown (every text field)
-
-${MARKDOWN_HELP}
-
-Supported tags:
-  **bold**  *italic*  ***both***  ~~strike~~  \`code\`  [label](url)
-  bare emails → mailto links in PDF
-  # ## ### #### ##### ###### #######   headings (scale from field base size)
-  {@18} line   {@p:18} line   {@18:inline span}   absolute px sizes
-  - item   * item   1. item   > quote   ---
-  single newline = hard break
-
-Not supported: tables, images, raw HTML, footnotes.
-Currency/punctuation as plain text: ₹ € £ ¥ ₩ ₽ • — – … → ← ·
+## ${mdRef}
 
 Constraints:
 - Every key used in lineItems must be present in the columns array.

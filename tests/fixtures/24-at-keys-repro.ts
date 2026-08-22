@@ -12,7 +12,7 @@ export default {
     logoUrl: undefined,
     digitalSignatureUrl: undefined,
     isCancelled: true,
-    cancelledNotes: '**Void** — see `CN-99`',
+    cancelledNotes: '**Void** - see `CN-99`',
     invoiceHeading: '**Tax** Invoice',
     invoiceDescription: 'Period *Q2*\n{@11}small desc line',
     invoiceFrom: {

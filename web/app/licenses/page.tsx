@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     'Open-source licenses for the libraries that draw RenderInvoice PDFs. Satori, pdf-lib, Next.js, and friends.',
   alternates: { canonical: '/licenses' },
   openGraph: {
-    title: 'Licenses — RenderInvoice',
+    title: 'Licenses - RenderInvoice',
     description: 'The open-source stack behind the PDF. Satori does the drawing.',
     url: '/licenses',
   },
@@ -22,7 +22,7 @@ const libs = [
     license: 'MPL-2.0',
     href: 'https://github.com/vercel/satori',
     blurb:
-      'This is the one. Satori turns the invoice layout into an SVG — real text, real paths, no screenshot. Every PDF you download starts here. Without Satori there is no RenderInvoice PDF. We owe it everything.',
+      'This is the one. Satori turns the invoice layout into an SVG - real text, real paths, no screenshot. Every PDF you download starts here. Without Satori there is no RenderInvoice PDF. We owe it everything.',
   },
   {
     name: 'Yoga',

@@ -140,7 +140,7 @@ const SCENARIOS: CompanyScenario[] = [
       autoSize: true,
       filename: 'invoice-nexus-october-2024',
       invoiceHeading: 'Subscription Invoice',
-      invoiceDescription: 'Enterprise cluster compute, dedicated egress & support — Oct 2024',
+      invoiceDescription: 'Enterprise cluster compute, dedicated egress & support - Oct 2024',
       logoUrl: `data:image/svg+xml;utf8,${encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 36" width="160" height="36">
           <rect width="36" height="36" rx="8" fill="#7c3aed"/>
@@ -196,7 +196,7 @@ const SCENARIOS: CompanyScenario[] = [
       },
       {
         lineItem: {
-          Description: 'GPU Compute Fleet (H100 tier — 450 reserved hrs)',
+          Description: 'GPU Compute Fleet (H100 tier - 450 reserved hrs)',
           'Qty / Usage': '450 hrs',
           Rate: '$4.50/hr',
           Amount: '$2,025.00',

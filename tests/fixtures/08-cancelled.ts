@@ -2,7 +2,7 @@ import { exampleInvoice } from '../../web/schema/invoiceSchema.js';
 
 export default {
   name: '08-cancelled',
-  description: 'Cancelled invoice — red badge in corner, notes block at bottom',
+  description: 'Cancelled invoice - red badge in corner, notes block at bottom',
   invoice: {
     ...exampleInvoice,
     isCancelled: true,

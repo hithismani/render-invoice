@@ -7,7 +7,7 @@
 
 import React from 'react';
 // Relative import (not `@/schema/...`) so this module resolves cleanly when
-// imported from the cf-worker too — the worker's bundler doesn't honor v1's
+// imported from the cf-worker too - the worker's bundler doesn't honor v1's
 // tsconfig path aliases.
 import type { Invoice } from '../schema/invoiceSchema';
 import { Markdown, inlineMarkdownWords, stripMarkdown, displayKey, needsBlockMarkdown } from './SatoriMarkdown';
@@ -144,7 +144,7 @@ function CancelledBadge({ notes }: { notes?: string }): React.ReactElement {
  * key as an uppercase section header (so "Issued By" → "ISSUED BY",
  * "Bill To" → "BILL TO", "Patient" → "PATIENT") and the FIRST value as
  * a prominent line, then renders remaining entries as Field rows. This
- * makes Bold's headers fully dynamic — they reflect whatever keys the
+ * makes Bold's headers fully dynamic - they reflect whatever keys the
  * caller used, not a hard-coded "Bill to" / "Ship to" guess.
  */
 function BoldPartyBlock({
@@ -177,7 +177,7 @@ function BoldPartyBlock({
 /**
  * Field = one paragraph line: `Label:` + value words share a single flex-wrap
  * row. When the value wraps, the next word drops to the LEFT edge (under the
- * label), like normal prose — not a 2-column layout where wraps indent under
+ * label), like normal prose - not a 2-column layout where wraps indent under
  * the value only.
  *
  * Satori won't break inside a multi-word span, so value markdown is flattened
@@ -193,7 +193,7 @@ function Field({
   labelStyle: React.CSSProperties;
 }): React.ReactElement {
   const v = String(value ?? '');
-  // Block markdown (newlines, lists, headings, size markers) needs full Markdown —
+  // Block markdown (newlines, lists, headings, size markers) needs full Markdown -
   // inline word-spans flatten breaks and drop list/heading structure.
   if (needsBlockMarkdown(v)) {
     return (
@@ -257,7 +257,7 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
   // Spacing strategy: the outer flex column owns ALL vertical rhythm via
   // `gap` and `padding`. Individual sections only declare horizontal padding
   // (`'0 48px'`). That way removing any conditional section (e.g. disclaimer
-  // when amountsVerifiedHideDisclaimer:true) doesn't collapse the layout —
+  // when amountsVerifiedHideDisclaimer:true) doesn't collapse the layout -
   // gap kicks in uniformly between whichever sections do render.
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: fontFamilyOf(invoice), color: '#111827', position: 'relative', paddingTop: 32, paddingBottom: 24, gap: 14 }}>
@@ -283,7 +283,7 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
         </div>
       )}
 
-      {/* From / To — wraps to multiple rows when there are many recipients.
+      {/* From / To - wraps to multiple rows when there are many recipients.
           Each card has flex-basis 220px with grow+shrink, so 1–3 cards share
           a single row evenly, 4–5 wrap into 2 rows, etc. */}
       <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: '0 48px' }}>
@@ -425,7 +425,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
     <div style={{ display: 'flex', flexDirection: 'column', width: PAGE_WIDTH, backgroundColor: '#ffffff', fontFamily: fontFamilyOf(invoice), color: '#111827', position: 'relative', paddingBottom: 24, gap: 16 }}>
       {(invoice.isCancelled || invoice.cancelledNotes) && <CancelledBadge notes={invoice.cancelledNotes} />}
 
-      {/* Accent header — top corners flat in exports (PDF/SVG/PNG) so the
+      {/* Accent header - top corners flat in exports (PDF/SVG/PNG) so the
           page edge looks intentional, but rounded in the live preview to
           match the playground card aesthetic. */}
       <div style={{ display: 'flex', flexDirection: 'column', padding: '40px 48px', borderRadius: forExport ? 0 : '8px 8px 0 0', backgroundImage: `linear-gradient(135deg, ${accent}, ${darker})`, color: '#ffffff' }}>
@@ -451,7 +451,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
         </div>
       )}
 
-      {/* From / To — Bold's signature look uses the FIRST key/value of each
+      {/* From / To - Bold's signature look uses the FIRST key/value of each
           party as a typographic header (uppercase letter-spaced label +
           prominent name), then renders the remaining fields as Field rows.
           That makes the section header dynamic: a recipient keyed by
@@ -582,7 +582,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
 
 export interface InvoiceRenderOpts {
   /** True when rendering for export (PDF/SVG/PNG). Strips preview-only
-   *  flourishes — e.g. rounded corners on the bold accent header that look
+   *  flourishes - e.g. rounded corners on the bold accent header that look
    *  right inside a card preview but not on a printed page edge. */
   forExport?: boolean;
 }
