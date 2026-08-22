@@ -4,7 +4,9 @@
   "description": "RenderInvoice monorepo - web site + workers/ submodule",
   "scripts": {
     "submodule:init": "git submodule update --init --recursive",
-    "worker:deploy": "pnpm --dir workers/cf-worker deploy",
+    "deploy:web": "pnpm --dir web install && pnpm --dir web deploy",
+    "worker:deploy": "pnpm --dir workers/cf-worker install && pnpm --dir workers/cf-worker exec wrangler deploy",
+    "deploy:worker": "pnpm worker:deploy",
     "test": "pnpm test:markdown && pnpm test:autosize && pnpm test:web && pnpm test:security && pnpm test:worker && pnpm test:security:worker",
     "test:markdown": "bash tests/run.sh assert-markdown-fields.ts",
     "test:autosize": "bash tests/run.sh assert-autosize.ts",

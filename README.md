@@ -121,6 +121,24 @@ git clone --recurse-submodules https://github.com/hithismani/render-invoice.git
 
 Vercel: set **Root Directory** to `web`. Do not enable “Include git submodules” - the site does not import `workers/`.
 
+### Cloudflare (static site)
+
+Root directory **`web`**. Deploy command must **build** before wrangler (bare `npx wrangler deploy` fails - `./out` is missing):
+
+```text
+pnpm install && pnpm deploy
+```
+
+That runs Next export → `./out`, then uploads assets via `web/wrangler.toml`.
+
+### Cloudflare (PDF worker)
+
+Separate repo / submodule: Root directory **`cf-worker`**, deploy:
+
+```text
+pnpm install && pnpm exec wrangler deploy
+```
+
 How the PDF is drawn: [licenses](https://renderinvoice.com/licenses).
 
 ## Disclaimer

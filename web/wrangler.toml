@@ -1,4 +1,8 @@
-# One-click deploy of the static playground (Next `output: 'export'` → ./out).
+# Static site (Next `output: 'export'` → ./out).
+# Cloudflare dashboard (this folder as Root directory):
+#   Build/deploy command:  pnpm install && pnpm deploy
+#   (or: npm install && npx pnpm install && npx pnpm deploy)
+# Do NOT run bare `npx wrangler deploy` - ./out must exist from `pnpm build` first.
 name = "renderinvoice"
 compatibility_date = "2024-11-11"
 
