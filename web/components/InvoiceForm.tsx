@@ -498,7 +498,7 @@ export default function InvoiceForm({ value, onChange }: Props) {
         <Section title="Options" sectionKey="disclaimer">
           <label className="flex items-center gap-2 mb-2">
             <input type="checkbox" checked={!!value.autoSize} onChange={(e) => set('autoSize', e.target.checked)} />
-            <span className="text-sm">Auto-size PDF to content (vs A4)</span>
+            <span className="text-sm">Auto-size PDF (A4 width, grow height) vs fit one A4</span>
           </label>
           <label className="flex items-center gap-2 mb-2">
             <input type="checkbox" checked={!!value.amountsVerifiedHideDisclaimer} onChange={(e) => set('amountsVerifiedHideDisclaimer', e.target.checked)} />

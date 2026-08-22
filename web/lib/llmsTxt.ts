@@ -49,7 +49,7 @@ playground. PDF with selectable text. Free plan.
 
   Content-Type: application/json
   { "invoice": <Invoice> }     // or a bare invoice object
-  autoSize defaults true (page = content). autoSize: false fits one A4.
+  autoSize defaults true (portrait A4 width, height = max(A4, content)). autoSize: false scales onto one A4.
 
 ## 3. Invoice JSON schema
 

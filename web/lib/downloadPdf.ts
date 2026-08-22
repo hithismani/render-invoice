@@ -118,11 +118,20 @@ export async function downloadInvoicePdf(element: HTMLElement, invoice: Partial<
   const contentH = Math.ceil(root.getBoundingClientRect().height);
   const contentW = captureWidth;
 
+  // autoSize: A4 width, height = max(A4, content) in portrait. fit-to-A4: one A4 sheet.
+  const A4_W_MM = 210;
+  const A4_H_MM = 297;
+  const heightMm = Math.max(A4_H_MM, A4_W_MM * (contentH / contentW));
+
   const pageStyle = doc.createElement('style');
   pageStyle.textContent = autoFit
-    ? `@page { size: ${contentW}px ${contentH}px; margin: 0; }
-       html, body { width: ${contentW}px; height: ${contentH}px; overflow: hidden; }
-       #print-root { width: ${contentW}px; height: ${contentH}px; }`
+    ? `@page { size: ${A4_W_MM}mm ${heightMm}mm; margin: 0; }
+       html, body { width: ${A4_W_MM}mm; margin: 0; background: #fff; }
+       #print-root {
+         width: ${contentW}px;
+         transform: scale(calc(${A4_W_MM}mm / ${contentW}px));
+         transform-origin: top left;
+       }`
     : `@page { size: A4; margin: 12mm; }`;
   doc.head.appendChild(pageStyle);
 

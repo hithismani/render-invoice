@@ -10,7 +10,7 @@ import React from 'react';
 // imported from the cf-worker too — the worker's bundler doesn't honor v1's
 // tsconfig path aliases.
 import type { Invoice } from '../schema/invoiceSchema';
-import { Markdown, inlineMarkdownWords, stripMarkdown } from './SatoriMarkdown';
+import { Markdown, inlineMarkdownWords, stripMarkdown, displayKey, needsBlockMarkdown } from './SatoriMarkdown';
 import { satoriFontName } from '../lib/invoiceFonts';
 
 const PAGE_WIDTH = 900;
@@ -40,10 +40,6 @@ function copyrightOf(inv: Invoice): string {
   const y = dateStr ? new Date(dateStr).getFullYear() : NaN;
   const year = Number.isFinite(y) ? y : new Date().getFullYear();
   return name ? `© ${year} ${name}. All rights reserved.` : `© ${year}. All rights reserved.`;
-}
-
-function displayKey(key: string): string {
-  return !key.startsWith('@') || !key.endsWith('@') ? key.replace(/@/g, '') : '';
 }
 
 /* ─── Shared components ─── */
@@ -163,14 +159,16 @@ function BoldPartyBlock({
   const rest = entries.slice(1);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
-      <div style={{ display: 'flex', fontSize: 11, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: accent, marginBottom: 4, wordBreak: 'break-word' }}>
-        <Markdown text={headerKey} compact style={{ fontSize: 11, fontWeight: 600, color: accent }} />
-      </div>
+      {headerKey ? (
+        <div style={{ display: 'flex', fontSize: 11, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: accent, marginBottom: 4, wordBreak: 'break-word' }}>
+          <Markdown text={headerKey} compact style={{ fontSize: 11, fontWeight: 600, color: accent }} />
+        </div>
+      ) : null}
       <div style={{ display: 'flex', fontSize: 14, fontWeight: 600, color: '#18181b', wordBreak: 'break-word' }}>
         <Markdown text={headerValue} compact style={{ fontSize: 14, fontWeight: 600, color: '#18181b' }} />
       </div>
-      {rest.map(([k, v]) => (
-        <Field key={k} label={k} value={v} labelStyle={{ color: '#71717a' }} />
+      {rest.map(([k, v], i) => (
+        <Field key={`${k}-${i}`} label={k} value={v} labelStyle={{ color: '#71717a' }} />
       ))}
     </div>
   );
@@ -194,8 +192,23 @@ function Field({
   value: string;
   labelStyle: React.CSSProperties;
 }): React.ReactElement {
+  const v = String(value ?? '');
+  // Block markdown (newlines, lists, headings, size markers) needs full Markdown —
+  // inline word-spans flatten breaks and drop list/heading structure.
+  if (needsBlockMarkdown(v)) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0, fontSize: 13, color: '#111827' }}>
+        {label ? (
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 4, alignItems: 'flex-start' }}>
+            <Markdown text={`${label}:`} compact style={{ fontSize: 13, ...labelStyle }} />
+          </div>
+        ) : null}
+        <Markdown text={v} compact style={{ fontSize: 13, color: '#111827' }} />
+      </div>
+    );
+  }
   const labelWords = label ? inlineMarkdownWords(label, { fontSize: 13, ...labelStyle }) : [];
-  const valueWords = inlineMarkdownWords(String(value ?? ''), { fontSize: 13, color: '#111827' });
+  const valueWords = inlineMarkdownWords(v, { fontSize: 13, color: '#111827' });
   // Glue ":" onto the last label word so gap:4 doesn't produce "By :".
   const labelNodes =
     labelWords.length === 0
@@ -282,7 +295,7 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
         {(invoice.invoiceTo || []).map((recipient, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', flex: '1 1 220px', minWidth: 0, border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, gap: 4 }}>
             {Object.entries(recipient).map(([k, v]) => (
-              <Field key={k} label={k} value={String(v)} labelStyle={{ fontWeight: 500 }} />
+              <Field key={k} label={displayKey(k)} value={String(v)} labelStyle={{ fontWeight: 500 }} />
             ))}
           </div>
         ))}
@@ -290,12 +303,15 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
 
       {/* Meta top */}
       <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
-        {Object.entries(invoice.metaTop || {}).map(([k, v]) => (
-          <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-            <Markdown text={`${k}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} />
-            <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
-          </div>
-        ))}
+        {Object.entries(invoice.metaTop || {}).map(([k, v]) => {
+          const lbl = displayKey(k);
+          return (
+            <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
+              {lbl ? <Markdown text={`${lbl}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} /> : null}
+              <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
+            </div>
+          );
+        })}
       </div>
 
       {/* Line items */}
@@ -322,12 +338,15 @@ function ClassicTemplate({ invoice }: { invoice: Invoice }): React.ReactElement 
       {/* Meta bottom */}
       {invoice.metaBottom && Object.keys(invoice.metaBottom).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '0 48px', flexWrap: 'wrap' }}>
-          {Object.entries(invoice.metaBottom).map(([k, v]) => (
-            <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-              <Markdown text={`${k}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} />
-              <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
-            </div>
-          ))}
+          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
+                {lbl ? <Markdown text={`${lbl}:`} compact style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }} /> : null}
+                <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#1f2937' }} />
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -449,7 +468,7 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
           {(invoice.invoiceTo || []).map((recipient, i) => (
             <BoldPartyBlock
               key={i}
-              entries={Object.entries(recipient).map(([k, v]) => [k, String(v)] as [string, string])}
+              entries={Object.entries(recipient).map(([k, v]) => [displayKey(k), String(v)] as [string, string])}
               accent={accent}
             />
           ))}
@@ -459,12 +478,15 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       {/* Meta top (accent box) */}
       {invoice.metaTop && Object.keys(invoice.metaTop).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, padding: '16px', margin: '0 48px', borderRadius: 8, backgroundColor: `${accent}14`, flexWrap: 'wrap' }}>
-          {Object.entries(invoice.metaTop).map(([k, v]) => (
-            <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
-              <Markdown text={k} compact style={{ fontSize: 11, color: '#71717a', fontWeight: 600 }} />
-              <Markdown text={String(v)} compact style={{ fontSize: 13, fontWeight: 600, color: '#18181b' }} />
-            </div>
-          ))}
+          {Object.entries(invoice.metaTop).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 120 }}>
+                {lbl ? <Markdown text={lbl} compact style={{ fontSize: 11, color: '#71717a', fontWeight: 600 }} /> : null}
+                <Markdown text={String(v)} compact style={{ fontSize: 13, fontWeight: 600, color: '#18181b' }} />
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -509,12 +531,15 @@ function BoldTemplate({ invoice, forExport }: { invoice: Invoice; forExport?: bo
       {/* Meta bottom */}
       {invoice.metaBottom && Object.keys(invoice.metaBottom).length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16, flexWrap: 'wrap', padding: '0 48px' }}>
-          {Object.entries(invoice.metaBottom).map(([k, v]) => (
-            <div key={k} style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 180, padding: 16, borderRadius: 8, backgroundColor: '#fafafa', border: '1px solid #f4f4f5', gap: 2 }}>
-              <Markdown text={k} compact style={{ fontSize: 11, fontWeight: 600, color: '#71717a', marginBottom: 2 }} />
-              <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#3f3f46' }} />
-            </div>
-          ))}
+          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <div key={k} style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 180, padding: 16, borderRadius: 8, backgroundColor: '#fafafa', border: '1px solid #f4f4f5', gap: 2 }}>
+                {lbl ? <Markdown text={lbl} compact style={{ fontSize: 11, fontWeight: 600, color: '#71717a', marginBottom: 2 }} /> : null}
+                <Markdown text={String(v)} compact style={{ fontSize: 13, color: '#3f3f46' }} />
+              </div>
+            );
+          })}
         </div>
       )}
 

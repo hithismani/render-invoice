@@ -93,17 +93,42 @@ export async function satoriSvgToPdf(
   }
 
   const raw = await pdf.save();
-  if (!opts.fitToA4) return raw;
 
+  // Always land on portrait A4 *width*.
+  // - autoSize (fitToA4=false): height = max(A4, scaled content) — short invoices
+  //   get a full A4 sheet; tall ones grow past A4 but stay A4-wide portrait.
+  // - fitToA4=true: scale uniformly onto one A4 page (may shrink).
   const out = await PDFDocument.create();
   const [embedded] = await out.embedPdf(raw);
-  const scale = Math.min(A4_W / svgW, A4_H / svgH);
-  const drawW = svgW * scale;
-  const drawH = svgH * scale;
-  const a4 = out.addPage([A4_W, A4_H]);
-  const ox = (A4_W - drawW) / 2;
-  const oy = A4_H - drawH;
-  a4.drawPage(embedded, { x: ox, y: oy, width: drawW, height: drawH });
+
+  let scale: number;
+  let drawW: number;
+  let drawH: number;
+  let pageW: number;
+  let pageH: number;
+  let ox: number;
+  let oy: number;
+
+  if (opts.fitToA4) {
+    scale = Math.min(A4_W / svgW, A4_H / svgH);
+    drawW = svgW * scale;
+    drawH = svgH * scale;
+    pageW = A4_W;
+    pageH = A4_H;
+    ox = (A4_W - drawW) / 2;
+    oy = A4_H - drawH;
+  } else {
+    scale = A4_W / svgW;
+    drawW = A4_W;
+    drawH = svgH * scale;
+    pageW = A4_W;
+    pageH = Math.max(A4_H, drawH);
+    ox = 0;
+    oy = pageH - drawH;
+  }
+
+  const pageOut = out.addPage([pageW, pageH]);
+  pageOut.drawPage(embedded, { x: ox, y: oy, width: drawW, height: drawH });
   for (const L of links) {
     stampLink(out, L.uri, {
       x: ox + L.rect.x * scale,

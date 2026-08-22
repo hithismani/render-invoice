@@ -15,7 +15,7 @@ export const InvoiceSchema = z.object({
   direction: z.enum(['ltr', 'rtl']).default('ltr')
     .describe('Reading direction. Use "rtl" for Arabic, Hebrew, Urdu, Farsi, and other right-to-left scripts.'),
   autoSize: z.boolean().default(true)
-    .describe('Whether to automatically fit the content to the page when generating PDF.'),
+    .describe('PDF page sizing. true (default): portrait A4 width, height = max(A4, content). false: scale the whole invoice onto one A4 page.'),
   filename: z.string().optional()
     .describe('The filename to use for the generated PDF.'),
   invoiceHeading: validatedString.optional()
@@ -23,13 +23,13 @@ export const InvoiceSchema = z.object({
   invoiceDescription: validatedString.optional()
     .describe('Subtitle. Full markdown: **bold** *italic* ~~strike~~ `code` [label](url) #–####### headings {@18}/ {@p:18} size {@18:span} - list 1. numbered > quote. Line breaks kept.'),
   invoiceFrom: z.record(z.string())
-    .describe('Sender key-value pairs. Keys and values accept full markdown including size overrides ({@18}, # headings).'),
+    .describe('Sender key-value pairs. Keys and values accept full markdown including size overrides ({@18}, # headings). Wrap a key in @…@ (e.g. "@note@") to hide the label and print the value only.'),
   invoiceTo: z.array(z.record(z.string()))
-    .describe('Recipients as key-value objects. Keys and values accept full markdown including size overrides.'),
+    .describe('Recipients as key-value objects. Keys and values accept full markdown including size overrides. Wrap a key in @…@ to hide the label.'),
   metaTop: z.record(z.string())
-    .describe('Metadata above line items. Keys and values accept full markdown including size overrides.'),
+    .describe('Metadata above line items. Keys and values accept full markdown including size overrides. Wrap a key in @…@ to hide the label.'),
   metaBottom: z.record(z.string()).default({})
-    .describe('Metadata below line items. Keys and values accept full markdown including size overrides.'),
+    .describe('Metadata below line items. Keys and values accept full markdown including size overrides. Wrap a key in @…@ to hide the label.'),
   columns: z.array(z.string()).min(1, 'At least one column is required')
     .describe('Column headers for the line items table. Markdown supported.'),
   lineItems: z.array(LineItemSchema).min(1, 'At least one line item is required')

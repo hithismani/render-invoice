@@ -84,11 +84,20 @@ function preprocess(text: string): string {
   let s = String(text ?? '');
   // h7 → h6 with a depth marker the renderer understands
   s = s.replace(/^(\s{0,3})#######\s+/gm, `$1###### ${H_OPEN}7${H_CLOSE} `);
-  // block / paragraph size at line start: {@18} or {@p:18}
-  s = s.replace(/^(\s*)\{@(?:p:)?(\d+(?:\.\d+)?)\}\s*/gm, `$1${SZ_OPEN}$2${SZ_CLOSE}`);
-  // inline size {@18:text}
+  // inline size {@18:text} first so bare {@n} does not steal the colon form
   s = s.replace(/\{@(\d+(?:\.\d+)?):([^}]*)\}/g, (_m, size: string, inner: string) => {
     return `${IN_OPEN}${size}${IN_MID}${inner}${IN_END}`;
+  });
+  // line-start bare {@18}/{@p:18} → block size (survives codespans on the same line)
+  s = s.replace(/^(\s*)\{@(?:p:)?(\d+(?:\.\d+)?)\}\s*/gm, `$1${SZ_OPEN}$2${SZ_CLOSE}`);
+  // mid/end-of-line bare markers: size the rest, or strip if nothing left (never print `{@11}`)
+  s = s.replace(/\{@(?:p:)?(\d+(?:\.\d+)?)\}([^\n]*)/g, (_m, size: string, rest: string) => {
+    const body = String(rest)
+      .replace(/\{@(?:p:)?\d+(?:\.\d+)?\}/g, '')
+      .replace(/^\s+/, '')
+      .replace(/\s+$/, '');
+    if (!body) return '';
+    return `${IN_OPEN}${size}${IN_MID}${body}${IN_END}`;
   });
   return s;
 }
@@ -102,6 +111,20 @@ export function Markdown({ text, style, compact }: MarkdownProps): React.ReactEl
       {tokens.map((tok, i) => renderBlock(tok, i, base))}
     </div>
   );
+}
+
+/** Hide label when key is fully wrapped in `@…@` (after trim). Else strip stray `@`. */
+export function displayKey(key: string): string {
+  const k = String(key ?? '').trim();
+  if (!k) return '';
+  if (k.startsWith('@') && k.endsWith('@')) return '';
+  return k.replace(/@/g, '');
+}
+
+/** True when value needs block markdown (lists, headings, multi-line, …). */
+export function needsBlockMarkdown(text: string): boolean {
+  const s = String(text ?? '');
+  return /[\n\r]|^[ \t]{0,3}#{1,7}\s|^[ \t]*([-*+]|\d+\.)\s|^[ \t]*>|```|\{@(?:p:)?\d/.test(s);
 }
 
 /** Strip markdown / size markers down to plain text (copyright, filenames, …). */

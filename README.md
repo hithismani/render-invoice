@@ -13,7 +13,7 @@ Open [the playground](https://renderinvoice.com/playground), fill the form or pa
 - Markdown in every text field (see table below). Currency glyphs (₹ € £ ¥ …) via Inter fallback. PDF edit bar when `includeEditLink` is true (default).
 - Logo and signature, from a URL or an upload
 - Classic or bold layout, curated typefaces, any accent color, LTR or RTL
-- PDF with selectable text. Auto-fit to one page, or A4.
+- PDF with selectable text. Auto-size: A4 width + content height (min A4). Or fit one A4.
 - Optional footer rule on the PDF that reopens that exact invoice in the editor
 - Local drafts, history, and templates. Share as a URL or a QR code.
 - Works offline. Installable as a PWA.
@@ -84,7 +84,7 @@ curl -X POST https://your-worker.workers.dev/v1/render \
   --output invoice.pdf
 ```
 
-`autoSize` (default true) sizes the page to content. `autoSize: false` fits one A4.
+`autoSize` (default true): portrait A4 width, height = max(A4, content). `autoSize: false` scales onto one A4 page.
 
 ## Reference wrapper (embeds, Apps Script, custom UIs)
 

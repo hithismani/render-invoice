@@ -19,9 +19,15 @@ export function formatMarkdown(text: string | number | undefined | null): string
   // are unaffected by entity escaping, so the rules below still apply.
   let html = escapeHtml(String(text));
 
-  // Size overrides
+  // Size overrides — colon form first; bare form sizes rest of line and strips leftover bare markers
   html = html.replace(/\{@(\d+(?:\.\d+)?):([^}]*)\}/g, '<span style="font-size:$1px">$2</span>');
-  html = html.replace(/\{@(?:p:)?(\d+(?:\.\d+)?)\}([^\n]*)/g, '<span style="font-size:$1px">$2</span>');
+  html = html.replace(/\{@(?:p:)?(\d+(?:\.\d+)?)\}([^\n]*)/g, (_m, size: string, rest: string) => {
+    const body = String(rest)
+      .replace(/\{@(?:p:)?\d+(?:\.\d+)?\}/g, '')
+      .replace(/^\s+/, '')
+      .replace(/\s+$/, '');
+    return `<span style="font-size:${size}px">${body}</span>`;
+  });
 
   // Headings (h1–h7) — process before other inline so # isn't eaten
   html = html.replace(/^#{7}\s+(.+)$/gm, '<span style="font-size:0.8em;font-weight:700;display:block">$1</span>');
@@ -69,6 +75,10 @@ export function stripMarkdown(text: string): string {
   return s.replace(/\s+/g, ' ').trim();
 }
 
+/** Hide label when key is fully wrapped in `@…@` (after trim). Else strip stray `@`. */
 export function displayKey(key: string): string {
-  return !key.startsWith('@') || !key.endsWith('@') ? key.replace(/@/g, '') : '';
+  const k = String(key ?? '').trim();
+  if (!k) return '';
+  if (k.startsWith('@') && k.endsWith('@')) return '';
+  return k.replace(/@/g, '');
 }

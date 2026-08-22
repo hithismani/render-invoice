@@ -118,44 +118,63 @@ function Classic({ invoice, cols, colTemplate, logoPos }: RenderProps) {
   return (
     <>
       {(invoice.cancelledNotes || invoice.isCancelled) && (
-        <div data-section="disclaimer" className="absolute top-0 right-0 bg-red-500 text-white py-2 px-4 text-sm font-semibold">Cancelled</div>
+        <div data-section="disclaimer" className="absolute top-0 right-0 bg-red-500 text-white py-2 px-4 text-sm font-semibold">
+          <Md>{invoice.cancelledNotes || 'Cancelled'}</Md>
+        </div>
       )}
-      {invoice.logoUrl && (
+      {(invoice.logoUrl || invoice.invoiceHeading || invoice.invoiceDescription) && (
         <div className="gap-3 mb-3">
-          <div className={logoAlign} data-section="logo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={invoice.logoUrl} alt="Company Logo" className="inline-block mb-3"
-              style={invoice.logoSize ? { width: invoice.logoSize.width, height: invoice.logoSize.height } : undefined} />
-          </div>
-          <div className={`${logoAlign} mb-3`} data-section="heading">
-            {invoice.invoiceHeading && <Md as="h2" className="text-2xl font-bold text-gray-800 mb-3">{invoice.invoiceHeading}</Md>}
-            {invoice.invoiceDescription && <Md as="p" className="text-gray-600">{invoice.invoiceDescription}</Md>}
-          </div>
+          {invoice.logoUrl && (
+            <div className={logoAlign} data-section="logo">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={invoice.logoUrl} alt="Company Logo" className="inline-block mb-3"
+                style={invoice.logoSize ? { width: invoice.logoSize.width, height: invoice.logoSize.height } : undefined} />
+            </div>
+          )}
+          {(invoice.invoiceHeading || invoice.invoiceDescription) && (
+            <div className={`${logoAlign} mb-3`} data-section="heading">
+              {invoice.invoiceHeading && <Md as="h2" className="text-2xl font-bold text-gray-800 mb-3">{invoice.invoiceHeading}</Md>}
+              {invoice.invoiceDescription && <Md as="p" className="text-gray-600">{invoice.invoiceDescription}</Md>}
+            </div>
+          )}
         </div>
       )}
       {!invoice.amountsVerifiedHideDisclaimer && <Disclaimer />}
       <div className="grid md:grid-cols-2 gap-3 mb-3">
         <div className="border border-gray-200 p-4 rounded-lg" data-section="from">
-          {invoice.invoiceFrom && Object.entries(invoice.invoiceFrom).map(([k, v]) => (
-            <p key={k} className="text-sm text-gray-600"><span className="font-medium">{displayKey(k)}:</span> <Md>{v}</Md></p>
-          ))}
+          {invoice.invoiceFrom && Object.entries(invoice.invoiceFrom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <p key={k} className="text-sm text-gray-600">
+                {lbl ? <><Md as="span" className="font-medium">{`${lbl}:`}</Md>{' '}</> : null}<Md>{v}</Md>
+              </p>
+            );
+          })}
         </div>
         {invoice.invoiceTo?.map((recipient, i, arr) => (
           <div key={i} data-section="to" className={`border border-gray-200 p-4 rounded-lg ${i === arr.length - 1 && arr.length % 2 === 0 ? 'md:col-span-2' : ''}`}>
-            {Object.entries(recipient).map(([k, v]) => (
-              <p key={k} className="text-sm text-gray-600"><span className="font-medium">{k}:</span> <Md>{v}</Md></p>
-            ))}
+            {Object.entries(recipient).map(([k, v]) => {
+              const lbl = displayKey(k);
+              return (
+                <p key={k} className="text-sm text-gray-600">
+                  {lbl ? <><Md as="span" className="font-medium">{`${lbl}:`}</Md>{' '}</> : null}<Md>{v}</Md>
+                </p>
+              );
+            })}
           </div>
         ))}
       </div>
       <div className="grid gap-3 mt-5 mb-5" data-section="metaTop"
         style={{ gridTemplateColumns: `repeat(${Math.min(Object.keys(invoice.metaTop || {}).length, 5)}, 1fr)` }}>
-        {invoice.metaTop && Object.entries(invoice.metaTop).map(([k, v]) => (
-          <dl key={k} className="flex flex-col gap-x-3 text-sm">
-            <dt className="text-gray-500 font-medium">{k}:</dt>
-            <Md as="dd" className="font-normal text-gray-800">{v}</Md>
-          </dl>
-        ))}
+        {invoice.metaTop && Object.entries(invoice.metaTop).map(([k, v]) => {
+          const lbl = displayKey(k);
+          return (
+            <dl key={k} className="flex flex-col gap-x-3 text-sm">
+              {lbl ? <Md as="dt" className="text-gray-500 font-medium">{`${lbl}:`}</Md> : null}
+              <Md as="dd" className="font-normal text-gray-800">{v}</Md>
+            </dl>
+          );
+        })}
       </div>
       <div className="mt-3 border border-gray-200 p-4 rounded-lg space-y-4 overflow-x-auto" data-section="lineItems">
         <div className="grid gap-2" style={{ gridTemplateColumns: colTemplate }}>
@@ -173,11 +192,15 @@ function Classic({ invoice, cols, colTemplate, logoPos }: RenderProps) {
                 <div key={`${i}-${c}`} className={`px-2 ${isLast ? 'text-end' : 'text-start'} overflow-hidden`}>
                   <Md as="h5" className="sm:hidden text-xs font-medium text-gray-500 uppercase">{c}</Md>
                   {typeof value === 'object' && value !== null ? (
-                    Object.entries(value).map(([k, val]) => (
-                      <p key={k} className="text-sm text-gray-600">
-                        <span className="font-semibold">{displayKey(k)}</span>: <Md className="font-normal">{String(val)}</Md>
-                      </p>
-                    ))
+                    Object.entries(value).map(([k, val]) => {
+                      const lbl = displayKey(k);
+                      return (
+                        <p key={k} className="text-sm text-gray-600">
+                          {lbl ? <><Md as="span" className="font-semibold">{`${lbl}:`}</Md>{' '}</> : null}
+                          <Md className="font-normal">{String(val)}</Md>
+                        </p>
+                      );
+                    })
                   ) : (
                     <Md as="p" className={`text-gray-800 ${isLast ? 'sm:text-end' : ''}`}>{value}</Md>
                   )}
@@ -205,12 +228,15 @@ function Classic({ invoice, cols, colTemplate, logoPos }: RenderProps) {
       {invoice.metaBottom && Object.entries(invoice.metaBottom).length > 0 && (
         <div className="grid gap-3 mt-5 mb-5" data-section="metaBottom"
           style={{ gridTemplateColumns: `repeat(${Math.min(Object.keys(invoice.metaBottom).length, 5)}, 1fr)` }}>
-          {Object.entries(invoice.metaBottom).map(([k, v]) => (
-            <dl key={k} className="flex flex-col gap-x-3 text-sm">
-              <dt className="text-gray-500 font-medium">{k}:</dt>
-              <Md as="dd" className="font-normal text-gray-800">{v}</Md>
-            </dl>
-          ))}
+          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <dl key={k} className="flex flex-col gap-x-3 text-sm">
+                {lbl ? <Md as="dt" className="text-gray-500 font-medium">{`${lbl}:`}</Md> : null}
+                <Md as="dd" className="font-normal text-gray-800">{v}</Md>
+              </dl>
+            );
+          })}
         </div>
       )}
       {invoice.digitalSignatureUrl && (
@@ -241,7 +267,9 @@ function Bold({ invoice, cols, colTemplate, logoPos }: RenderProps) {
   return (
     <>
       {(invoice.cancelledNotes || invoice.isCancelled) && (
-        <div data-section="disclaimer" className="absolute top-0 right-0 bg-red-500 text-white py-2 px-4 text-sm font-semibold z-10">Cancelled</div>
+        <div data-section="disclaimer" className="absolute top-0 right-0 bg-red-500 text-white py-2 px-4 text-sm font-semibold z-10">
+          <Md>{invoice.cancelledNotes || 'Cancelled'}</Md>
+        </div>
       )}
       <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-10 px-8 py-10 text-white mb-8 rounded-t-lg" style={{ background: 'linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, black))' }} data-section="heading">
         <div className={`flex items-start gap-6 ${logoAlign}`}>
@@ -252,8 +280,8 @@ function Bold({ invoice, cols, colTemplate, logoPos }: RenderProps) {
             </div>
           )}
           <div className={`flex-1 ${logoAlign ? 'text-right' : ''}`}>
-            <div className="text-xs font-semibold tracking-widest uppercase opacity-80">{invoice.invoiceHeading || 'Invoice'}</div>
-            {invNum && <div className="mt-1 text-4xl font-extrabold tracking-tight">{invNum}</div>}
+            <Md as="div" className="text-xs font-semibold tracking-widest uppercase opacity-80">{invoice.invoiceHeading || 'Invoice'}</Md>
+            {invNum ? <Md as="div" className="mt-1 text-4xl font-extrabold tracking-tight">{invNum}</Md> : null}
             {invoice.invoiceDescription && <Md as="p" className="mt-2 text-white/80">{invoice.invoiceDescription}</Md>}
           </div>
         </div>
@@ -262,29 +290,42 @@ function Bold({ invoice, cols, colTemplate, logoPos }: RenderProps) {
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div data-section="from">
           <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: 'var(--accent)' }}>From</div>
-          {invoice.invoiceFrom && Object.entries(invoice.invoiceFrom).map(([k, v]) => (
-            <p key={k} className="text-sm text-zinc-700"><span className="text-zinc-500">{displayKey(k)}:</span> <Md>{v}</Md></p>
-          ))}
+          {invoice.invoiceFrom && Object.entries(invoice.invoiceFrom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <p key={k} className="text-sm text-zinc-700">
+                {lbl ? <><Md as="span" className="text-zinc-500">{`${lbl}:`}</Md>{' '}</> : null}<Md>{v}</Md>
+              </p>
+            );
+          })}
         </div>
         <div className="space-y-4">
           {invoice.invoiceTo?.map((recipient, i) => (
             <div key={i} data-section="to">
               <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: 'var(--accent)' }}>{Object.keys(recipient)[0]?.includes('Ship') ? 'Ship to' : 'Bill to'}</div>
-              {Object.entries(recipient).map(([k, v]) => (
-                <p key={k} className="text-sm text-zinc-700"><span className="text-zinc-500">{k}:</span> <Md>{v}</Md></p>
-              ))}
+              {Object.entries(recipient).map(([k, v]) => {
+                const lbl = displayKey(k);
+                return (
+                  <p key={k} className="text-sm text-zinc-700">
+                    {lbl ? <><Md as="span" className="text-zinc-500">{`${lbl}:`}</Md>{' '}</> : null}<Md>{v}</Md>
+                  </p>
+                );
+              })}
             </div>
           ))}
         </div>
       </div>
       <div className="grid gap-3 mt-5 mb-5 p-4 rounded-lg" data-section="metaTop"
         style={{ gridTemplateColumns: `repeat(${Math.min(Object.keys(invoice.metaTop || {}).length, 5)}, 1fr)`, backgroundColor: 'color-mix(in srgb, var(--accent) 8%, white)' }}>
-        {invoice.metaTop && Object.entries(invoice.metaTop).map(([k, v]) => (
-          <dl key={k} className="flex flex-col gap-x-3 text-sm">
-            <dt className="text-zinc-500 text-xs font-semibold tracking-wider uppercase">{k}</dt>
-            <Md as="dd" className="font-semibold text-zinc-900">{v}</Md>
-          </dl>
-        ))}
+        {invoice.metaTop && Object.entries(invoice.metaTop).map(([k, v]) => {
+          const lbl = displayKey(k);
+          return (
+            <dl key={k} className="flex flex-col gap-x-3 text-sm">
+              {lbl ? <Md as="dt" className="text-zinc-500 text-xs font-semibold tracking-wider uppercase">{lbl}</Md> : null}
+              <Md as="dd" className="font-semibold text-zinc-900">{v}</Md>
+            </dl>
+          );
+        })}
       </div>
       <div className="mt-3 rounded-lg overflow-hidden border border-zinc-200 overflow-x-auto" data-section="lineItems">
         <div className="grid gap-2 px-4 py-3 text-white" style={{ gridTemplateColumns: colTemplate, backgroundColor: 'var(--accent)' }}>
@@ -300,9 +341,15 @@ function Bold({ invoice, cols, colTemplate, logoPos }: RenderProps) {
               return (
                 <div key={`${i}-${c}`} className={`${isLast ? 'text-end' : 'text-start'}`}>
                   {typeof value === 'object' && value !== null ? (
-                    Object.entries(value).map(([k, val]) => (
-                      <p key={k} className="text-sm text-zinc-600"><span className="font-semibold">{displayKey(k)}</span>: <Md className="font-normal">{String(val)}</Md></p>
-                    ))
+                    Object.entries(value).map(([k, val]) => {
+                      const lbl = displayKey(k);
+                      return (
+                        <p key={k} className="text-sm text-zinc-600">
+                          {lbl ? <><Md as="span" className="font-semibold">{`${lbl}:`}</Md>{' '}</> : null}
+                          <Md className="font-normal">{String(val)}</Md>
+                        </p>
+                      );
+                    })
                   ) : (
                     <Md as="p" className={`text-sm text-zinc-800 ${isLast ? 'font-semibold' : ''}`}>{value}</Md>
                   )}
@@ -327,12 +374,15 @@ function Bold({ invoice, cols, colTemplate, logoPos }: RenderProps) {
       </div>
       {invoice.metaBottom && Object.entries(invoice.metaBottom).length > 0 && (
         <div className="mt-6 grid sm:grid-cols-2 gap-4" data-section="metaBottom">
-          {Object.entries(invoice.metaBottom).map(([k, v]) => (
-            <div key={k} className="p-4 rounded-lg bg-zinc-50 border border-zinc-100">
-              <div className="text-xs font-semibold tracking-wider uppercase text-zinc-500 mb-1">{k}</div>
-              <Md className="text-zinc-700 text-sm">{v}</Md>
-            </div>
-          ))}
+          {Object.entries(invoice.metaBottom).map(([k, v]) => {
+            const lbl = displayKey(k);
+            return (
+              <div key={k} className="p-4 rounded-lg bg-zinc-50 border border-zinc-100">
+                {lbl ? <Md as="div" className="text-xs font-semibold tracking-wider uppercase text-zinc-500 mb-1">{lbl}</Md> : null}
+                <Md className="text-zinc-700 text-sm">{v}</Md>
+              </div>
+            );
+          })}
         </div>
       )}
       {invoice.digitalSignatureUrl && (

@@ -5,7 +5,9 @@
   "scripts": {
     "submodule:init": "git submodule update --init --recursive",
     "worker:deploy": "pnpm --dir workers/cf-worker deploy",
-    "test": "pnpm test:web && pnpm test:security && pnpm test:worker && pnpm test:security:worker",
+    "test": "pnpm test:markdown && pnpm test:autosize && pnpm test:web && pnpm test:security && pnpm test:worker && pnpm test:security:worker",
+    "test:markdown": "bash tests/run.sh assert-markdown-fields.ts",
+    "test:autosize": "bash tests/run.sh assert-autosize.ts",
     "test:web": "bash tests/run.sh render-web.ts",
     "test:worker": "bash tests/run.sh render-worker.ts",
     "test:security": "bash tests/run.sh security-web.ts",

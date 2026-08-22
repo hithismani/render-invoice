@@ -272,14 +272,14 @@ var RenderInvoicePlayground = (function () {
     { k: 'accentColor', t: 'string = "#2563eb"', d: 'Hex color threaded through headings, totals, and borders.' },
     { k: 'logoPosition', t: '"center" | "left" | "right"', d: 'Where the logo sits in the header.' },
     { k: 'direction', t: '"ltr" | "rtl"', d: 'Reading direction. Use "rtl" for Arabic, Hebrew, Urdu, Farsi.' },
-    { k: 'autoSize', t: 'boolean = true', d: 'Automatically fit content to the page when generating PDF.' },
+    { k: 'autoSize', t: 'boolean = true', d: 'PDF page sizing. true: portrait A4 width, height = max(A4, content). false: scale onto one A4 page.' },
     { k: 'filename', t: 'string?', d: 'Filename for the generated PDF.' },
     { k: 'invoiceHeading', t: 'string?', d: 'Main heading or title (e.g., "Invoice"). Required if present.' },
     { k: 'invoiceDescription', t: 'string?', d: 'Subtitle. Full markdown: **bold** *italic* ~~strike~~ `code` [label](url) headings, {@18} size, lists, quotes. Line breaks kept.' },
-    { k: 'invoiceFrom', t: 'Record<string,string>', d: 'Sender key-value pairs. Keys and values accept markdown incl. size overrides.' },
-    { k: 'invoiceTo', t: 'Array<Record<string,string>>', d: 'Recipients as key-value objects. Markdown supported.' },
-    { k: 'metaTop', t: 'Record<string,string>', d: 'Metadata above line items. Markdown supported.' },
-    { k: 'metaBottom', t: 'Record<string,string> = {}', d: 'Metadata below line items. Markdown supported.' },
+    { k: 'invoiceFrom', t: 'Record<string,string>', d: 'Sender key-value pairs. Markdown on keys/values. Wrap a key in @…@ (e.g. "@note@") to hide the label.' },
+    { k: 'invoiceTo', t: 'Array<Record<string,string>>', d: 'Recipients as key-value objects. Markdown supported. Wrap a key in @…@ to hide the label.' },
+    { k: 'metaTop', t: 'Record<string,string>', d: 'Metadata above line items. Markdown supported. Wrap a key in @…@ to hide the label.' },
+    { k: 'metaBottom', t: 'Record<string,string> = {}', d: 'Metadata below line items. Markdown supported. Wrap a key in @…@ to hide the label.' },
     { k: 'columns', t: 'string[] (min 1)', d: 'Column headers for the line items table. Markdown supported.' },
     { k: 'lineItems', t: 'Array<Record<string,string|number>> (min 1)', d: 'Cells aligned with columns. Currency glyphs and markdown supported. Keys must exist in columns.' },
     { k: 'summary', t: 'Array<{label, value}> (min 1)', d: 'Label (required) and value (required, string|number). Markdown supported.' },
@@ -436,7 +436,10 @@ var RenderInvoicePlayground = (function () {
   }
 
   function displayKey(key) {
-    return (!key || (key.charAt(0) === '@' && key.charAt(key.length - 1) === '@')) ? '' : String(key).replace(/@/g, '');
+    var k = String(key == null ? '' : key).trim();
+    if (!k) return '';
+    if (k.charAt(0) === '@' && k.charAt(k.length - 1) === '@') return '';
+    return k.replace(/@/g, '');
   }
 
   function withDefaults(data) {
@@ -1266,7 +1269,7 @@ var RenderInvoicePlayground = (function () {
   function buildSignature(c) { c.appendChild(imagePicker('Signature', 'digitalSignatureUrl', 'signatureSize', 500, 160)); }
 
   function buildOptions(c) {
-    c.appendChild(boundCheck('autoSize', 'Auto-size PDF to content (vs A4)'));
+    c.appendChild(boundCheck('autoSize', 'Auto-size PDF (A4 width, grow height) vs fit one A4'));
     c.appendChild(boundCheck('amountsVerifiedHideDisclaimer', 'I have verified the invoice, and want to hide disclaimer.'));
     var canc = boundCheck('isCancelled', 'Mark as cancelled');
     canc.querySelector('input').addEventListener('change', function () {
@@ -1392,10 +1395,16 @@ var RenderInvoicePlayground = (function () {
       '</div>';
   }
 
+  function needsBlockMd(v) {
+    var s = String(v == null ? '' : v);
+    return /[\n\r]|^[ \t]{0,3}#{1,7}\s|^[ \t]*([-*+]|\d+\.)\s|^[ \t]*>|```|\{@(?:p:)?\d/.test(s);
+  }
+
   function fldHtml(k, v) {
     var lbl = displayKey(k);
     var lh = lbl ? '<span class="fl">' + mdi(lbl) + ':</span> ' : '';
-    return '<div class="fld">' + lh + mdi(v) + '</div>';
+    var body = needsBlockMd(v) ? md(v) : mdi(v);
+    return '<div class="fld">' + lh + body + '</div>';
   }
 
   function imgHtml(url, size, fbW, fbH) {
@@ -1434,7 +1443,8 @@ var RenderInvoicePlayground = (function () {
 
     h += '<div class="metarow px">';
     Object.keys(inv.metaTop || {}).forEach(function (k) {
-      h += '<div class="mi"><div class="mi-k">' + cellMd(k + ':') + '</div><div class="mi-v">' + cellMd(inv.metaTop[k]) + '</div></div>';
+      var lbl = displayKey(k);
+      h += '<div class="mi">' + (lbl ? '<div class="mi-k">' + cellMd(lbl + ':') + '</div>' : '') + '<div class="mi-v">' + cellMd(inv.metaTop[k]) + '</div></div>';
     });
     h += '</div>';
 
@@ -1464,7 +1474,8 @@ var RenderInvoicePlayground = (function () {
     if (inv.metaBottom && Object.keys(inv.metaBottom).length) {
       h += '<div class="metarow px">';
       Object.keys(inv.metaBottom).forEach(function (k) {
-        h += '<div class="mi"><div class="mi-k">' + cellMd(k + ':') + '</div><div class="mi-v">' + cellMd(inv.metaBottom[k]) + '</div></div>';
+        var lbl = displayKey(k);
+        h += '<div class="mi">' + (lbl ? '<div class="mi-k">' + cellMd(lbl + ':') + '</div>' : '') + '<div class="mi-v">' + cellMd(inv.metaBottom[k]) + '</div></div>';
       });
       h += '</div>';
     }
@@ -1496,7 +1507,7 @@ var RenderInvoicePlayground = (function () {
   function boldParty(entries) {
     if (!entries.length) return '';
     var h = '<div class="bp">';
-    h += '<div class="bp-k">' + cellMd(entries[0][0]) + '</div>';
+    if (entries[0][0]) h += '<div class="bp-k">' + cellMd(entries[0][0]) + '</div>';
     h += '<div class="bp-v">' + cellMd(entries[0][1]) + '</div>';
     entries.slice(1).forEach(function (e) { h += fldHtml(e[0], e[1]); });
     h += '</div>';
@@ -1531,14 +1542,15 @@ var RenderInvoicePlayground = (function () {
     h += '<div class="pcard">' + boldParty(fromEntries) + '</div>';
     h += '<div class="pcard" style="gap:16px">';
     (inv.invoiceTo || []).forEach(function (rec) {
-      h += boldParty(Object.keys(rec || {}).map(function (k) { return [k, String(rec[k])]; }));
+      h += boldParty(Object.keys(rec || {}).map(function (k) { return [displayKey(k), String(rec[k])]; }));
     });
     h += '</div></div>';
 
     if (inv.metaTop && Object.keys(inv.metaTop).length) {
       h += '<div class="metabox" style="background:' + accent + '14">';
       Object.keys(inv.metaTop).forEach(function (k) {
-        h += '<div class="mi"><div class="mi-k">' + cellMd(k) + '</div><div class="mi-v">' + cellMd(inv.metaTop[k]) + '</div></div>';
+        var lbl = displayKey(k);
+        h += '<div class="mi">' + (lbl ? '<div class="mi-k">' + cellMd(lbl) + '</div>' : '') + '<div class="mi-v">' + cellMd(inv.metaTop[k]) + '</div></div>';
       });
       h += '</div>';
     }
@@ -1569,7 +1581,8 @@ var RenderInvoicePlayground = (function () {
     if (inv.metaBottom && Object.keys(inv.metaBottom).length) {
       h += '<div class="mbcards">';
       Object.keys(inv.metaBottom).forEach(function (k) {
-        h += '<div class="mbcard"><div class="mi-k">' + cellMd(k) + '</div><div class="mi-v">' + cellMd(inv.metaBottom[k]) + '</div></div>';
+        var lbl = displayKey(k);
+        h += '<div class="mbcard">' + (lbl ? '<div class="mi-k">' + cellMd(lbl) + '</div>' : '') + '<div class="mi-v">' + cellMd(inv.metaBottom[k]) + '</div></div>';
       });
       h += '</div>';
     }
